@@ -143,8 +143,8 @@ public class SongService {
     public Song tranferToSong(SongInputDto dto){
         var song = new Song();
 
-        song.setSongtitle(song.getSongtitle());
-        song.setIsfavorited(song.getIsfavorited());
+        song.setSongtitle(dto.getSongtitle());
+        song.setIsfavorited(dto.getIsfavorited());
 
         return song;
     }
