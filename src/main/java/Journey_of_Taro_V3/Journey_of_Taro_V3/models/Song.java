@@ -13,6 +13,19 @@ public class Song {
     private String songtitle;
     private Boolean isfavorited;
 
+    // Een collectie kan meerdere songs bevatten, een song kan in meerdere collecties zitten.
+    @ManyToOne
+    @JoinColumn(name = "song_collection_type_id")
+    private SongCollectionType songCollectionType;
+
+    public SongCollectionType getSongCollectionType() {
+        return songCollectionType;
+    }
+
+    public void setSongCollectionType(SongCollectionType songCollectionType) {
+        this.songCollectionType = songCollectionType;
+    }
+
     public Song() {
     }
 
