@@ -76,6 +76,7 @@ public class SongService {
         var dto = new SongDto();
 
         dto.songtitle = song.getSongtitle();
+        dto.artistname = song.getArtistname();
         dto.isfavorited = song.getIsfavorited();
 
         return dto;
@@ -85,6 +86,7 @@ public class SongService {
         var song = new Song();
 
         song.setSongtitle(songDto.getSongtitle());
+        song.setArtistname(songDto.getArtistname());
         song.setIsfavorited(songDto.getIsfavorited());
 
         return song;
@@ -144,6 +146,7 @@ public class SongService {
         var song = new Song();
 
         song.setSongtitle(dto.getSongtitle());
+        song.setArtistname(dto.getArtistname());
         song.setIsfavorited(dto.getIsfavorited());
 
         return song;

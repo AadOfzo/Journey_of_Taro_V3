@@ -7,12 +7,14 @@ public class SongInputDto {
 
     @NotNull(message = "Songtitle is required")
     private String songtitle;
-
+    @NotNull(message = "Artist name is required")
+    private String artistname;
     @AssertTrue(message = "All favorited songs")
     private Boolean isfavorited;
 
-    public SongInputDto(String songtitle, Boolean isfavorited) {
+    public SongInputDto(String songtitle, String artistname, Boolean isfavorited) {
         this.songtitle = songtitle;
+        this.artistname = artistname;
         this.isfavorited = isfavorited;
     }
 
@@ -22,6 +24,14 @@ public class SongInputDto {
 
     public void setSongtitle(String songtitle) {
         this.songtitle = songtitle;
+    }
+
+    public String getArtistname() {
+        return artistname;
+    }
+
+    public void setArtistname(String artistname) {
+        this.artistname = artistname;
     }
 
     public Boolean getIsfavorited() {
