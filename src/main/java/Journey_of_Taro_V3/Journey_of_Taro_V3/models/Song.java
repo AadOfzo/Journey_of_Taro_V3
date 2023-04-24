@@ -9,30 +9,19 @@ public class Song {
     @Id
     @GeneratedValue
     Long id;
-
     private String songtitle;
+    private String artistname;
     private Boolean isfavorited;
 
-    // Een collectie kan meerdere songs bevatten, een song kan in meerdere collecties zitten.
-    @ManyToOne
-    @JoinColumn(name = "song_collection_type_id")
-    private SongCollectionType songCollectionType;
-
-    public SongCollectionType getSongCollectionType() {
-        return songCollectionType;
-    }
-
-    public void setSongCollectionType(SongCollectionType songCollectionType) {
-        this.songCollectionType = songCollectionType;
+    public Song(Long id, String songtitle, String artistname, Boolean isfavorited) {
+        this.id = id;
+        this.songtitle = songtitle;
+        this.artistname = artistname;
+        this.isfavorited = isfavorited;
     }
 
     public Song() {
-    }
 
-    public Song(Long id, String songtitle, Boolean isfavorited) {
-        this.id = id;
-        this.songtitle = songtitle;
-        this.isfavorited = isfavorited;
     }
 
     public Long getId() {
@@ -49,6 +38,14 @@ public class Song {
 
     public void setSongtitle(String songtitle) {
         this.songtitle = songtitle;
+    }
+
+    public String getArtistname() {
+        return artistname;
+    }
+
+    public void setArtistname(String artistname) {
+        this.artistname = artistname;
     }
 
     public Boolean getIsfavorited() {
