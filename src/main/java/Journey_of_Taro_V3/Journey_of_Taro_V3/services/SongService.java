@@ -5,7 +5,9 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.SongTitleNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.SongCollectionType;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.SongRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -162,4 +164,42 @@ public class SongService {
         return dto;
     }
 
+    // Assign Song to SongCollectionType
+    private List<SongCollectionType> songCollectionTypes = new ArrayList<>();
+
+    // Initialize named song collection types of different types
+    @PostConstruct
+    public void init() {
+        songCollectionTypes.add(new SongCollectionType("demo"));
+        songCollectionTypes.add(new SongCollectionType("sampledemo"));
+        songCollectionTypes.add(new SongCollectionType("single"));
+        songCollectionTypes.add(new SongCollectionType("ep"));
+        songCollectionTypes.add(new SongCollectionType("album"));
+        songCollectionTypes.add(new SongCollectionType("meditations"));
+    }
+
+    public void addSong(String type, Song song) throws IllegalArgumentException {
+        SongCollectionType collectionType = getCollectionTypeByType(type);
+        if (collectionType == null) {
+            throw new IllegalArgumentException("Invalid collection type");
+        }
+        collectionType.addSong(song);
+    }
+
+    public List<Song> getAllSongs(String type) throws IllegalArgumentException {
+        SongCollectionType collectionType = getCollectionTypeByType(type);
+        if (collectionType == null) {
+            throw new IllegalArgumentException("Invalid collection type");
+        }
+        return collectionType.getSongs();
+    }
+
+    private SongCollectionType getCollectionTypeByType(String type) {
+        for (SongCollectionType collectionType : songCollectionTypes) {
+            if (collectionType.getType().equals(type)) {
+                return collectionType;
+            }
+        }
+        return null;
+    }
 }

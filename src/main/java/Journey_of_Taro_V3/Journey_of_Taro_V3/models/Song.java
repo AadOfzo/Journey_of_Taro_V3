@@ -13,15 +13,14 @@ public class Song {
     private String artistname;
     private Boolean isfavorited;
 
+    public Song() {
+
+    }
     public Song(Long id, String songtitle, String artistname, Boolean isfavorited) {
         this.id = id;
         this.songtitle = songtitle;
         this.artistname = artistname;
         this.isfavorited = isfavorited;
-    }
-
-    public Song() {
-
     }
 
     public Long getId() {
