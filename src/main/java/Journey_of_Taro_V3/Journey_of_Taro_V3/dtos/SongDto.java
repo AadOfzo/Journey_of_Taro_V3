@@ -1,19 +1,24 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.SongCollectionType;
+
+import java.util.List;
+
 public class SongDto {
     private Long id;
     public String songtitle;
     public String artistname;
     public Boolean isfavorited;
-
+    public List<SongCollectionType> songCollectionType;
     public SongDto() {
     }
 
-    public SongDto(Long id, String songtitle, String artistname, Boolean isfavorited) {
+    public SongDto(Long id, String songtitle, String artistname, Boolean isfavorited, List<SongCollectionType> songCollectionType) {
         this.id = id;
         this.songtitle = songtitle;
         this.artistname = artistname;
         this.isfavorited = isfavorited;
+        this.songCollectionType = songCollectionType;
     }
 
     public Long getId() {

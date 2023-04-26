@@ -1,7 +1,10 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.SongCollectionType;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 
 public class SongInputDto {
 
@@ -11,11 +14,14 @@ public class SongInputDto {
     private String artistname;
     @AssertTrue(message = "All favorited songs")
     private Boolean isfavorited;
+    @NotNull(message = "Song collection must be added")
+    private final SongCollectionType songCollectionType;
 
-    public SongInputDto(String songtitle, String artistname, Boolean isfavorited) {
+    public SongInputDto(String songtitle, String artistname, Boolean isfavorited, SongCollectionType songCollectionType) {
         this.songtitle = songtitle;
         this.artistname = artistname;
         this.isfavorited = isfavorited;
+        this.songCollectionType = songCollectionType;
     }
 
     public String getSongtitle() {
@@ -41,4 +47,9 @@ public class SongInputDto {
     public void setIsfavorited(Boolean isfavorited) {
         this.isfavorited = isfavorited;
     }
+
+    public SongCollectionType getSongCollectionType() {
+        return songCollectionType;
+    }
+
 }

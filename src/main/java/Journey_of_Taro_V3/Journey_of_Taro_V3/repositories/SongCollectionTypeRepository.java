@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SongCollectionTypeRepository extends SongRepository {
-    List<Song> findAllSongsBySongtitleEqualsIgnoreCase(String songtitle);
+    List<Song> findAllSongsBySongtitleEqualsIgnoreCase(Long songtitle);
 
     Optional<Song> findById(String songtitle);
 
