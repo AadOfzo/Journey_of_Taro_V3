@@ -7,3 +7,4 @@ values ('Aadofzo', 'ADMIN'), ('Aadofzo', 'USER');
 -- SongCollectionTypes
 insert into song_collection_type (song_collection_type)
 values ('Demo'), ('Sample Demo'), ('Single'), ('EP'), ('Album'), ('Meditations');
+-- SongCollections
