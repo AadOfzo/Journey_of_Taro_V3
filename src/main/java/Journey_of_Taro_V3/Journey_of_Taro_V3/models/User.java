@@ -9,7 +9,6 @@ import java.util.Set;
 public class User {
 
     @Id
-    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false, length = 255)
