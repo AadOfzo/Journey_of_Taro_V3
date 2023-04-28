@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
+    Optional<Song> findBySongtitleIgnoreCase(String songtitle);
 //        List<Song> findAllSongsByIdEqualsIgnoreCase(Long Id);
-//
-//        List<Song> findAllSongsBySongtitleEqualsIgnoreCase(String songtitle);
-//
+
+        List<Song> findAllSongsBySongtitleEqualsIgnoreCase(String songtitle);
+
 //        Optional<Song> findById(String songtitle);
 }

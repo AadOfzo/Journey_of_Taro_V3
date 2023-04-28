@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "song_collection_type")
+@Table(name = "song_collection_types")
 public class SongCollectionType {
 
     @Id

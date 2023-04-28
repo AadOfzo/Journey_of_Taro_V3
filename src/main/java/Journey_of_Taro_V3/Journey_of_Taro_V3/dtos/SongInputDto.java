@@ -12,4 +12,30 @@ public class SongInputDto {
     @AssertTrue(message = "All favorited songs")
     private Boolean isfavorited;
 
+    public SongInputDto(String songTitle, String artistName, boolean b) {
+    }
+
+    public String getSongtitle() {
+        return songtitle;
+    }
+
+    public void setSongtitle(String songtitle) {
+        this.songtitle = songtitle;
+    }
+
+    public String getArtistname() {
+        return artistname;
+    }
+
+    public void setArtistname(String artistname) {
+        this.artistname = artistname;
+    }
+
+    public Boolean getIsfavorited() {
+        return isfavorited;
+    }
+
+    public void setIsfavorited(Boolean isfavorited) {
+        this.isfavorited = isfavorited;
+    }
 }
