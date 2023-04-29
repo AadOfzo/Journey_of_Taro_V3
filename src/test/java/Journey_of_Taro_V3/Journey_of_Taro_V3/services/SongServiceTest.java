@@ -29,14 +29,15 @@ public class SongServiceTest {
 
     @Test
     public void testGetAllSongs() {
+        // given
         List<Song> songs = new ArrayList<>();
         songs.add(new Song(1L, "song1", "artist1", true));
         songs.add(new Song(2L, "song2", "artist2", false));
 
         when(songRepository.findAll()).thenReturn(songs);
-
+        // when
         List<SongDto> songDtos = songService.getAllSongs();
-
+        // then
         assertEquals(2, songDtos.size());
         assertEquals("song1", songDtos.get(0).getSongtitle());
         assertEquals("artist2", songDtos.get(1).getArtistname());

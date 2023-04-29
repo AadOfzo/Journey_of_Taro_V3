@@ -2,7 +2,9 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "songs")
@@ -15,6 +17,14 @@ public class Song {
     private String artistname;
     private Boolean isfavorited;
 
+    private static List<Song> songs = new ArrayList<>();
+
+    static {
+        songs.add(new Song(1L, "Song Title 1", "Artist 1", false));
+        songs.add(new Song(2L, "Song Title 2", "Artist 2", true));
+        // add more songs if needed
+    }
+
     public Song() {
     }
 
@@ -24,6 +34,8 @@ public class Song {
         this.artistname = artistname;
         this.isfavorited = isfavorited;
     }
+
+    // getters and setters
 
     public Long getId() {
         return id;
@@ -56,4 +68,17 @@ public class Song {
     public void setIsfavorited(Boolean isfavorited) {
         this.isfavorited = isfavorited;
     }
+
+    public static List<Song> getSongs() {
+        return songs;
+    }
+
+    public static void setSongs(List<Song> songs) {
+        Song.songs = songs;
+    }
+
+    public static Stream<Song> stream() {
+        return songs.stream();
+    }
 }
+

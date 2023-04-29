@@ -1,10 +1,9 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.SongCollectionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "song_collections")
@@ -17,13 +16,17 @@ public class SongCollection {
     @ManyToOne
     @JoinColumn(name = "song_collection_type_id")
     private SongCollectionType songCollectionType;
+    @ManyToOne
+    @JoinColumn(name = "song_id")
+    private Song song;
 
     public SongCollection() {
     }
 
-    public SongCollection(Long id, String name, SongCollectionType songCollectionType) {
+    public SongCollection(Long id, String name, Song song, SongCollectionType songCollectionType) {
         this.id = id;
         this.name = name;
+        this.song = song;
         this.songCollectionType = songCollectionType;
     }
 
@@ -41,6 +44,14 @@ public class SongCollection {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Song getSong() {
+        return song;
+    }
+
+    public void setSong(Song song) {
+        this.song = song;
     }
 
     public SongCollectionType getSongCollectionType() {
