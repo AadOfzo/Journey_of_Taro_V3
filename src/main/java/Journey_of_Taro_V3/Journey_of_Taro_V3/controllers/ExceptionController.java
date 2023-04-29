@@ -2,7 +2,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.TelevisionNameTooLongException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.UsernameNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +29,7 @@ public class ExceptionController {
     }
 
 //    Deze exception handler vangt elke TelevisionNameTooLongException op die naar de gebruiker gegooid wordt en returned daar voor in de plaats een ResponseEntity met de Message en de NOT_FOUND-status (404)
-    @ExceptionHandler(value = TelevisionNameTooLongException.class)
-    public ResponseEntity<String> exception(TelevisionNameTooLongException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+
 
     @ExceptionHandler(value = BadRequestException.class)
     public ResponseEntity<String> exception(BadRequestException exception) {
