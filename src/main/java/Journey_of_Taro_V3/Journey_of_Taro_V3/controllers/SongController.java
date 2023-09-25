@@ -31,16 +31,16 @@ public class SongController {
     }
 
     @GetMapping("/songs")
-    public ResponseEntity<List<SongDto>> getAllSongs(@RequestParam(value = "songtitle", required = false) Optional<String> songtitle) {
+    public ResponseEntity<List<SongDto>> getAllSongs(@RequestParam(value = "songTitle", required = false) Optional<String> songTitle) {
         List<SongDto> dtos;
 
-        if (songtitle.isEmpty()) {
+        if (songTitle.isEmpty()) {
 
             dtos = songService.getAllSongs();
 
         } else {
 
-            dtos = songService.getAllSongsBySongTitle(songtitle.get());
+            dtos = songService.getAllSongsBySongTitle(songTitle.get());
 
         }
 
@@ -55,10 +55,10 @@ public class SongController {
         return ResponseEntity.ok().body(song);
     }
 
-    @GetMapping("/{songtitle}")
-    public ResponseEntity<SongDto> getSong(@PathVariable("songtitle") String songtitle) {
+    @GetMapping("/{songTitle}")
+    public ResponseEntity<SongDto> getSong(@PathVariable("songTitle") String songTitle) {
 
-        SongDto optionalSong = songService.getSong(songtitle);
+        SongDto optionalSong = songService.getSong(songTitle);
 
         return ResponseEntity.ok().body(optionalSong);
     }

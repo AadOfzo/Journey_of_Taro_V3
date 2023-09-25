@@ -6,29 +6,29 @@ import jakarta.validation.constraints.NotNull;
 public class SongInputDto {
 
     @NotNull(message = "Songtitle is required")
-    private String songtitle;
+    private String songTitle;
 
     @AssertTrue(message = "All favorited songs")
-    private Boolean isfavorited;
+    private Boolean isFavorited;
 
-    public SongInputDto(String songtitle, Boolean isfavorited) {
-        this.songtitle = songtitle;
-        this.isfavorited = isfavorited;
+    public SongInputDto(String songTitle, Boolean isFavorited) {
+        this.songTitle = songTitle;
+        this.isFavorited = isFavorited;
     }
 
-    public String getSongtitle() {
-        return songtitle;
+    public String getSongTitle() {
+        return songTitle;
     }
 
-    public void setSongtitle(String songtitle) {
-        this.songtitle = songtitle;
+    public void setSongTitle(String songTitle) {
+        this.songTitle = songTitle;
     }
 
-    public Boolean getIsfavorited() {
-        return isfavorited;
+    public Boolean getIsFavorited() {
+        return isFavorited;
     }
 
-    public void setIsfavorited(Boolean isfavorited) {
-        this.isfavorited = isfavorited;
+    public void setIsFavorited(Boolean isFavorited) {
+        this.isFavorited = isFavorited;
     }
 }

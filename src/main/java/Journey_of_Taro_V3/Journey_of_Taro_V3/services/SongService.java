@@ -29,9 +29,9 @@ public class SongService {
         return transferSongListToDtoList(songList);
     }
 
-    // Find all songs by songtitle
-    public List<SongDto> getAllSongsBySongTitle(String songtitle) {
-        List<Song> songList = songRepository.findAllSongsBySongtitleEqualsIgnoreCase(songtitle);
+    // Find all songs by songTitle
+    public List<SongDto> getAllSongsBySongTitle(String songTitle) {
+        List<Song> songList = songRepository.findAllSongsBySongTitleEqualsIgnoreCase(songTitle);
         return transferSongListToDtoList(songList);
     }
 
@@ -75,8 +75,8 @@ public class SongService {
 
         var dto = new SongDto();
 
-        dto.songtitle = song.getSongtitle();
-        dto.isfavorited = song.getIsfavorited();
+        dto.songTitle = song.getSongTitle();
+        dto.isFavorited = song.getIsFavorited();
 
         return dto;
     }
@@ -84,18 +84,18 @@ public class SongService {
     public Song toSong(SongDto songDto) {
         var song = new Song();
 
-        song.setSongtitle(songDto.getSongtitle());
-        song.setIsfavorited(songDto.getIsfavorited());
+        song.setSongTitle(songDto.getSongTitle());
+        song.setIsFavorited(songDto.getIsFavorited());
 
         return song;
     }
-    public SongDto getSong(String songtitle) {
+    public SongDto getSong(String songTitle) {
         SongDto dto = new SongDto();
-        Optional<Song> song = songRepository.findById(songtitle);
+        Optional<Song> song = songRepository.findById(songTitle);
         if (song.isPresent()){
             dto = fromSong(song.get());
         } else {
-            throw new SongTitleNotFoundException(songtitle);
+            throw new SongTitleNotFoundException(songTitle);
         }
         return dto;
     }
@@ -120,15 +120,15 @@ public class SongService {
         }
     }
 
-    // Update songtitle
-    public SongDto updateSong(String songtitle, SongInputDto inputDto) {
+    // Update songTitle
+    public SongDto updateSong(String songTitle, SongInputDto inputDto) {
 
-        if (songRepository.findById(songtitle).isPresent()){
+        if (songRepository.findById(songTitle).isPresent()){
 
-            Song song = songRepository.findById(songtitle).get();
+            Song song = songRepository.findById(songTitle).get();
 
             Song song1 = tranferToSong(inputDto);
-            song1.setSongtitle(song.getSongtitle());
+            song1.setSongTitle(song.getSongTitle());
 
             songRepository.save(song1);
 
@@ -143,8 +143,8 @@ public class SongService {
     public Song tranferToSong(SongInputDto dto){
         var song = new Song();
 
-        song.setSongtitle(dto.getSongtitle());
-        song.setIsfavorited(dto.getIsfavorited());
+        song.setSongTitle(dto.getSongTitle());
+        song.setIsFavorited(dto.getIsFavorited());
 
         return song;
     }
@@ -153,8 +153,8 @@ public class SongService {
         SongDto dto = new SongDto();
 
         dto.setId(song.getId());
-        dto.setSongtitle(song.getSongtitle());
-        dto.setIsfavorited(song.getIsfavorited());
+        dto.setSongTitle(song.getSongTitle());
+        dto.setIsFavorited(song.getIsFavorited());
 
         return dto;
     }

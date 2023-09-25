@@ -10,8 +10,9 @@ public class Song {
     @GeneratedValue
     Long id;
 
-    private String songtitle;
-    private Boolean isfavorited;
+    private String songTitle;
+    private String artistName;
+    private Boolean isFavorited;
 
     // Een collectie kan meerdere songs bevatten, een song kan in meerdere collecties zitten.
     @ManyToOne
@@ -29,10 +30,11 @@ public class Song {
     public Song() {
     }
 
-    public Song(Long id, String songtitle, Boolean isfavorited) {
+    public Song(Long id, String songTitle, String artistName, Boolean isFavorited) {
         this.id = id;
-        this.songtitle = songtitle;
-        this.isfavorited = isfavorited;
+        this.songTitle = songTitle;
+        this.artistName = artistName;
+        this.isFavorited = isFavorited;
     }
 
     public Long getId() {
@@ -43,19 +45,19 @@ public class Song {
         this.id = id;
     }
 
-    public String getSongtitle() {
-        return songtitle;
+    public String getSongTitle() {
+        return songTitle;
     }
 
-    public void setSongtitle(String songtitle) {
-        this.songtitle = songtitle;
+    public void setSongTitle(String songTitle) {
+        this.songTitle = songTitle;
     }
 
-    public Boolean getIsfavorited() {
-        return isfavorited;
+    public Boolean getIsFavorited() {
+        return isFavorited;
     }
 
-    public void setIsfavorited(Boolean isfavorited) {
-        this.isfavorited = isfavorited;
+    public void setIsFavorited(Boolean isFavorited) {
+        this.isFavorited = isFavorited;
     }
 }

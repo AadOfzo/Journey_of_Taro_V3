@@ -17,10 +17,13 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>2.7.5</version>
 		</dependency>
+
 		<!--        Deze security dependency is nodig voor Spring security. Zodra je deze dependency inlaadt, is je app beveiligd en kan je er alleen nog in met credentials-->
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.boot</groupId>-->
