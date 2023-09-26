@@ -24,6 +24,9 @@ public class User {
     @Column
     private String email;
 
+    @Column
+    public String artistName;
+
     @OneToMany(
             targetEntity = Authority.class,
             mappedBy = "username",
@@ -48,6 +51,8 @@ public class User {
     public void setApikey(String apikey) { this.apikey = apikey; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email;}
+    public String getArtistName() { return artistName; }
+    public void setArtistName(String artistName) { this.artistName = artistName; }
 
     public Set<Authority> getAuthorities() { return authorities; }
     public void addAuthority(Authority authority) {
