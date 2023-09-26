@@ -76,6 +76,7 @@ public class SongService {
         var dto = new SongDto();
 
         dto.songTitle = song.getSongTitle();
+        dto.artistName = song.getArtistName();
         dto.isFavorited = song.getIsFavorited();
 
         return dto;
@@ -85,19 +86,18 @@ public class SongService {
         var song = new Song();
 
         song.setSongTitle(songDto.getSongTitle());
+        song.setArtistName(songDto.getArtistName());
         song.setIsFavorited(songDto.getIsFavorited());
 
         return song;
     }
     public SongDto getSong(String songTitle) {
-        SongDto dto = new SongDto();
-        Optional<Song> song = songRepository.findById(songTitle);
-        if (song.isPresent()){
-            dto = fromSong(song.get());
+        Optional<Song> songOptional = songRepository.findById(songTitle);
+        if (songOptional.isPresent()) {
+            return tranferToSongDto(songOptional.get());
         } else {
-            throw new SongTitleNotFoundException(songTitle);
+            throw new RecordNotFoundException("No song found with the title: " + songTitle);
         }
-        return dto;
     }
 
     // Update song ID

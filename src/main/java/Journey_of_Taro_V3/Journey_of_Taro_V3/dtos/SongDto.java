@@ -32,6 +32,14 @@ public class SongDto {
         this.songTitle = songTitle;
     }
 
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
+
     public Boolean getIsFavorited() {
         return isFavorited;
     }
