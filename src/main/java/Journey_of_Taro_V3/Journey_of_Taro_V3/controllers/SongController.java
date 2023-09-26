@@ -31,21 +31,25 @@ public class SongController {
     }
 
     @GetMapping("/songs")
-    public ResponseEntity<List<SongDto>> getAllSongs(@RequestParam(value = "songTitle", required = false) Optional<String> songTitle) {
+    public ResponseEntity<List<SongDto>> getAllSongs(
+            @RequestParam(value = "songTitle", required = false) Optional<String> songTitle,
+            @RequestParam(value = "artistName", required = false) Optional<String> artistName
+    ) {
         List<SongDto> dtos;
 
-        if (songTitle.isEmpty()) {
-
-            dtos = songService.getAllSongs();
-
-        } else {
-
+        if (songTitle.isPresent() && artistName.isPresent()) {
+            dtos = songService.getAllSongsBySongTitleAndArtistName(songTitle.get(), artistName.get());
+        } else if (songTitle.isPresent()) {
             dtos = songService.getAllSongsBySongTitle(songTitle.get());
-
+        } else if (artistName.isPresent()) {
+            dtos = songService.getAllSongsByArtistName(artistName.get());
+        } else {
+            dtos = songService.getAllSongs();
         }
 
         return ResponseEntity.ok().body(dtos);
     }
+
 
     @GetMapping("/songs/{id}")
     public ResponseEntity<SongDto> getSong(@PathVariable("id") Long id) {

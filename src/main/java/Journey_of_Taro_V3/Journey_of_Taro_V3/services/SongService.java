@@ -29,11 +29,21 @@ public class SongService {
         return transferSongListToDtoList(songList);
     }
 
-    // Find all songs by songTitle
+    // Find all songs by : songTitle, artistName
     public List<SongDto> getAllSongsBySongTitle(String songTitle) {
         List<Song> songList = songRepository.findAllSongsBySongTitleEqualsIgnoreCase(songTitle);
         return transferSongListToDtoList(songList);
     }
+    public List<SongDto> getAllSongsBySongTitleAndArtistName(String songTitle, String artistName) {
+        List<Song> songList = songRepository.findAllSongsBySongTitleAndArtistName(songTitle, artistName);
+        return transferSongListToDtoList(songList);
+    }
+
+    public List<SongDto> getAllSongsByArtistName(String artistName) {
+        List<Song> songList = songRepository.findAllSongsByArtistNameEqualsIgnoreCase(artistName);
+        return transferSongListToDtoList(songList);
+    }
+
 
     // Hier komen verschillende SongCollectionTypes in "if" statement Song to DTO list
     public List<SongDto> transferSongListToDtoList(List<Song> songs) {

@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
     List<Song> findAllSongsBySongTitleEqualsIgnoreCase(String songTitle);
+    List<Song> findAllSongsByArtistNameEqualsIgnoreCase(String artistName);
+    List<Song> findAllSongsBySongTitleAndArtistName(String songTitle, String artistName);
 
     Optional<Song> findById(String songTitle);
 }
