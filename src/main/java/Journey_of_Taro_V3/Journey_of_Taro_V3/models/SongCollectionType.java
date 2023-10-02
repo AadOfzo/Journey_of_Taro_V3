@@ -17,6 +17,10 @@ public class SongCollectionType {
     private String ep;
     private String album;
     private String meditations;
+
+    @OneToMany(mappedBy = "songCollectionType")
+    private List<Song> songs;
+
     @OneToMany(mappedBy = "songCollectionType")
     @JsonIgnore
     List<SongCollectionType> songCollectionTypes;
@@ -87,6 +91,14 @@ public class SongCollectionType {
 
     public void setMeditations(String meditations) {
         this.meditations = meditations;
+    }
+
+    public List<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
     }
 
     public List<SongCollectionType> getSongCollectionTypes() {
