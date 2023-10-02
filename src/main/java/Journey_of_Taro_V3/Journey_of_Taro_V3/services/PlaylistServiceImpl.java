@@ -18,7 +18,7 @@ public class PlaylistServiceImpl implements PlaylistService {
         // Add validation and error handling if necessary
         Playlist playlist = playlistRepository.findById(playlistId).orElse(null);
         if (playlist != null) {
-            playlist.setIsPublic(isPublic);
+            playlist.setPublic(isPublic);
             playlistRepository.save(playlist);
         }
     }

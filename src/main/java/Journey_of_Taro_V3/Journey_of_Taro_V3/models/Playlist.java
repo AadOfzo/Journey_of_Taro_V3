@@ -1,17 +1,26 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
 public class Playlist {
+
     @Id
     @GeneratedValue
-    Long id;
+    private Long id;
+
     private String playlistName;
+
+    @OneToMany
     private List<Song> songs;
-    private Boolean isPublic;
+
+    private boolean isPublic;
+
+    public Playlist() {
+        // Default constructor for JPA
+    }
 
     public Playlist(List<Song> songs) {
         this.songs = songs;
@@ -41,11 +50,11 @@ public class Playlist {
         this.songs = songs;
     }
 
-    public boolean getIsPublic() {
+    public boolean isPublic() {
         return isPublic;
     }
 
-    public void setIsPublic(boolean isPublic) {
+    public void setPublic(boolean isPublic) {
         this.isPublic = isPublic;
     }
 }
