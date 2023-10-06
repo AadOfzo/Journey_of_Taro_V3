@@ -1,9 +1,11 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.songcollectiontypes.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class SongCollectionType {
@@ -11,12 +13,25 @@ public class SongCollectionType {
     @Id
     @GeneratedValue
     private Long id;
-    private String demo;
-    private String sampledemo;
-    private String single;
-    private String ep;
-    private String album;
-    private String meditations;
+    // SongCollectionTypes
+//    @Embedded
+//    private Demo demo;
+//
+//    @Embedded
+//    private Single single;
+//
+//    @Embedded
+//    private EP ep;
+//
+//    @Embedded
+//    private Album album;
+//
+//    @Embedded
+//    private Meditation meditation;
+
+    // SongCollection Image
+    @Lob
+    private byte[] image;
 
     @OneToMany(mappedBy = "songCollectionType")
     private List<Song> songs;
@@ -36,62 +51,46 @@ public class SongCollectionType {
     public void setSongCollectionType(SongCollectionType songCollectionType) {
         this.songCollectionType = songCollectionType;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDemo() {
-        return demo;
-    }
-
-    public void setDemo(String demo) {
-        this.demo = demo;
-    }
-
-    public String getSampledemo() {
-        return sampledemo;
-    }
-
-    public void setSampledemo(String sampledemo) {
-        this.sampledemo = sampledemo;
-    }
-
-    public String getSingle() {
-        return single;
-    }
-
-    public void setSingle(String single) {
-        this.single = single;
-    }
-
-    public String getEp() {
-        return ep;
-    }
-
-    public void setEp(String ep) {
-        this.ep = ep;
-    }
-
-    public String getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
-
-    public String getMeditations() {
-        return meditations;
-    }
-
-    public void setMeditations(String meditations) {
-        this.meditations = meditations;
-    }
+//
+//    public Demo getDemo() {
+//        return demo;
+//    }
+//
+//    public void setDemo(Demo demo) {
+//        this.demo = demo;
+//    }
+//
+//    public Single getSingle() {
+//        return single;
+//    }
+//
+//    public void setSingle(Single single) {
+//        this.single = single;
+//    }
+//
+//    public EP getEp() {
+//        return ep;
+//    }
+//
+//    public void setEp(EP ep) {
+//        this.ep = ep;
+//    }
+//
+//    public Album getAlbum() {
+//        return album;
+//    }
+//
+//    public void setAlbum(Album album) {
+//        this.album = album;
+//    }
+//
+//    public Meditation getMeditation() {
+//        return meditation;
+//    }
+//
+//    public void setMeditation(Meditation meditation) {
+//        this.meditation = meditation;
+//    }
 
     public List<Song> getSongs() {
         return songs;

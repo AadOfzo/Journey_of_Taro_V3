@@ -12,161 +12,85 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SongService {
 
-    @Autowired
     private final SongRepository songRepository;
 
+    @Autowired
     public SongService(SongRepository songRepository) {
         this.songRepository = songRepository;
     }
 
-    // Find all songs
     public List<SongDto> getAllSongs() {
-        List<Song> songList = songRepository.findAll();
-        return transferSongListToDtoList(songList);
+        List<Song> songs = songRepository.findAll();
+        return transferSongListToDtoList(songs);
     }
-
-    // Find all songs by : songTitle, artistName
-    public List<SongDto> getAllSongsBySongTitle(String songTitle) {
-        List<Song> songList = songRepository.findAllSongsBySongTitleEqualsIgnoreCase(songTitle);
-        return transferSongListToDtoList(songList);
-    }
-    public List<SongDto> getAllSongsBySongTitleAndArtistName(String songTitle, String artistName) {
-        List<Song> songList = songRepository.findAllSongsBySongTitleAndArtistName(songTitle, artistName);
-        return transferSongListToDtoList(songList);
-    }
-
-    public List<SongDto> getAllSongsByArtistName(String artistName) {
-        List<Song> songList = songRepository.findAllSongsByArtistNameEqualsIgnoreCase(artistName);
-        return transferSongListToDtoList(songList);
-    }
-
-
-    // Hier komen verschillende SongCollectionTypes in "if" statement Song to DTO list
-    public List<SongDto> transferSongListToDtoList(List<Song> songs) {
-        List<SongDto> songDtoList = new ArrayList<>();
-
-        for (Song song : songs) {
-            SongDto dto = tranferToSongDto(song);
-            songDtoList.add(dto);
-        }
-        return songDtoList;
-    }
-
-    // Get Song By ID
+    // Find all songs by ID
     public SongDto getSongById(Long id) {
-
-        if (songRepository.findById(id).isPresent()) {
-            Song song = songRepository.findById(id).get();
-            SongDto dto = tranferToSongDto(song);
-
-            return tranferToSongDto(song);
-        } else {
-            throw new SongTitleNotFoundException("No song found with the title: ");
-        }
+        Song song = songRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("No song found with the ID: " + id));
+        return transferToSongDto(song);
     }
+
+    // Find all songs by songtitle and artist name
+//    public List<SongDto> getAllSongsBySongTitleAndArtistName(String songtitle, String artistName);
+//        List<Song> songList = songRepository.findAllSongsByArtistNameEqualsIgnoreCase(songtitle, artistName);
+//        return transferSongListToDtoList(songList);
+//
+//    public List<SongDto> getAllSongsBySongTitle(String songtitle) {
+//        List<Song> songList = songRepository.findAllSongsBySongTitleEqualsIgnoreCase(songtitle);
+//        return transferSongListToDtoList(songList);
+//    }
 
     public SongDto addSong(SongInputDto dto) {
-
-        Song song = tranferToSong(dto);
+        Song song = transferToSong(dto);
         songRepository.save(song);
-
-        return tranferToSongDto(song);
+        return transferToSongDto(song);
     }
 
     public void deleteSong(Long id) {
         songRepository.deleteById(id);
     }
-    // Get song by title
-    public static SongDto fromSong(Song song){
 
-        var dto = new SongDto();
-
-        dto.songTitle = song.getSongTitle();
-        dto.artistName = song.getArtistName();
-        dto.isFavorited = song.getIsFavorited();
-
-        return dto;
-    }
-
-    public Song toSong(SongDto songDto) {
-        var song = new Song();
-
-        song.setSongTitle(songDto.getSongTitle());
-        song.setArtistName(songDto.getArtistName());
-        song.setIsFavorited(songDto.getIsFavorited());
-
-        return song;
-    }
-    public SongDto getSong(String songTitle) {
-        Optional<Song> songOptional = songRepository.findById(songTitle);
-        if (songOptional.isPresent()) {
-            return tranferToSongDto(songOptional.get());
-        } else {
-            throw new RecordNotFoundException("No song found with the title: " + songTitle);
-        }
-    }
-
-    // Update song ID
     public SongDto updateSong(Long id, SongInputDto inputDto) {
+        Song song = songRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("No songs found with the ID: " + id));
 
-        if (songRepository.findById(id).isPresent()){
+        Song updatedSong = transferToSong(inputDto);
+        updatedSong.setId(id);
 
-            Song song = songRepository.findById(id).get();
+        songRepository.save(updatedSong);
 
-            Song song1 = tranferToSong(inputDto);
-            song1.setId(song.getId());
-
-            songRepository.save(song1);
-
-            return tranferToSongDto(song1);
-
-        } else {
-
-            throw new RecordNotFoundException("No songs found");
-        }
+        return transferToSongDto(updatedSong);
     }
 
-    // Update songTitle
-    public SongDto updateSong(String songTitle, SongInputDto inputDto) {
-
-        if (songRepository.findById(songTitle).isPresent()){
-
-            Song song = songRepository.findById(songTitle).get();
-
-            Song song1 = tranferToSong(inputDto);
-            song1.setSongTitle(song.getSongTitle());
-
-            songRepository.save(song1);
-
-            return tranferToSongDto(song1);
-
-        } else {
-
-            throw new RecordNotFoundException("No songs found");
-        }
-    }
-
-    public Song tranferToSong(SongInputDto dto){
-        var song = new Song();
+    public Song transferToSong(SongInputDto dto) {
+        Song song = new Song();
 
         song.setSongTitle(dto.getSongTitle());
+        song.setArtistName(dto.getArtistName());
         song.setIsFavorited(dto.getIsFavorited());
-
+        song.setIsFavoritedCounter(dto.getIsFavoritedCounter());
+        song.setPlayCounter(dto.getPlayCounter());
         return song;
     }
 
-    public SongDto tranferToSongDto(Song song){
+    public SongDto transferToSongDto(Song song) {
         SongDto dto = new SongDto();
 
         dto.setId(song.getId());
         dto.setSongTitle(song.getSongTitle());
+        dto.setArtistName(song.getArtistName());
         dto.setIsFavorited(song.getIsFavorited());
-
+        dto.setIsFavoritedCounter(song.getIsFavoritedCounter());
+        dto.setPlayCounter(song.getPlayCounter());
         return dto;
     }
 
+    public List<SongDto> transferSongListToDtoList(List<Song> songs) {
+        return songs.stream().map(this::transferToSongDto).collect(Collectors.toList());
+    }
 }

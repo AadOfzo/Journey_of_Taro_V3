@@ -1,4 +1,4 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.models.songcollections;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.models.songcollectiontypes;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.Song;
 

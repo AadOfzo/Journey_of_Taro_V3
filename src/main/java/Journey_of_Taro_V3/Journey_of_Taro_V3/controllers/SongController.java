@@ -30,25 +30,26 @@ public class SongController {
         return ResponseEntity.ok().body(songDtos);
     }
 
-    @GetMapping("/songs")
-    public ResponseEntity<List<SongDto>> getAllSongs(
-            @RequestParam(value = "songTitle", required = false) Optional<String> songTitle,
-            @RequestParam(value = "artistName", required = false) Optional<String> artistName
-    ) {
-        List<SongDto> dtos;
-
-        if (songTitle.isPresent() && artistName.isPresent()) {
-            dtos = songService.getAllSongsBySongTitleAndArtistName(songTitle.get(), artistName.get());
-        } else if (songTitle.isPresent()) {
-            dtos = songService.getAllSongsBySongTitle(songTitle.get());
-        } else if (artistName.isPresent()) {
-            dtos = songService.getAllSongsByArtistName(artistName.get());
-        } else {
-            dtos = songService.getAllSongs();
-        }
-
-        return ResponseEntity.ok().body(dtos);
-    }
+    // Find all songs by songtitle and artist name
+//    @GetMapping("/songs")
+//    public ResponseEntity<List<SongDto>> getAllSongs(
+//            @RequestParam(value = "songTitle", required = false) Optional<String> songTitle,
+//            @RequestParam(value = "artistName", required = false) Optional<String> artistName
+//    ) {
+//        List<SongDto> dtos;
+//
+//        if (songTitle.isPresent() && artistName.isPresent()) {
+//            dtos = songService.getAllSongsBySongTitleAndArtistName(songTitle.get(), artistName.get());
+//        } else if (songTitle.isPresent()) {
+//            dtos = songService.getAllSongsBySongTitle(songTitle.get());
+//        } else if (artistName.isPresent()) {
+//            dtos = songService.getAllSongsByArtistName(artistName.get());
+//        } else {
+//            dtos = songService.getAllSongs();
+//        }
+//
+//        return ResponseEntity.ok().body(dtos);
+//    }
 
 
     @GetMapping("/songs/{id}")
@@ -58,14 +59,14 @@ public class SongController {
 
         return ResponseEntity.ok().body(song);
     }
-
-    @GetMapping("/{songTitle}")
-    public ResponseEntity<SongDto> getSong(@PathVariable("songTitle") String songTitle) {
-
-        SongDto optionalSong = songService.getSong(songTitle);
-
-        return ResponseEntity.ok().body(optionalSong);
-    }
+    // Find all song by title
+//    @GetMapping("/{songTitle}")
+//    public ResponseEntity<SongDto> getSong(@PathVariable("songTitle") String songTitle) {
+//
+//        SongDto optionalSong = songService.getAllSongs(songTitle);
+//
+//        return ResponseEntity.ok().body(optionalSong);
+//    }
 
     @PostMapping("/songs")
     public ResponseEntity<Object> addSong(@Valid @RequestBody SongInputDto songInputDto) {
@@ -90,4 +91,7 @@ public class SongController {
 
         return ResponseEntity.ok().body(dto);
     }
+
+    // Add a new endpoint for uploading images
+
 }

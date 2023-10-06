@@ -1,11 +1,13 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.models.songcollections;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.models.songcollectiontypes;
+
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.Song;
 
 import java.util.List;
-public class Meditation {
+
+public class Single {
     private List<Song> songs;
 
-    public Meditation(List<Song> songs) {
+    public Single(List<Song> songs) {
         this.songs = songs;
     }
 

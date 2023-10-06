@@ -115,7 +115,7 @@ public class UserService {
         user.setEnabled(userDto.getEnabled());
         user.setApikey(userDto.getApikey());
         user.setEmail(userDto.getEmail());
-        user.artistName = userDto.getArtistName();
+        user.setArtistName(userDto.getArtistName());
 
         return user;
     }
