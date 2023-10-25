@@ -14,9 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/*  Deze security is niet de enige manier om het te doen.
-    In de andere branch van deze github repo staat een ander voorbeeld
- */
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
@@ -58,7 +55,7 @@ public class SpringSecurityConfig {
                 .cors().and()
                 .authorizeHttpRequests()
                 // Wanneer je deze uncomments, staat je hele security open. Je hebt dan alleen nog een jwt nodig.
-//                .requestMatchers("/**").permitAll()
+                .requestMatchers("/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET,"/users").authenticated()
                 .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
