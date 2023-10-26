@@ -3,7 +3,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
