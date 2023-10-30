@@ -101,7 +101,7 @@ public class UserService {
         dto.enabled = user.isEnabled();
         dto.apikey = user.getApikey();
         dto.email = user.getEmail();
-        dto.artistName = user.getArtistName();
+//        dto.artistName = user.getArtistName();
 //        dto.roles = user.getAuthorities();
 
         return dto;
@@ -116,7 +116,7 @@ public class UserService {
         user.setEnabled(userDto.getEnabled());
         user.setApikey(userDto.getApikey());
         user.setEmail(userDto.getEmail());
-        user.setArtistName(userDto.getArtistName());
+//        user.setArtistName(userDto.getArtistName());
 
         return user;
     }

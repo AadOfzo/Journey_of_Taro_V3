@@ -1,5 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,7 +13,11 @@ public class Song {
     private Long id;
 
     private String songTitle;
-    private String artistName;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "artist_name")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "song_collection_type_id")
@@ -41,12 +46,12 @@ public class Song {
         this.songTitle = songTitle;
     }
 
-    public String getArtistName() {
-        return artistName;
+    public User getUser() {
+        return user;
     }
 
-    public void setArtistName(String artistName) {
-        this.artistName = artistName;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public SongCollectionType getSongCollectionType() {

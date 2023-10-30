@@ -68,7 +68,7 @@ public class SongService {
         Song song = new Song();
 
         song.setSongTitle(dto.getSongTitle());
-        song.setArtistName(dto.getArtistName());
+//        song.setArtistName(dto.getArtistName());
         song.setIsFavorited(dto.getIsFavorited());
         song.setIsFavoritedCounter(dto.getIsFavoritedCounter());
         song.setPlayCounter(dto.getPlayCounter());
@@ -80,7 +80,7 @@ public class SongService {
 
         dto.setId(song.getId());
         dto.setSongTitle(song.getSongTitle());
-        dto.setArtistName(song.getArtistName());
+//        dto.setArtistName(song.getArtistName());
         dto.setIsFavorited(song.getIsFavorited());
         dto.setIsFavoritedCounter(song.getIsFavoritedCounter());
         dto.setPlayCounter(song.getPlayCounter());
