@@ -13,22 +13,42 @@ public class Song {
     private Long id;
 
     private String songTitle;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "artist_name")
-    private User user;
+    @ManyToOne
+    @NotNull
+    private User artist;
 
     @ManyToOne
     @JoinColumn(name = "song_collection_type_id")
-    @NotNull
+    @NotNull(message = "Please choose a Song Collection Type")
     private SongCollectionType songCollectionType;
 
     private Boolean isFavorited;
     private Long isFavoritedCounter;
     private Long playCounter;
 
-    // Getters and setters
+    public void setArtist(User artist) {
+        this.artist = artist;
+    }
+
+    public String getArtistName() {
+        if (artist != null) {
+            return artist.getArtistName();
+        }
+        return "Test Artist Name";
+    }
+
+    public Song() {
+    }
+
+    public Song(Long id, String songTitle, User artist, SongCollectionType songCollectionType, Boolean isFavorited, Long isFavoritedCounter, Long playCounter) {
+        this.id = id;
+        this.songTitle = songTitle;
+        this.artist = artist;
+        this.songCollectionType = songCollectionType;
+        this.isFavorited = isFavorited;
+        this.isFavoritedCounter = isFavoritedCounter;
+        this.playCounter = playCounter;
+    }
 
     public Long getId() {
         return id;
@@ -44,14 +64,6 @@ public class Song {
 
     public void setSongTitle(String songTitle) {
         this.songTitle = songTitle;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public SongCollectionType getSongCollectionType() {

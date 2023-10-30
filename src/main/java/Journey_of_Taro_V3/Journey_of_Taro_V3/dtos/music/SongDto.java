@@ -1,14 +1,26 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+
 public class SongDto {
     private Long id;
     private String songTitle;
-    private String artistName;
+    private User artist;
+
     private Boolean isFavorited;
     private Long isFavoritedCounter;
     private Long playCounter;
 
     public SongDto() {
+    }
+
+    public SongDto(Long id, String songTitle, User artist, Boolean isFavorited, Long isFavoritedCounter, Long playCounter) {
+        this.id = id;
+        this.songTitle = songTitle;
+        this.artist = artist;
+        this.isFavorited = isFavorited;
+        this.isFavoritedCounter = isFavoritedCounter;
+        this.playCounter = playCounter;
     }
 
     public Long getId() {
@@ -27,12 +39,12 @@ public class SongDto {
         this.songTitle = songTitle;
     }
 
-    public String getArtistName() {
-        return artistName;
+    public User getArtist() {
+        return artist;
     }
 
-    public void setArtistName(String artistName) {
-        this.artistName = artistName;
+    public void setArtist(User artist) {
+        this.artist = artist;
     }
 
     public Boolean getIsFavorited() {

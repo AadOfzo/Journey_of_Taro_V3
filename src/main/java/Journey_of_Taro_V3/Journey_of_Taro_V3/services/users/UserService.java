@@ -24,8 +24,20 @@ public class UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
-
+    public Optional<User> getUserByArtistName(String artistName) {
+        return userRepository.findByArtistName(artistName);
+    }
+//
+//    public User getOrCreateUserByArtistName(String artistName) {
+//        Optional<User> existingUser.get();
+//    } else {
+//        User newUser = new User();
+//        newUser.setArtistName(artistName);
+//
+//        newUser.setUsername("Test Username");
+//
+//        return userRepository.save(newUser);
+//    }
     public List<UserDto> getUsers() {
         List<UserDto> collection = new ArrayList<>();
         List<User> list = userRepository.findAll();
@@ -101,7 +113,7 @@ public class UserService {
         dto.enabled = user.isEnabled();
         dto.apikey = user.getApikey();
         dto.email = user.getEmail();
-//        dto.artistName = user.getArtistName();
+        dto.artistName = user.getArtistName();
 //        dto.roles = user.getAuthorities();
 
         return dto;
@@ -116,7 +128,7 @@ public class UserService {
         user.setEnabled(userDto.getEnabled());
         user.setApikey(userDto.getApikey());
         user.setEmail(userDto.getEmail());
-//        user.setArtistName(userDto.getArtistName());
+        user.setArtistName(userDto.getArtistName());
 
         return user;
     }

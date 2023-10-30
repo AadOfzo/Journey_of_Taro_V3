@@ -67,7 +67,7 @@ public class SongController {
 //        return ResponseEntity.ok().body(optionalSong);
 //    }
 
-    @PostMapping("/songs")
+    @PostMapping("/")
     public ResponseEntity<Object> addSong(@Valid @RequestBody SongInputDto songInputDto) {
 
         SongDto dto = songService.addSong(songInputDto);

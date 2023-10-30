@@ -71,7 +71,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.POST, "/wallbrackets").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/wallbrackets/**").hasRole("ADMIN")
                 // RequestMatchers voor songs, songCollectionType, Music collection (Playlists)
-//                .requestMatchers(HttpMethod.POST,"/songs").permitAll()
+                .requestMatchers(HttpMethod.POST,"/songs").permitAll()
 //                .requestMatchers(HttpMethod.GET,"/songs").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.POST,"/songs/**").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/songs/**").hasRole("ADMIN")
@@ -85,7 +85,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.DELETE, "/songCollectionTypes/**").hasRole("ADMIN").requestMatchers(HttpMethod.POST,"/songCollectionTypes").permitAll()
                 // Je mag meerdere paths tegelijk definieren
 //                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
-//                .requestMatchers("/songs", "/songCollections", "/songCollectionTypes").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/songs", "/songCollections", "/songCollectionTypes").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticated").authenticated()
                 .requestMatchers("/authenticate").permitAll()
                 .anyRequest().denyAll()

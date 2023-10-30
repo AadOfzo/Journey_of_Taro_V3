@@ -4,6 +4,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,9 @@ public class SongService {
         Song song = new Song();
 
         song.setSongTitle(dto.getSongTitle());
-//        song.setArtistName(dto.getArtistName());
+//        User artist = userService.getOrCreateUserByArtistName(dto.getArtistName());
+//        song.setArtist(artist);
+
         song.setIsFavorited(dto.getIsFavorited());
         song.setIsFavoritedCounter(dto.getIsFavoritedCounter());
         song.setPlayCounter(dto.getPlayCounter());
@@ -80,7 +83,7 @@ public class SongService {
 
         dto.setId(song.getId());
         dto.setSongTitle(song.getSongTitle());
-//        dto.setArtistName(song.getArtistName());
+//        dto.setArtist(song.getArtistName());
         dto.setIsFavorited(song.getIsFavorited());
         dto.setIsFavoritedCounter(song.getIsFavoritedCounter());
         dto.setPlayCounter(song.getPlayCounter());

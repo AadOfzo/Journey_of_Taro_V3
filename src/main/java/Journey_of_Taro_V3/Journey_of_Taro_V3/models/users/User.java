@@ -1,13 +1,9 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -29,9 +25,8 @@ public class User {
     @Column
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "artist_name")
-    private Song song;
+    @Column
+    private String artistName;
 //
 //    @OneToMany(
 //            targetEntity = Authority.class,
@@ -62,12 +57,12 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email;}
 
-    public Song getSong() {
-        return song;
+    public String getArtistName() {
+        return artistName;
     }
 
-    public void setSong(Song song) {
-        this.song = song;
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
     //    public Set<Authority> getRoles() { return authorities; }
 //    public void addAuthority(Authority authority) {

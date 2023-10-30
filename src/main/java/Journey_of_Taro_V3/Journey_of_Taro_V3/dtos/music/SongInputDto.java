@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public class SongInputDto {
 
@@ -17,11 +18,10 @@ public class SongInputDto {
 
     @AssertTrue(message = "All favorited songs")
     private Boolean isFavorited;
-
-    @NotNull(message = "Favorited counter is required")
+    @Positive
     private Long isFavoritedCounter;
 
-    @NotNull(message = "Play counter is required")
+    @Positive
     private Long playCounter;
 
     public SongInputDto(String songTitle, String artistName, SongCollectionType songCollectionType, Boolean isFavorited, Long isFavoritedCounter, Long playCounter) {
