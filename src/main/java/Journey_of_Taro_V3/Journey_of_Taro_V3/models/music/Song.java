@@ -15,7 +15,7 @@ public class Song {
     private String songTitle;
     @ManyToOne
     @NotNull
-    private User artist;
+    private User artistName;
 
     @ManyToOne
     @JoinColumn(name = "song_collection_type_id")
@@ -26,13 +26,13 @@ public class Song {
     private Long isFavoritedCounter;
     private Long playCounter;
 
-    public void setArtist(User artist) {
-        this.artist = artist;
+    public void setArtistName(User artistName) {
+        this.artistName = artistName;
     }
 
     public String getArtistName() {
-        if (artist != null) {
-            return artist.getArtistName();
+        if (artistName != null) {
+            return artistName.getArtistName();
         }
         return "Test Artist Name";
     }
@@ -43,7 +43,7 @@ public class Song {
     public Song(Long id, String songTitle, User artist, SongCollectionType songCollectionType, Boolean isFavorited, Long isFavoritedCounter, Long playCounter) {
         this.id = id;
         this.songTitle = songTitle;
-        this.artist = artist;
+        this.artistName = artist;
         this.songCollectionType = songCollectionType;
         this.isFavorited = isFavorited;
         this.isFavoritedCounter = isFavoritedCounter;

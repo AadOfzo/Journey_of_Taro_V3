@@ -16,7 +16,7 @@ class SongTest {
         // Maak new Song en set Artist
         Song song = new Song();
         song.setSongTitle("Test Song");
-        song.setArtist(artist);
+        song.setArtistName(artist);
         song.setIsFavorited(true);
 
         assertEquals("Test Song", song.getSongTitle());

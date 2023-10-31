@@ -5,7 +5,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 public class SongDto {
     private Long id;
     private String songTitle;
-    private User artist;
+    private User artistName;
 
     private Boolean isFavorited;
     private Long isFavoritedCounter;
@@ -14,10 +14,10 @@ public class SongDto {
     public SongDto() {
     }
 
-    public SongDto(Long id, String songTitle, User artist, Boolean isFavorited, Long isFavoritedCounter, Long playCounter) {
+    public SongDto(Long id, String songTitle, User artistName, Boolean isFavorited, Long isFavoritedCounter, Long playCounter) {
         this.id = id;
         this.songTitle = songTitle;
-        this.artist = artist;
+        this.artistName = artistName;
         this.isFavorited = isFavorited;
         this.isFavoritedCounter = isFavoritedCounter;
         this.playCounter = playCounter;
@@ -39,12 +39,12 @@ public class SongDto {
         this.songTitle = songTitle;
     }
 
-    public User getArtist() {
-        return artist;
+    public User getArtistName() {
+        return artistName;
     }
 
-    public void setArtist(User artist) {
-        this.artist = artist;
+    public void setArtistName(User artistName) {
+        this.artistName = artistName;
     }
 
     public Boolean getIsFavorited() {
