@@ -8,6 +8,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,22 +27,13 @@ public class SongService {
         List<Song> songs = songRepository.findAll();
         return transferSongListToDtoList(songs);
     }
+
     // Find all songs by ID
     public SongDto getSongById(Long id) {
         Song song = songRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("No song found with the ID: " + id));
         return transferToSongDto(song);
     }
-
-    // Find all songs by songtitle and artist name
-//    public List<SongDto> getAllSongsBySongTitleAndArtistName(String songtitle, String artistName);
-//        List<Song> songList = songRepository.findAllSongsByArtistNameEqualsIgnoreCase(songtitle, artistName);
-//        return transferSongListToDtoList(songList);
-//
-//    public List<SongDto> getAllSongsBySongTitle(String songtitle) {
-//        List<Song> songList = songRepository.findAllSongsBySongTitleEqualsIgnoreCase(songtitle);
-//        return transferSongListToDtoList(songList);
-//    }
 
     public SongDto addSong(SongInputDto dto) {
         Song song = transferToSong(dto);
@@ -69,12 +61,6 @@ public class SongService {
         Song song = new Song();
 
         song.setSongTitle(dto.getSongTitle());
-//        User artist = userService.getOrCreateUserByArtistName(dto.getArtistName());
-//        song.setArtist(artist);
-
-        song.setIsFavorited(dto.getIsFavorited());
-        song.setIsFavoritedCounter(dto.getIsFavoritedCounter());
-        song.setPlayCounter(dto.getPlayCounter());
         return song;
     }
 
@@ -83,10 +69,6 @@ public class SongService {
 
         dto.setId(song.getId());
         dto.setSongTitle(song.getSongTitle());
-//        dto.setArtist(song.getArtistName());
-        dto.setIsFavorited(song.getIsFavorited());
-        dto.setIsFavoritedCounter(song.getIsFavoritedCounter());
-        dto.setPlayCounter(song.getPlayCounter());
         return dto;
     }
 

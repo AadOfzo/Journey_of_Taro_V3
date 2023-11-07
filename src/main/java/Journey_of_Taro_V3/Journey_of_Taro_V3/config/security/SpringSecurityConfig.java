@@ -86,7 +86,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.DELETE, "/songCollectionTypes/**").hasRole("ADMIN").requestMatchers(HttpMethod.POST,"/songCollectionTypes").permitAll()
                 // Je mag meerdere paths tegelijk definieren
 //                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/songs", "/songCollections", "/songCollectionTypes", "/images").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/songs", "/images").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticated").authenticated()
                 .requestMatchers("/authenticate").permitAll()
                 .anyRequest().denyAll()

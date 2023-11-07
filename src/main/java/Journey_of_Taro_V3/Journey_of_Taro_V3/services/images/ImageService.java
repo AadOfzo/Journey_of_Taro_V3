@@ -49,7 +49,6 @@ public class ImageService {
         Image image = new Image();
         image.setImageName(imageDto.getImageName());
         image.setImageAltName(imageDto.getImageAltName());
-        // Set other properties if needed
         return image;
     }
 }

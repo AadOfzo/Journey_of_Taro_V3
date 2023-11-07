@@ -31,8 +31,8 @@ public class SongCollectionType {
     @Lob
     private byte[] image;
 
-    @OneToMany(mappedBy = "songCollectionType")
-    private List<Song> songs;
+//    @OneToMany(mappedBy = "songCollectionType")
+//    private List<Song> songs;
 
     @OneToMany(mappedBy = "songCollectionType")
     @JsonIgnore
@@ -90,13 +90,13 @@ public class SongCollectionType {
 //        this.meditation = meditation;
 //    }
 
-    public List<Song> getSongs() {
-        return songs;
-    }
+//    public List<Song> getSongs() {
+//        return songs;
+//    }
 
-    public void setSongs(List<Song> songs) {
-        this.songs = songs;
-    }
+//    public void setSongs(List<Song> songs) {
+//        this.songs = songs;
+//    }
 
     public List<SongCollectionType> getSongCollectionTypes() {
         return songCollectionTypes;
