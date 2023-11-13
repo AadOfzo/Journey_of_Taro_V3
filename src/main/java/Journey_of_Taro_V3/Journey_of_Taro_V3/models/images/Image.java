@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 public class Image {
@@ -13,7 +14,7 @@ public class Image {
     private Long id;
 
     @Lob
-    private byte[] data;
+    private byte[] imageData;
 
     private String imageName;
     private String imageAltName;
@@ -21,11 +22,14 @@ public class Image {
     public Image() {
     }
 
-    public Image(Long id, byte[] data, String imageName, String imageAltName) {
-        this.id = id;
-        this.data = data;
+    public Image(String imageName, String imageAltName, MultipartFile file) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
+        try {
+            this.imageData = file.getBytes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Long getId() {
@@ -36,12 +40,12 @@ public class Image {
         this.id = id;
     }
 
-    public byte[] getData() {
-        return data;
+    public byte[] getImageData() {
+        return imageData;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 
     public String getImageName() {

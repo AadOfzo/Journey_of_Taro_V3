@@ -1,12 +1,15 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.images;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +34,19 @@ public class ImageService {
         return convertToDto(image);
     }
 
-    public ImageDto addImage(ImageDto imageDto) {
-        Image image = convertToEntity(imageDto);
-        imageRepository.save(image);
-        return convertToDto(image);
+    public ImageDto addImage(ImageInputDto inputDto) {
+        try {
+            Image image = convertToEntity(inputDto);
+            imageRepository.save(image);
+            return convertToDto(image);
+        } catch (IOException e) {
+            // Exception Logger
+            e.printStackTrace(); // log using logging framework
+
+            // Rethrow Exception return response
+            throw new BadRequestException("Failed to add image. Check your request data.");
+        }
+
     }
 
     public void deleteImage(Long id) {
@@ -45,10 +57,15 @@ public class ImageService {
         return new ImageDto(image.getId(), image.getImageName(), image.getImageAltName());
     }
 
-    private Image convertToEntity(ImageDto imageDto) {
+    private Image convertToEntity(ImageInputDto inputDto) throws IOException {
         Image image = new Image();
-        image.setImageName(imageDto.getImageName());
-        image.setImageAltName(imageDto.getImageAltName());
+        image.setImageName(inputDto.getImageName());
+        image.setImageAltName(inputDto.getImageAltName());
+
+        // Multipart conversie
+        byte[] imageData = inputDto.getFile().getBytes();
+        image.setImageData(imageData);
+
         return image;
     }
 }

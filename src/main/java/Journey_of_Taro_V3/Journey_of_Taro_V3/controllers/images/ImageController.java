@@ -1,10 +1,13 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.images;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,11 +34,20 @@ public class ImageController {
         return ResponseEntity.ok().body(image);
     }
 
-    @PostMapping
-    public ResponseEntity<ImageDto> addImage(@RequestBody ImageDto imageDto) {
-        ImageDto dto = imageService.addImage(imageDto);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ImageDto> addImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("imageName") String imageName,
+            @RequestParam("imageAltName") String imageAltName) {
+        ImageInputDto inputDto = new ImageInputDto();
+        inputDto.setFile(file);
+        inputDto.setImageName(imageName);
+        inputDto.setImageAltName(imageAltName);
+
+        ImageDto dto = imageService.addImage(inputDto);
         return ResponseEntity.created(null).body(dto);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteImage(@PathVariable Long id) {
