@@ -99,7 +99,12 @@ public class SongCollectionServiceImpl implements SongCollectionService {
 
         dto.setId(collection.getId());
         dto.setSongCollectionName(collection.getSongCollectionName());
-        dto.setSongIds(collection.getSongs().stream().map(Song::getId).collect(Collectors.toList()));
+
+        // Check if the songs list is not null before calling stream()
+        if (collection.getSongs() != null) {
+            dto.setSongIds(collection.getSongs().stream().map(Song::getId).collect(Collectors.toList()));
+        }
+
         dto.setCollectionImage(collection.getCollectionImage());
         dto.setSongCollectionType(collection.getSongCollectionType());
 

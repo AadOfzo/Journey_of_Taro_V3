@@ -29,6 +29,9 @@ public class SongCollection {
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
 
+    public SongCollection() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -67,5 +70,10 @@ public class SongCollection {
 
     public void setSongCollectionType(SongCollectionType songCollectionType) {
         this.songCollectionType = songCollectionType;
+    }
+
+    public SongCollection(Long id, String songCollectionName, List<Song> songs, Image collectionImage) {
+        // ... other assignments
+        this.songCollectionType = Song.categorizeSongs(songs.size());
     }
 }
