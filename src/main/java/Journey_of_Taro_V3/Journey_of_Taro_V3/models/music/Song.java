@@ -4,6 +4,8 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "songs")
 public class Song {
@@ -14,7 +16,16 @@ public class Song {
 
     private String songTitle;
 
+    @ManyToMany(mappedBy = "songs")
+    private Set<SongCollection> songCollections;
+
     public Song() {
+    }
+
+    public Song(Long id, String songTitle, Set<SongCollection> songCollections) {
+        this.id = id;
+        this.songTitle = songTitle;
+        this.songCollections = songCollections;
     }
 
     public Song(Long id, String songTitle) {
@@ -38,5 +49,12 @@ public class Song {
         this.songTitle = songTitle;
     }
 
+    public Set<SongCollection> getSongCollections() {
+        return songCollections;
     }
+
+    public void setSongCollections(Set<SongCollection> songCollections) {
+        this.songCollections = songCollections;
+    }
+}
 
