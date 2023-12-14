@@ -76,7 +76,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.GET,"/songs").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.POST,"/songs/**").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/songs/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST,"/songCollections").permitAll()
+                .requestMatchers(HttpMethod.POST,"/song-collections").permitAll()
 //                .requestMatchers(HttpMethod.GET,"/songCollections").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.POST,"/songCollections/**").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/songCollections/**").hasRole("ADMIN")

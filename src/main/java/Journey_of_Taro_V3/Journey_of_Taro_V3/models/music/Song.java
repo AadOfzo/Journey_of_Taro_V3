@@ -14,8 +14,9 @@ public class Song {
 
     private String songTitle;
 
-    @ManyToMany(mappedBy = "songs")
-    private Set<SongCollection> songCollections;
+    @ManyToOne
+    @JoinColumn(name = "song_collection_id")
+    private SongCollection songCollection;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -24,10 +25,10 @@ public class Song {
     public Song() {
     }
 
-    public Song(Long id, String songTitle, Set<SongCollection> songCollections, SongCollectionType songCollectionType) {
+    public Song(Long id, String songTitle, SongCollection songCollection, SongCollectionType songCollectionType) {
         this.id = id;
         this.songTitle = songTitle;
-        this.songCollections = songCollections;
+        this.songCollection = songCollection;
         this.songCollectionType = songCollectionType;
     }
 
@@ -53,12 +54,12 @@ public class Song {
         this.songTitle = songTitle;
     }
 
-    public Set<SongCollection> getSongCollections() {
-        return songCollections;
+    public SongCollection getSongCollections() {
+        return songCollection;
     }
 
-    public void setSongCollections(Set<SongCollection> songCollections) {
-        this.songCollections = songCollections;
+    public void setSongCollections(SongCollection songCollections) {
+        this.songCollection = songCollections;
     }
 
     public SongCollectionType getSongCollectionType() {
@@ -68,7 +69,7 @@ public class Song {
     public void setSongCollectionType(SongCollectionType songCollectionType) {
         this.songCollectionType = songCollectionType;
     }
-
+//    Deze if statement klopt nog niet! Lijst returnen voor opties met 1 Song, EP en Album.
     public static SongCollectionType categorizeSongs(int numberOfSongs) {
         if (numberOfSongs == 1) {
             return SongCollectionType.Demo;

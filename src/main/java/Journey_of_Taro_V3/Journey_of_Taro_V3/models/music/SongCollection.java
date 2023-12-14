@@ -15,21 +15,23 @@ public class SongCollection {
 
     private String songCollectionName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "song_collection_songs",
-            joinColumns = @JoinColumn(name = "song_collection_id"),
-            inverseJoinColumns = @JoinColumn(name = "song_id")
-    )
+    @OneToMany(mappedBy = "songCollection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Song> songs;
 
     @OneToOne
     private Image collectionImage;
 
-    @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
 
     public SongCollection() {
+    }
+
+    public SongCollection(Long id, String songCollectionName, List<Song> songs, Image collectionImage, SongCollectionType songCollectionType) {
+        this.id = id;
+        this.songCollectionName = songCollectionName;
+        this.songs = songs;
+        this.collectionImage = collectionImage;
+        this.songCollectionType = songCollectionType;
     }
 
     public Long getId() {

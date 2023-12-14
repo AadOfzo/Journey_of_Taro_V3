@@ -37,13 +37,12 @@ public class SongController {
         return ResponseEntity.created(null).body(dto);
     }
 
-    @DeleteMapping("songs/{id}")
+    @DeleteMapping("/songs/{id}")
     public ResponseEntity<Object> deleteSong(@PathVariable Long id) {
-
         songService.deleteSong(id);
-
         return ResponseEntity.noContent().build();
     }
+
 
     @PutMapping("/songs/{id}")
     public ResponseEntity<Object> updateSong(@PathVariable Long id, @Valid @RequestBody SongInputDto newSong) {
