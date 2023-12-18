@@ -4,8 +4,10 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,12 +32,18 @@ public class SongController {
         return ResponseEntity.ok().body(song);
     }
 
-    @PostMapping
-    public ResponseEntity<SongDto> addSong(@RequestBody SongInputDto songInputDto) {
-        SongDto dto = songService.addSong(songInputDto);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<SongDto> addSong(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("songTitle") String songTitle) {
+        SongInputDto inputDto = new SongInputDto();
+        inputDto.setFile(file);
+        inputDto.setSongTitle(songTitle);
 
+        SongDto dto = songService.addSong(inputDto);
         return ResponseEntity.created(null).body(dto);
     }
+
 
     @DeleteMapping("/songs/{id}")
     public ResponseEntity<Object> deleteSong(@PathVariable Long id) {
@@ -44,12 +52,12 @@ public class SongController {
     }
 
 
-    @PutMapping("/songs/{id}")
-    public ResponseEntity<Object> updateSong(@PathVariable Long id, @Valid @RequestBody SongInputDto newSong) {
-
-        SongDto dto = songService.updateSong(id, newSong);
-
-        return ResponseEntity.ok().body(dto);
-    }
+//    @PutMapping("/songs/{id}")
+//    public ResponseEntity<Object> updateSong(@PathVariable Long id, @Valid @RequestBody SongInputDto newSong) {
+//
+//        SongDto dto = songService.updateSong(id, newSong);
+//
+//        return ResponseEntity.ok().body(dto);
+//    }
 
 }

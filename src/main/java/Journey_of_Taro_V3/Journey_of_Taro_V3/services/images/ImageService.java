@@ -41,7 +41,7 @@ public class ImageService {
             return convertToDto(image);
         } catch (IOException e) {
             // Exception Logger
-            e.printStackTrace(); // log using logging framework
+            e.printStackTrace(); // log
 
             // Rethrow Exception return response
             throw new BadRequestException("Failed to add image. Check your request data.");

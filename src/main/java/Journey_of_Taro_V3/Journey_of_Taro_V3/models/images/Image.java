@@ -1,12 +1,10 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.images;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
+@Table(name = "Images")
 public class Image {
 
     @Id

@@ -2,6 +2,8 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Set;
 
 @Entity
@@ -12,30 +14,21 @@ public class Song {
     @GeneratedValue
     private Long id;
 
+    @Lob
+    private byte[] songData;
+
     private String songTitle;
-
-    @ManyToOne
-    @JoinColumn(name = "song_collection_id")
-    private SongCollection songCollection;
-
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private SongCollectionType songCollectionType;
 
     public Song() {
     }
 
-    public Song(Long id, String songTitle, SongCollection songCollection, SongCollectionType songCollectionType) {
-        this.id = id;
+    public Song(String songTitle, MultipartFile file) {
         this.songTitle = songTitle;
-        this.songCollection = songCollection;
-        this.songCollectionType = songCollectionType;
-    }
-
-    public Song(Long id, String songTitle, SongCollectionType songCollectionType) {
-        this.id = id;
-        this.songTitle = songTitle;
-        this.songCollectionType = songCollectionType;
+        try {
+            this.songData = file.getBytes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Long getId() {
@@ -46,37 +39,19 @@ public class Song {
         this.id = id;
     }
 
+    public byte[] getSongData() {
+        return songData;
+    }
+
+    public void setSongData(byte[] songData) {
+        this.songData = songData;
+    }
+
     public String getSongTitle() {
         return songTitle;
     }
 
     public void setSongTitle(String songTitle) {
         this.songTitle = songTitle;
-    }
-
-    public SongCollection getSongCollections() {
-        return songCollection;
-    }
-
-    public void setSongCollections(SongCollection songCollections) {
-        this.songCollection = songCollections;
-    }
-
-    public SongCollectionType getSongCollectionType() {
-        return songCollectionType;
-    }
-
-    public void setSongCollectionType(SongCollectionType songCollectionType) {
-        this.songCollectionType = songCollectionType;
-    }
-//    Deze if statement klopt nog niet! Lijst returnen voor opties met 1 Song, EP en Album.
-    public static SongCollectionType categorizeSongs(int numberOfSongs) {
-        if (numberOfSongs == 1) {
-            return SongCollectionType.Demo;
-        } else if (numberOfSongs >= 2 && numberOfSongs <= 6) {
-            return SongCollectionType.EP;
-        } else {
-            return SongCollectionType.Album;
-        }
     }
 }

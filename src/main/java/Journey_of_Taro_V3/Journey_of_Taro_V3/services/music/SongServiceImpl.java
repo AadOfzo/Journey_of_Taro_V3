@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SongServiceImpl implements SongService {
+public class SongServiceImpl {
 
     private final SongRepository songRepository;
 
@@ -18,29 +18,27 @@ public class SongServiceImpl implements SongService {
         this.songRepository = songRepository;
     }
 
-    @Override
     public List<SongDto> getAllSongs() {
-        return null;
+        // Implement the logic to get all songs
+        return null; // Placeholder, replace with actual implementation
     }
 
-    @Override
     public SongDto getSongById(Long id) {
         // Implement the logic to fetch a song by ID
         return null; // Placeholder, replace with actual implementation
     }
 
-    @Override
-    public SongDto addSong(SongInputDto dto) {
-        return null;
+    public SongDto addSong(SongInputDto inputDto) {
+        // Implement the logic to add a song
+        return null; // Placeholder, replace with actual implementation
     }
 
-    @Override
-    public void deleteSong(Long id) {
-
-    }
-
-    @Override
     public SongDto updateSong(Long id, SongInputDto inputDto) {
-        return null;
+        // Implement the logic to update a song by ID
+        return null; // Placeholder, replace with actual implementation
+    }
+
+    public void deleteSong(Long id) {
+        // Implement the logic to delete a song by ID
     }
 }
