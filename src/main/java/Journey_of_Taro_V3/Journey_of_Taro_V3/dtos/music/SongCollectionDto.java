@@ -1,26 +1,25 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
-
-import java.util.List;
 
 public class SongCollectionDto {
 
     private Long id;
-    private String songCollectionName;
-    private List<Long> songIds; // Assuming you want to transfer only the IDs of the songs
-    private Image collectionImage;
+    private String songCollectionTitle;
+    private Song song;
+    private Image image;
     private SongCollectionType songCollectionType;
 
     public SongCollectionDto() {
     }
 
-    public SongCollectionDto(Long id, String songCollectionName, List<Long> songIds, Image collectionImage, SongCollectionType songCollectionType) {
+    public SongCollectionDto(Long id, String songCollectionTitle, Song song, Image image, SongCollectionType songCollectionType) {
         this.id = id;
-        this.songCollectionName = songCollectionName;
-        this.songIds = songIds;
-        this.collectionImage = collectionImage;
+        this.songCollectionTitle = songCollectionTitle;
+        this.song = song;
+        this.image = image;
         this.songCollectionType = songCollectionType;
     }
 
@@ -32,28 +31,28 @@ public class SongCollectionDto {
         this.id = id;
     }
 
-    public String getSongCollectionName() {
-        return songCollectionName;
+    public String getSongCollectionTitle() {
+        return songCollectionTitle;
     }
 
-    public void setSongCollectionName(String songCollectionName) {
-        this.songCollectionName = songCollectionName;
+    public void setSongCollectionTitle(String songCollectionTitle) {
+        this.songCollectionTitle = songCollectionTitle;
     }
 
-    public List<Long> getSongIds() {
-        return songIds;
+    public Song getSong() {
+        return song;
     }
 
-    public void setSongIds(List<Long> songIds) {
-        this.songIds = songIds;
+    public void setSong(Song song) {
+        this.song = song;
     }
 
-    public Image getCollectionImage() {
-        return collectionImage;
+    public Image getImage() {
+        return image;
     }
 
-    public void setCollectionImage(Image collectionImage) {
-        this.collectionImage = collectionImage;
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public SongCollectionType getSongCollectionType() {
@@ -64,4 +63,3 @@ public class SongCollectionDto {
         this.songCollectionType = songCollectionType;
     }
 }
-

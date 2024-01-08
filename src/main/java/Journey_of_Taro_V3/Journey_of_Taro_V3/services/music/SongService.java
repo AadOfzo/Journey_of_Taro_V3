@@ -23,8 +23,9 @@ public class SongService {
         this.songRepository = songRepository;
     }
 
-    public SongService() {
-        this.songRepository = null;
+    public List<SongDto> getSongs() {
+        List<Song> songs = songRepository.findAll();
+        return songs.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     public List<SongDto> getAllSongs() {
@@ -45,7 +46,6 @@ public class SongService {
             return convertToDto(song);
         } catch (IOException e) {
             e.printStackTrace();
-
             throw new BadRequestException("Failed to add Song. Check your request data.");
         }
     }
@@ -55,7 +55,7 @@ public class SongService {
     }
 
     private SongDto convertToDto(Song song) {
-        return new SongDto(song.getId(), song.getSongTitle());
+        return new SongDto(song.getId(), song.getSongTitle(), song.getArtistName());
     }
 
     private Song convertToEntity(SongInputDto inputDto) throws IOException {
