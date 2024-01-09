@@ -35,7 +35,7 @@ public class SongService {
 
     public SongDto getSongById(Long id) {
         Song song = songRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("No image found with the ID: " + id));
+                .orElseThrow(() -> new RecordNotFoundException("No song found with the ID: " + id));
         return convertToDto(song);
     }
 
@@ -62,7 +62,7 @@ public class SongService {
         Song song = new Song();
         song.setSongTitle(inputDto.getSongTitle());
 
-        byte[] songData = inputDto.getFile().getBytes();
+        byte[] songData = inputDto.getSongFile().getBytes();
         song.setSongData(songData);
 
         return song;

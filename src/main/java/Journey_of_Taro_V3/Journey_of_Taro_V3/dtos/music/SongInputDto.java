@@ -8,14 +8,14 @@ public class SongInputDto {
     @NotNull(message = "Song title is required")
     private String songTitle;
 
-    private MultipartFile file;
+    private MultipartFile songFile;
 
     public SongInputDto() {
     }
 
-    public SongInputDto(String songTitle, MultipartFile file) {
+    public SongInputDto(String songTitle, MultipartFile songFile) {
         this.songTitle = songTitle;
-        this.file = file;
+        this.songFile = songFile;
     }
 
     public String getSongTitle() {
@@ -26,11 +26,11 @@ public class SongInputDto {
         this.songTitle = songTitle;
     }
 
-    public MultipartFile getFile() {
-        return file;
+    public MultipartFile getSongFile() {
+        return songFile;
     }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public void setSongFile(MultipartFile songFile) {
+        this.songFile = songFile;
     }
 }

@@ -8,6 +8,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.util.List;
@@ -40,10 +41,15 @@ public class SongCollectionController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> createSongCollection(@Valid @RequestBody SongCollectionInputDto songCollectionInputDto) {
-        SongCollectionDto savedSongCollection = songCollectionService.createSongCollection(songCollectionInputDto);
+    public ResponseEntity<Object> createSongCollection(
+            @Valid @RequestBody SongCollectionInputDto songCollectionInputDto,
+            @RequestParam("imageFile") MultipartFile imageFile,
+            @RequestParam("songFiles") List<MultipartFile> songFiles) {
+
+        SongCollectionDto savedSongCollection = songCollectionService.createSongCollection(songCollectionInputDto, imageFile, songFiles);
         return ResponseEntity.created(URI.create("/songCollections/" + savedSongCollection.getId())).build();
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSongCollection(@PathVariable Long id) {

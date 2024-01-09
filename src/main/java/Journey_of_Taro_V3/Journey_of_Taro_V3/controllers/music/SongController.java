@@ -2,7 +2,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class SongController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("songTitle") String songTitle) {
         SongInputDto inputDto = new SongInputDto();
-        inputDto.setFile(file);
+        inputDto.setSongFile(file);
         inputDto.setSongTitle(songTitle);
 
         SongDto dto = songService.addSong(inputDto);

@@ -40,7 +40,7 @@ public class ImageController {
             @RequestParam("imageName") String imageName,
             @RequestParam("imageAltName") String imageAltName) {
         ImageInputDto inputDto = new ImageInputDto();
-        inputDto.setFile(file);
+        inputDto.setImageFile(file);
         inputDto.setImageName(imageName);
         inputDto.setImageAltName(imageAltName);
 

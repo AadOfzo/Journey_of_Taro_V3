@@ -63,7 +63,7 @@ public class ImageService {
         image.setImageAltName(inputDto.getImageAltName());
 
         // Multipart conversie
-        byte[] imageData = inputDto.getFile().getBytes();
+        byte[] imageData = inputDto.getImageFile().getBytes();
         image.setImageData(imageData);
 
         return image;
