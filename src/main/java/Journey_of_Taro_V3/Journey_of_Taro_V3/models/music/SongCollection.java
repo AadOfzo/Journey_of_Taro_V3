@@ -14,8 +14,8 @@ public class SongCollection {
     private Long id;
 
 //  Error 3860:  'SongCollection.songs' is 'mappedBy' another entity and may not specify the '@JoinColumn'
-    @OneToMany(mappedBy = "songCollection", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "songs_in_collection", nullable = false)
+    @OneToMany(mappedBy = "songCollection", cascade = CascadeType.ALL)
+//    @JoinColumn(name = "song_collections", nullable = false)
     private List<Song> songs;
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
