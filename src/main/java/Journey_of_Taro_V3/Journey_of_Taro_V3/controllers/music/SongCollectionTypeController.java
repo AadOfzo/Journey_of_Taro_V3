@@ -1,43 +1,16 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongCollectionTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/songCollectionTypes")
+@RequestMapping("song_collection_type_mapping")
 public class SongCollectionTypeController {
-
-    @Autowired
-    private SongCollectionTypeService songCollectionTypeService;
-
-    @GetMapping("")
-    public ResponseEntity<List<SongCollectionType>> getAllSongCollectionTypes() {
-        List<SongCollectionType> songCollectionTypes = songCollectionTypeService.getAllSongCollectionTypes();
-        return ResponseEntity.ok().body(songCollectionTypes);
+    @GetMapping("/get")
+    public String getBySongCollectionType(@RequestParam(required = true) SongCollectionType songCollectionType) {
+        return songCollectionType.name();
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<SongCollectionType> getSongCollectionType(@PathVariable("id") Long id) {
-        SongCollectionType songCollectionType = songCollectionTypeService.getSongCollectionTypeById(id);
-        return ResponseEntity.ok().body(songCollectionType);
-    }
-
-    @PostMapping("")
-    public ResponseEntity<Object> addSongCollectionType(@RequestBody SongCollectionType songCollectionType) {
-        songCollectionTypeService.saveSongCollectionType(songCollectionType);
-        return ResponseEntity.created(null).build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteSongCollectionType(@PathVariable Long id) {
-        songCollectionTypeService.deleteSongCollectionTypeById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-
 }
