@@ -1,5 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -18,4 +18,15 @@ public class EPExample {
 //      byte[] imageContent = new byte[]{};
 //      MockMultipartFile imageFile = new MockMultipartFile("")
 //  }
+
+//    public static void main(String[] args) {
+//        String[] songs = {"Song 1", "Song 2", "Song 3", "Song 4" };
+//
+//        int songsLength = songs.length;
+//
+//        songs[songsLength-1] = "Last song";
+//
+//        System.out.println("Amount of songs: " + songsLength);
+//        System.out.println(songs[2]);
+//    }
 }
