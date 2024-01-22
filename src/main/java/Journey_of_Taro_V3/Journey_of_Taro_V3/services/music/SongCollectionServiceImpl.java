@@ -89,7 +89,7 @@ public class SongCollectionServiceImpl implements SongCollectionService {
                 .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
 
         List<Song> songs = songFiles.stream()
-                .map(file -> new Song(file.getOriginalFilename(), file, "Unknown Artist", SongCollectionType.Demos))
+                .map(file -> new Song(file.getOriginalFilename(), file, "Unknown Artist", "EP"))
                 .collect(Collectors.toList());
 
         songs.forEach(song -> song.setSongCollection(collection));
@@ -130,7 +130,9 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         dto.setId(collection.getId());
         dto.setSongCollectionTitle(collection.getSongCollectionTitle());
         // You can set other fields as needed
-
+//        if(songCollection.getSong() != null){
+//            dto.setSongDto(SongService.transferToDto(songCollection.getSong()));
+//        }
         return dto;
     }
 

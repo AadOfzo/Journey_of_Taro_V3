@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,24 +13,27 @@ public class SongCollection {
     @GeneratedValue
     private Long id;
 
+//  Error 3860:  'SongCollection.songs' is 'mappedBy' another entity and may not specify the '@JoinColumn'
     @OneToMany(mappedBy = "songCollection", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "songs_in_collection", nullable = false)
     private List<Song> songs;
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
 
     private String songCollectionTitle;
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "song_collection_image", nullable = false)
     private Image image;
 
 
     public SongCollection() {
     }
 
-    public SongCollection(List<Song> songs, String songCollectionTitle, Image image) {
-        this.songs = songs;
+    public SongCollection(SongCollectionType songCollectionType, String songCollectionTitle, Image image) {
+        this.songs = new ArrayList<>();
+        this.songCollectionType = songCollectionType;
         this.songCollectionTitle = songCollectionTitle;
         this.image = image;
-        this.songCollectionType = determineSongCollectionType(songs.size());
     }
 
     private SongCollectionType determineSongCollectionType(int numberOfSongs) {
@@ -58,6 +62,14 @@ public class SongCollection {
         this.songs = songs;
     }
 
+    public void addSongs(Song song) {
+        this.songs = songs;
+    }
+
+    public void showSongCollectionInformation(){
+        System.out.println("There are " + songs.size() + "in Collection" + getSongCollectionType() + songCollectionTitle);
+    }
+
     public SongCollectionType getSongCollectionType() {
         return songCollectionType;
     }
@@ -82,4 +94,20 @@ public class SongCollection {
     public void setImage(Image image) {
         this.image = image;
     }
-}
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("In").append(songCollectionTitle).append("")
+                .append(songCollectionType).append("there are")
+                .append(songs.size()).append("songs");
+
+        for (Song song : songs) {
+
+            stringBuilder.append("\n\r").append(song.toString()).append(",");
+        }
+            stringBuilder.append("\n\r");
+            return stringBuilder.toString();
+        }
+    }
+

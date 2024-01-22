@@ -33,10 +33,10 @@ public class SongController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SongDto> addSong(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam("songFile") MultipartFile songFile,
             @RequestParam("songTitle") String songTitle) {
         SongInputDto inputDto = new SongInputDto();
-        inputDto.setSongFile(file);
+        inputDto.setSongFile(songFile);
         inputDto.setSongTitle(songTitle);
 
         SongDto dto = songService.addSong(inputDto);

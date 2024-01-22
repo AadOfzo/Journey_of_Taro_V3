@@ -20,11 +20,11 @@ public class Image {
     public Image() {
     }
 
-    public Image(String imageName, String imageAltName, MultipartFile file) {
+    public Image(String imageName, String imageAltName, MultipartFile imageFile) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
         try {
-            this.imageData = file.getBytes();
+            this.imageData = imageFile.getBytes();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,6 +47,9 @@ public class Image {
     }
 
     public String getImageName() {
+        if (imageName == null || imageName.trim().isEmpty()) {
+
+        }
         return imageName;
     }
 

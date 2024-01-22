@@ -2,27 +2,36 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Set;
 
 @Entity
 @Table(name = "songs")
 public class Song {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
     private byte[] songData;
 
     private String songTitle;
+
+    public String getName() {
+        return null;
+    }
+
+    public String getOriginalAudioFilename() {
+        return null;
+    }
+
+    public String getContentType() {
+        return null;
+    }
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
-
     private String artistName;
 
     @ManyToOne
@@ -32,32 +41,33 @@ public class Song {
     public Song() {
     }
 
-    public Song(String songTitle, MultipartFile file, String artistName, SongCollectionType songCollectionType) {
+    public Song(String songTitle, MultipartFile songFile, String artistName, String collectionType) {
         if (songTitle == null || songTitle.trim().isEmpty()) {
             throw new BadRequestException("Song title cannot be null or empty");
         }
 
-        if (file == null || file.isEmpty()) {
-            throw new BadRequestException("Please choose a mp3 file");
+        if (songFile == null || songFile.isEmpty()) {
+            throw new BadRequestException("Please choose an mp3 song file");
         }
 
-        if (songCollectionType == null) {
-            throw new BadRequestException("Please choose a collection type ");
+        if (collectionType == null || collectionType.trim().isEmpty()) {
+            throw new BadRequestException("Please provide a collection type");
         }
 
-        if (artistName == null) {
+        if (artistName == null || artistName.trim().isEmpty()) {
             throw new BadRequestException("Please provide an artist name");
         }
 
         this.songTitle = songTitle;
-        try {
-            this.songData = file.getBytes();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read file data", e);
-        }
-        this.songCollectionType = songCollectionType;
-    }
+        this.artistName = artistName;
+        this.songCollectionType = SongCollectionType.valueOf(collectionType);
 
+        try {
+            this.songData = songFile.getBytes();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read song file data", e);
+        }
+    }
 
     public Long getId() {
         return id;
@@ -106,4 +116,19 @@ public class Song {
     public void setSongCollection(SongCollection songCollection) {
         this.songCollection = songCollection;
     }
+
+    // Song to String
+    @Override
+    public String toString() {
+        String string = songTitle + "" + songData + "" + artistName + "" + songCollectionType + "" ;
+        if(songCollection != null) {
+            string += " is in collection " + songCollection.toString() + ".";
+        } else {
+            string += " has no collection.";
+        }
+        return string;
+//                "Request(songtitle=" + this.getOriginalAudioFilename() + ", songdata" + this.getSongData() + ", artistname" + this.getArtistName() + ", collection type" + this.getSongCollectionType();
+    }
+
 }
+

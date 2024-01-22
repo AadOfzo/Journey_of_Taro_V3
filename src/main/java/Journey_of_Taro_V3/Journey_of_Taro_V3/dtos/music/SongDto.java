@@ -1,6 +1,5 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 
 public class SongDto {
     private Long id;
