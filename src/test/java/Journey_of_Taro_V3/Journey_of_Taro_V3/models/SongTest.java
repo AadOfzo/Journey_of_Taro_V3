@@ -1,5 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -35,7 +36,7 @@ class SongTest {
         try {
             when(songFile.getBytes()).thenReturn(new byte[]{1, 2, 3}); // Provide sample bytes for song data
         } catch (Exception e) {
-            // Handle exception if needed
+            throw new BadRequestException("Error getting bytes from MultipartFile");
         }
 
         // Mock SongCollectionType
