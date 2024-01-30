@@ -1,6 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -8,14 +9,14 @@ import java.util.List;
 
 @Entity
 @Table( name = "song_collections")
-public class SongCollection {
+public class SongCollection extends Song {
     @Id
     @GeneratedValue
     private Long id;
 
 //  Error 3860:  'SongCollection.songs' is 'mappedBy' another entity and may not specify the '@JoinColumn'
     @OneToMany(mappedBy = "songCollection", cascade = CascadeType.ALL)
-//    @JoinColumn(name = "song_collections", nullable = false)
+    @JsonIgnore
     private List<Song> songs;
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;

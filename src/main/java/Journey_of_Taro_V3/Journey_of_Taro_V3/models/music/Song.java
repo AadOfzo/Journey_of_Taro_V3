@@ -23,13 +23,6 @@ public class Song {
         return null;
     }
 
-    public String getOriginalAudioFilename() {
-        return null;
-    }
-
-    public String getContentType() {
-        return null;
-    }
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
     private String artistName;
@@ -41,13 +34,13 @@ public class Song {
     public Song() {
     }
 
-    public Song(String songTitle, MultipartFile songFile, String artistName, String collectionType) {
+    public Song(String songTitle, MultipartFile songData, String artistName, String collectionType) {
         if (songTitle == null || songTitle.trim().isEmpty()) {
             throw new BadRequestException("Song title cannot be null or empty");
         }
 
-        if (songFile == null || songFile.isEmpty()) {
-            throw new BadRequestException("Please choose an mp3 song file");
+        if (songData == null || songData.isEmpty()) {
+            throw new BadRequestException("Please choose an mp3 Audio file");
         }
 
         if (collectionType == null || collectionType.trim().isEmpty()) {
@@ -63,7 +56,7 @@ public class Song {
         this.songCollectionType = SongCollectionType.valueOf(collectionType);
 
         try {
-            this.songData = songFile.getBytes();
+            this.songData = songData.getBytes();
         } catch (IOException e) {
             throw new RuntimeException("Failed to read song file data", e);
         }

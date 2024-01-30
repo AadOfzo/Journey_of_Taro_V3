@@ -2,10 +2,10 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
 
 public class SongDto {
-    private Long id;
-    private String songTitle;
+    public Long id;
+    public String songTitle;
 
-    private String artistName;
+    public String artistName;
 
 
     public SongDto() {

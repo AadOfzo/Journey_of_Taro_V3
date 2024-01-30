@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class SongService {
 
-    private final SongRepository songRepository;
+    private SongRepository songRepository;
 
     @Autowired
     public SongService(SongRepository songRepository) {
@@ -25,25 +25,25 @@ public class SongService {
 
     public List<SongDto> getSongs() {
         List<Song> songs = songRepository.findAll();
-        return songs.stream().map(this::convertToDto).collect(Collectors.toList());
+        return songs.stream().map(this::transferToSongDto).collect(Collectors.toList());
     }
 
     public List<SongDto> getAllSongs() {
         List<Song> songs = songRepository.findAll();
-        return songs.stream().map(this::convertToDto).collect(Collectors.toList());
+        return songs.stream().map(this::transferToSongDto).collect(Collectors.toList());
     }
 
     public SongDto getSongById(Long id) {
         Song song = songRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("No song found with the ID: " + id));
-        return convertToDto(song);
+        return transferToSongDto(song);
     }
 
     public SongDto addSong(SongInputDto inputDto) {
         try {
             Song song = convertToEntity(inputDto);
             songRepository.save(song);
-            return convertToDto(song);
+            return transferToSongDto(song);
         } catch (IOException e) {
             e.printStackTrace();
             throw new BadRequestException("Failed to add Song. Check your request data.");
@@ -54,7 +54,32 @@ public class SongService {
         songRepository.deleteById(id);
     }
 
-    private SongDto convertToDto(Song song) {
+//    public SongDto updateSong(Long id, SongInputDto inputDto) {
+//
+//        if (songRepository.findById(id).isPresent()){
+//
+//            Song song = songRepository.findById(id).get();
+//
+//            Song song1 = transferToSong(inputDto);
+//            song1.setId(song1);
+//
+//            return transferToSongDto(song1);
+//
+//        } else {
+//
+//            throw new RecordNotFoundException("No Songs found");
+//        }
+//    }
+
+   public Song transferToSong(SongInputDto dto){
+        var song = new Song();
+
+        song.setSongTitle(dto.getSongTitle());
+
+        return song;
+   }
+
+    private SongDto transferToSongDto(Song song) {
         return new SongDto(song.getId(), song.getSongTitle(), song.getArtistName());
     }
 

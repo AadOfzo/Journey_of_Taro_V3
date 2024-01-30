@@ -31,14 +31,15 @@ public class SongController {
         return ResponseEntity.ok().body(song);
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/getSongFileInfo",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SongDto> addSong(
             @RequestParam("songFile") MultipartFile songFile,
             @RequestParam("songTitle") String songTitle) {
         SongInputDto inputDto = new SongInputDto();
         inputDto.setSongFile(songFile);
-        inputDto.setSongTitle(songTitle);
-
+        inputDto.setSongTitle(songFile.getOriginalFilename());
         SongDto dto = songService.addSong(inputDto);
         return ResponseEntity.created(null).body(dto);
     }
