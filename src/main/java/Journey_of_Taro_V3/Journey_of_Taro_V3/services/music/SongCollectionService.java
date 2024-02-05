@@ -11,7 +11,7 @@ import java.util.List;
 public interface SongCollectionService {
     List<SongCollectionDto> getAllSongCollections();
     SongCollectionDto getSongCollectionById(Long id);
-    SongCollectionDto createSongCollection(SongCollectionInputDto dto, MultipartFile imageFile, List<MultipartFile> songFile);
+    SongCollectionDto createSongCollection(SongCollectionInputDto dto, MultipartFile imageFile, List<MultipartFile> songFiles);
     void deleteSongCollection(Long id);
     SongCollectionDto updateSongCollection(Long id, SongCollectionInputDto dto);
 

@@ -4,6 +4,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +88,12 @@ public class SongService {
         Song song = new Song();
         song.setSongTitle(inputDto.getSongTitle());
 
-        byte[] songData = inputDto.getSongFile().getBytes();
-        song.setSongData(songData);
+        byte[] songFileBytes = inputDto.getSongFile().getBytes();
+        CustomMultipartFile songFile = new CustomMultipartFile(songFileBytes);
+
+        song.setSongFile(songFile);
 
         return song;
     }
+
 }

@@ -1,8 +1,8 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import jakarta.persistence.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -15,13 +15,13 @@ public class Song {
     private Long id;
 
     @Lob
-    private byte[] songData;
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] songDataBytes; // store the actual byte[] data
+
+    @Transient
+    private CustomMultipartFile songFile; // transient, not persisted in the database
 
     private String songTitle;
-
-    public String getName() {
-        return null;
-    }
 
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
@@ -34,12 +34,12 @@ public class Song {
     public Song() {
     }
 
-    public Song(String songTitle, MultipartFile songData, String artistName, String collectionType) {
+    public Song(String songTitle, CustomMultipartFile songFile, String artistName, String collectionType) {
         if (songTitle == null || songTitle.trim().isEmpty()) {
             throw new BadRequestException("Song title cannot be null or empty");
         }
 
-        if (songData == null || songData.isEmpty()) {
+        if (songFile == null || songFile.isEmpty()) {
             throw new BadRequestException("Please choose an mp3 Audio file");
         }
 
@@ -55,12 +55,41 @@ public class Song {
         this.artistName = artistName;
         this.songCollectionType = SongCollectionType.valueOf(collectionType);
 
+        // Convert CustomMultipartFile to byte[]
         try {
-            this.songData = songData.getBytes();
+            this.songDataBytes = songFile.getBytes();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read song file data", e);
+        }
+
+        // Set the transient field
+        this.songFile = songFile;
+    }
+
+
+    // Getter for CustomMultipartFile, which converts byte[] to CustomMultipartFile
+    public CustomMultipartFile getSongFile() {
+        if (songFile == null && songDataBytes != null) {
+            songFile = new CustomMultipartFile(songDataBytes);
+        }
+        return songFile;
+    }
+
+    // Setter for CustomMultipartFile, which converts CustomMultipartFile to byte[]
+    public void setSongFile(CustomMultipartFile songFile) {
+        this.songFile = songFile;
+
+        try {
+            this.songDataBytes = songFile.getBytes();
         } catch (IOException e) {
             throw new RuntimeException("Failed to read song file data", e);
         }
     }
+
+    public void setSongFileData(byte[] songDataBytes) {
+        this.songDataBytes = songDataBytes;
+    }
+
 
     public Long getId() {
         return id;
@@ -68,14 +97,6 @@ public class Song {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public byte[] getSongData() {
-        return songData;
-    }
-
-    public void setSongData(byte[] songData) {
-        this.songData = songData;
     }
 
     public String getSongTitle() {
@@ -113,15 +134,12 @@ public class Song {
     // Song to String
     @Override
     public String toString() {
-        String string = songTitle + "" + songData + "" + artistName + "" + songCollectionType + "" ;
-        if(songCollection != null) {
+        String string = songTitle + " " + artistName + " " + songCollectionType;
+        if (songCollection != null) {
             string += " is in collection " + songCollection.toString() + ".";
         } else {
             string += " has no collection.";
         }
         return string;
-//                "Request(songtitle=" + this.getOriginalAudioFilename() + ", songdata" + this.getSongData() + ", artistname" + this.getArtistName() + ", collection type" + this.getSongCollectionType();
     }
-
 }
-

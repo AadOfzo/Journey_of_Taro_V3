@@ -6,15 +6,14 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongCollectionRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -49,13 +48,13 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         return transferToSongCollectionDto(collection);
     }
 
-        @Override
+    @Override
     public SongCollectionDto createSongCollection(
             SongCollectionInputDto dto,
             MultipartFile imageFile,
-            List<MultipartFile> songFiles) {
-
-        SongCollection collection = transferToSongCollection(dto);
+            List<MultipartFile> songFiles
+    ) {
+    SongCollection collection = transferToSongCollection(dto);
         Image image = convertToImage(dto.getImage());
 
         // Save image to the collection
@@ -68,28 +67,12 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         return transferToSongCollectionDto(collection);
     }
 
-//    @Override
-//    public SongCollectionDto createSongCollection(SongCollectionInputDto dto, MultipartFile imageFile, List<MultipartFile> songFile) {
-//    SongCollection collection = transferToSongCollection(dto);
-//
-//    Image image = convertToImage((ImageDto) imageFile);
-//    collection.setImage(image);
-//
-//    List<SongDto> songDtos = dto.getSongs();
-//    List<Song> songs = convertToSongs(songDtos, songFile, collection);
-//
-//    songRepository.saveAll(songs);
-//    collectionRepository.save(collection);
-//
-//    return transferToSongCollectionDto(collection);
-//}
-
     private void addSongsToSongCollection(Long collectionId, List<MultipartFile> songFiles) {
         SongCollection collection = collectionRepository.findById(collectionId)
                 .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
 
         List<Song> songs = songFiles.stream()
-                .map(file -> new Song(file.getOriginalFilename(), file, "Unknown Artist", "EP"))
+                .map(file -> new Song(file.getOriginalFilename(), (CustomMultipartFile) file, "Unknown Artist", "EP"))
                 .collect(Collectors.toList());
 
         songs.forEach(song -> song.setSongCollection(collection));
@@ -97,6 +80,7 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         collection.setSongs(songs);
         collectionRepository.save(collection);
     }
+
     @Override
     public void deleteSongCollection(Long id) {
         collectionRepository.deleteById(id);
@@ -166,7 +150,7 @@ public class SongCollectionServiceImpl implements SongCollectionService {
 
         for (int i = 0; i < songDtos.size(); i++) {
             SongDto songDto = songDtos.get(i);
-            MultipartFile songFile = songFiles.get(i);
+            MultipartFile multipartFile = songFiles.get(i);
 
             Song song = new Song();
             song.setSongTitle(songDto.getSongTitle());
@@ -175,8 +159,8 @@ public class SongCollectionServiceImpl implements SongCollectionService {
             // other fields...
 
             try {
-                byte[] songData = songFile.getBytes();
-                song.setSongData(songData);
+                byte[] songData = multipartFile.getBytes();
+                song.setSongFileData(songData); // Assuming you have a method to set songDataBytes
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read song file data", e);
             }

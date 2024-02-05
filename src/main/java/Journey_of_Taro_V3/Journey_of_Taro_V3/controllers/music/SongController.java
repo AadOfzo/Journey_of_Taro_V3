@@ -1,4 +1,5 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
@@ -39,7 +40,7 @@ public class SongController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SongDto> addSong(
-            @RequestParam("songFile") MultipartFile songFile,
+            @RequestParam("songFile") CustomMultipartFile songFile,
             @RequestParam("songTitle") String songTitle) {
         SongInputDto inputDto = new SongInputDto();
         inputDto.setSongFile(songFile);
