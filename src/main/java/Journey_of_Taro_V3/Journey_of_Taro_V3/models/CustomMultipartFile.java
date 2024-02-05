@@ -1,15 +1,14 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
-import org.junit.Test;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
 public class CustomMultipartFile implements MultipartFile {
-    // Multiplart interface implementation
-    private byte[] input;
+    private final byte[] input;
 
     public CustomMultipartFile(byte[] inputArray) {
+        this.input = inputArray.clone();
     }
 
     @Override
@@ -27,7 +26,6 @@ public class CustomMultipartFile implements MultipartFile {
         return null;
     }
 
-    //
     @Override
     public boolean isEmpty() {
         return input == null || input.length == 0;
@@ -50,9 +48,8 @@ public class CustomMultipartFile implements MultipartFile {
 
     @Override
     public void transferTo(File destination) throws IOException, IllegalStateException {
-        try(FileOutputStream fos = new FileOutputStream(destination)) {
+        try (FileOutputStream fos = new FileOutputStream(destination)) {
             fos.write(input);
         }
     }
-    
 }
