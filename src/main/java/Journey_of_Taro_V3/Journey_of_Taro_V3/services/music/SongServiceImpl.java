@@ -91,24 +91,6 @@ public class SongServiceImpl {
         return transferToSongDto(song);
     }
 
-    public SongDto updateSong(Long id, SongInputDto inputDto) {
-
-        if (songRepository.findById(id).isPresent()) {
-
-            Song song = songRepository.findById(id).get();
-
-            Song song1 = transferToSong(inputDto);
-            song1.setId(song.getId());
-
-            songRepository.save(song1);
-
-            return transferToSongDto(song1);
-
-        } else {
-            throw new RecordNotFoundException("No Songs found");
-        }
-    }
-
     public void deleteSong(Long id) {
         songRepository.deleteById(id);
     }

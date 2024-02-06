@@ -6,24 +6,30 @@ import java.io.*;
 
 public class CustomMultipartFile implements MultipartFile {
     private final byte[] input;
+    private final String name;
+    private final String originalFilename;
+    private final String contentType;
 
-    public CustomMultipartFile(byte[] inputArray) {
+    public CustomMultipartFile(byte[] inputArray, String name, String originalFilename, String contentType) {
         this.input = inputArray.clone();
+        this.name = name;
+        this.originalFilename = originalFilename;
+        this.contentType = contentType;
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override
     public String getOriginalFilename() {
-        return null;
+        return this.originalFilename;
     }
 
     @Override
     public String getContentType() {
-        return null;
+        return this.contentType;
     }
 
     @Override

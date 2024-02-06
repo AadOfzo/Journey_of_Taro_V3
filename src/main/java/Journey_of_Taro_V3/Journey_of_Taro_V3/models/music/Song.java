@@ -70,12 +70,18 @@ public class Song {
     // Getter for CustomMultipartFile, which converts byte[] to CustomMultipartFile
     public CustomMultipartFile getSongFile() {
         if (songFile == null && songDataBytes != null) {
-            songFile = new CustomMultipartFile(songDataBytes);
+            songFile = new CustomMultipartFile(
+                    songDataBytes,
+                    "songFile", // Name - You can provide any name that makes sense in your context
+                    "example.mp3", // Original Filename - Replace with the actual filename
+                    "audio/mpeg" // Content Type - Replace with the actual content type
+            );
+
         }
         return songFile;
     }
 
-    // Setter for CustomMultipartFile, which converts CustomMultipartFile to byte[]
+    // Setter for CustomMultipartFile, convert CustomMultipartFile to byte[]
     public void setSongFile(CustomMultipartFile songFile) {
         this.songFile = songFile;
 

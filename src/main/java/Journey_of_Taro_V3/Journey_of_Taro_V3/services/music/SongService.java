@@ -51,28 +51,31 @@ public class SongService {
         }
     }
 
+
+    public SongDto updateSong(Long id, SongInputDto inputDto) {
+
+        if (songRepository.findById(id).isPresent()) {
+
+            Song song = songRepository.findById(id).get();
+
+            Song song1 = transferToSong(inputDto);
+            song1.setId(song.getId());
+
+            songRepository.save(song1);
+
+            return transferToSongDto(song1);
+
+        } else {
+            throw new RecordNotFoundException("No Songs found");
+        }
+    }
+
     public void deleteSong(Long id) {
         songRepository.deleteById(id);
     }
 
-//    public SongDto updateSong(Long id, SongInputDto inputDto) {
-//
-//        if (songRepository.findById(id).isPresent()){
-//
-//            Song song = songRepository.findById(id).get();
-//
-//            Song song1 = transferToSong(inputDto);
-//            song1.setId(song1);
-//
-//            return transferToSongDto(song1);
-//
-//        } else {
-//
-//            throw new RecordNotFoundException("No Songs found");
-//        }
-//    }
 
-   public Song transferToSong(SongInputDto dto){
+    public Song transferToSong(SongInputDto dto){
         var song = new Song();
 
         song.setSongTitle(dto.getSongTitle());
@@ -89,7 +92,12 @@ public class SongService {
         song.setSongTitle(inputDto.getSongTitle());
 
         byte[] songFileBytes = inputDto.getSongFile().getBytes();
-        CustomMultipartFile songFile = new CustomMultipartFile(songFileBytes);
+        CustomMultipartFile songFile = new CustomMultipartFile(
+                songFileBytes,
+                "songFile", // Name - You can provide any name that makes sense in your context
+                "example.mp3", // Original Filename - Replace with the actual filename
+                "audio/mpeg" // Content Type - Replace with the actual content type
+        );
 
         song.setSongFile(songFile);
 

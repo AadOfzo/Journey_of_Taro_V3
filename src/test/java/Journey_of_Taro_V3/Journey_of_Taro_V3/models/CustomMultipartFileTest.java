@@ -7,13 +7,14 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 
 public class CustomMultipartFileTest {
+
     @Test
     public void whenProvidingByteArray_thenMultipartFileCreated() throws IOException {
         byte[] inputArray = "Test String".getBytes();
-        CustomMultipartFile customMultipartFile = new CustomMultipartFile(inputArray);
+        CustomMultipartFile customMultipartFile = new CustomMultipartFile(inputArray, "", "", "");
         Assertions.assertFalse(customMultipartFile.isEmpty());
         Assertions.assertArrayEquals(inputArray, customMultipartFile.getBytes());
-        Assertions.assertEquals(inputArray.length,customMultipartFile.getSize());
+        Assertions.assertEquals(inputArray.length, customMultipartFile.getSize());
     }
 
     @Test
