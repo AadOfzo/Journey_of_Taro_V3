@@ -1,15 +1,30 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class FileInfo {
-
     private String fileName;
     private String contentType;
-    private boolean isEmpty;
-    private boolean isReadable;
+    private boolean empty;
+    private boolean readable;
     private byte[] fileData;
     private String fileUploadStatus;
+    private String fileType; // Add fileType field
+    private long fileSize;
+    private LocalDateTime uploadTime;
+
+    public FileInfo() {
+        this.fileName = fileName;
+        this.contentType = contentType;
+        this.empty = empty;
+        this.readable = readable;
+        this.fileData = fileData;
+        this.fileUploadStatus = fileUploadStatus;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
+        this.uploadTime = uploadTime;
+    }
+
 
     public String getFileName() {
         return fileName;
@@ -28,19 +43,19 @@ public class FileInfo {
     }
 
     public boolean isEmpty() {
-        return isEmpty;
+        return empty;
     }
 
     public void setEmpty(boolean empty) {
-        isEmpty = empty;
+        this.empty = empty;
     }
 
     public boolean isReadable() {
-        return isReadable;
+        return readable;
     }
 
     public void setReadable(boolean readable) {
-        isReadable = readable;
+        this.readable = readable;
     }
 
     public byte[] getFileData() {
@@ -59,9 +74,29 @@ public class FileInfo {
         this.fileUploadStatus = fileUploadStatus;
     }
 
-    public String getCurrentTimeStamp() {
-        return String.valueOf(new Date().getTime());
+    // Add setter for fileType
+    public String getFileType() {
+        return fileType;
     }
 
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public LocalDateTime getUploadTime() {
+        return uploadTime;
+    }
+
+    public void setUploadTime(LocalDateTime uploadTime) {
+        this.uploadTime = uploadTime;
+    }
 
 }
