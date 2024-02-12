@@ -1,7 +1,10 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.images;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import jakarta.persistence.*;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Images")
@@ -16,19 +19,27 @@ public class Image {
 
     private String imageName;
     private String imageAltName;
+    private String fileName;
+    private Long fileSize;
+    private LocalDateTime uploadTime;
 
     public Image() {
     }
 
-    public Image(String imageName, String imageAltName, MultipartFile imageFile) {
+    public Image(String imageName, String imageAltName, CustomMultipartFile imageFile) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
         try {
             this.imageData = imageFile.getBytes();
-        } catch (Exception e) {
+            this.fileName = imageFile.getOriginalFilename();
+            this.fileSize = imageFile.getSize();
+            this.uploadTime = LocalDateTime.now();
+        } catch (IOException e) {
             e.printStackTrace();
+            // Handle exception appropriately
         }
     }
+
 
     public Long getId() {
         return id;
@@ -47,9 +58,6 @@ public class Image {
     }
 
     public String getImageName() {
-        if (imageName == null || imageName.trim().isEmpty()) {
-
-        }
         return imageName;
     }
 
@@ -63,5 +71,29 @@ public class Image {
 
     public void setImageAltName(String imageAltName) {
         this.imageAltName = imageAltName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public LocalDateTime getUploadTime() {
+        return uploadTime;
+    }
+
+    public void setUploadTime(LocalDateTime uploadTime) {
+        this.uploadTime = uploadTime;
     }
 }

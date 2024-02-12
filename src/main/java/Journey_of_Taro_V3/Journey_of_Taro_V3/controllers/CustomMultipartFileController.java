@@ -1,21 +1,45 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.FileInfo;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+
 @RestController
 public class CustomMultipartFileController {
 
-    // localhost:8080/fileUpload Postman Post request checks file type!
+    private static final Logger logger = LoggerFactory.getLogger(CustomMultipartFileController.class);
+
+    ImageService imageService;
+
+    private final SongService songService;
+
+    @Autowired
+    public CustomMultipartFileController(SongService songService) {
+        this.songService = songService;
+    }
+
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public FileInfo fileUploadController(MultipartFile file) throws IOException {
+    public Object fileUploadController(MultipartFile file) throws IOException {
         // Check if the file is empty
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
@@ -32,19 +56,35 @@ public class CustomMultipartFileController {
         // Get the original file name
         String originalFilename = file.getOriginalFilename();
 
-        // Create a FileInfo object
-        FileInfo fileInfo = new FileInfo();
-        fileInfo.setFileName(originalFilename);
-        fileInfo.setFileSize(file.getSize());
-        fileInfo.setFileType(fileType);
-        fileInfo.setUploadTime(LocalDateTime.now());
+        // Log file information
+        logger.info("Received file: {}", originalFilename);
+        logger.info("File size: {} bytes", file.getSize());
+        logger.info("File type: {}", fileType);
 
         // Print file information
-        System.out.println("Filename: " + fileInfo.getFileName());
-        System.out.println("File type: " + fileInfo.getFileType());
-        System.out.println("File size: " + fileInfo.getFileSize());
+        System.out.println("Received file: " + originalFilename);
+        System.out.println("File type: " + fileType);
+        System.out.println("File size: " + file.getSize() + " bytes");
+        System.out.println("Upload time: " + LocalDateTime.now());
 
-        return fileInfo;
+        // Create appropriate object based on file type
+        if ("Image".equalsIgnoreCase(fileType)) {
+            Image image = new Image();
+            image.setFileName(originalFilename);
+            image.setFileSize(file.getSize());
+            image.setUploadTime(LocalDateTime.now());
+            // You can add more image-specific attributes here if needed
+            return image;
+        } else if ("Audio".equalsIgnoreCase(fileType)) {
+            Song song = new Song();
+            song.setFileName(originalFilename);
+            song.setFileSize(file.getSize());
+            song.setUploadTime(LocalDateTime.now());
+            // You can add more song-specific attributes here if needed
+            return song;
+        } else {
+            throw new IllegalArgumentException("Unsupported file type");
+        }
     }
 
     // Method to determine file type based on content type
@@ -57,4 +97,47 @@ public class CustomMultipartFileController {
             return "Unknown";
         }
     }
+
+    @PostMapping("/images")
+    public ResponseEntity<ImageDto> addImage(
+            @RequestParam("file") CustomMultipartFile file,
+            @RequestParam(value = "imageTitle", required = false) String imageTitle,
+            @RequestParam(value = "imageAltName", required = false) String imageAltName) {
+        if (imageTitle == null || imageTitle.isEmpty()) {
+            imageTitle = file.getOriginalFilename(); // Assign original file name if imageTitle is not provided
+        }
+
+        // For image, set both imageTitle and imageAltName to the same value if imageAltName is not provided
+        if (imageAltName == null || imageAltName.isEmpty()) {
+            imageAltName = imageTitle;
+        }
+
+        ImageInputDto inputDto = new ImageInputDto();
+        inputDto.setImageFile(file);
+        inputDto.setImageName(imageTitle);
+        inputDto.setImageAltName(imageAltName);
+
+        ImageDto dto = imageService.addImage(inputDto);
+        return ResponseEntity.created(null).body(dto);
+    }
+
+    @PostMapping("/songs")
+    public ResponseEntity<SongDto> addSong(
+            @RequestParam("file") CustomMultipartFile file,
+            @RequestParam(value = "songTitle", required = false) String songTitle,
+            @RequestParam(value = "artist", required = false) String artist) {
+        if (songTitle == null || songTitle.isEmpty()) {
+            songTitle = file.getOriginalFilename(); // Assign original file name if songTitle is not provided
+        }
+
+        SongInputDto inputDto = new SongInputDto();
+        inputDto.setSongFile(file);
+        inputDto.setSongTitle(songTitle);
+        inputDto.setArtist(artist);
+
+        SongDto dto = songService.addSong(inputDto);
+        return ResponseEntity.created(null).body(dto);
+    }
+
+
 }

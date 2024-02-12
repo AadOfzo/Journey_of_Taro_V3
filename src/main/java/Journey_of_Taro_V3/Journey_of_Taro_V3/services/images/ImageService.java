@@ -46,15 +46,6 @@ public class ImageService {
             // Rethrow Exception return response
             throw new BadRequestException("Failed to add image. Check your request data.");
         }
-
-    }
-
-    public void deleteImage(Long id) {
-        imageRepository.deleteById(id);
-    }
-
-    private ImageDto convertToDto(Image image) {
-        return new ImageDto(image.getId(), image.getImageName(), image.getImageAltName());
     }
 
     private Image convertToEntity(ImageInputDto inputDto) throws IOException {
@@ -62,10 +53,18 @@ public class ImageService {
         image.setImageName(inputDto.getImageName());
         image.setImageAltName(inputDto.getImageAltName());
 
-        // Multipart conversie
+        // Multipart conversion
         byte[] imageData = inputDto.getImageFile().getBytes();
         image.setImageData(imageData);
 
         return image;
+    }
+
+    private ImageDto convertToDto(Image image) {
+        return new ImageDto(image.getId(), image.getImageName(), image.getImageAltName());
+    }
+
+    public void deleteImage(Long id) {
+        imageRepository.deleteById(id);
     }
 }

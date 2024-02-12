@@ -1,5 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -10,9 +12,9 @@ public class CustomMultipartFile implements MultipartFile {
     private final String originalFilename;
     private final String contentType;
 
-    public CustomMultipartFile(byte[] inputArray, String name, String originalFilename, String contentType) {
+    public CustomMultipartFile(String originalFilename, String contentType, byte[] inputArray) {
         this.input = inputArray.clone();
-        this.name = name;
+        this.name = "file"; // You can set a default name if needed
         this.originalFilename = originalFilename;
         this.contentType = contentType;
     }
@@ -58,4 +60,27 @@ public class CustomMultipartFile implements MultipartFile {
             fos.write(input);
         }
     }
+    // Convert Image to Entity
+
+    // Convert Song to Entity
+    private Song convertFileToSongEntity(SongInputDto inputDto) throws IOException {
+        Song song = new Song();
+        song.setSongTitle(inputDto.getSongTitle());
+
+        // Get the byte array from the SongInputDto
+        byte[] songFileBytes = inputDto.getSongFile().getBytes();
+
+        // Use the appropriate values for the CustomMultipartFile constructor
+        CustomMultipartFile songFile = new CustomMultipartFile(
+                inputDto.getSongTitle(), // Original filename
+                "audio/mpeg", // Content type - Replace with the actual content type
+                songFileBytes
+        );
+
+        song.setSongFile(songFile);
+
+        return song;
+    }
+
+
 }

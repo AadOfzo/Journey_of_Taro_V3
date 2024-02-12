@@ -7,7 +7,9 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,11 +19,31 @@ import java.util.stream.Collectors;
 @Service
 public class SongService {
 
+    private static final Logger logger = LoggerFactory.getLogger(SongService.class);
+
     private SongRepository songRepository;
 
-    @Autowired
     public SongService(SongRepository songRepository) {
         this.songRepository = songRepository;
+    }
+
+    private Song convertToEntity(SongInputDto inputDto) throws IOException {
+        Song song = new Song();
+        song.setSongTitle(inputDto.getSongTitle());
+
+        // Get the byte array from the SongInputDto
+        byte[] songFileBytes = inputDto.getSongFile().getBytes();
+
+        // Use the appropriate values for the CustomMultipartFile constructor
+        CustomMultipartFile songFile = new CustomMultipartFile(
+                inputDto.getSongTitle(), // Use song title or any appropriate name
+                inputDto.getSongTitle(), // Use song title or any appropriate original filename
+                songFileBytes
+        );
+
+        song.setSongFile(songFile);
+
+        return song;
     }
 
     public List<SongDto> getSongs() {
@@ -40,13 +62,25 @@ public class SongService {
         return transferToSongDto(song);
     }
 
+    private Song convertFileToSongEntity(SongInputDto inputDto) throws IOException {
+        Song song = new Song();
+        song.setSongTitle(inputDto.getSongTitle());
+        // Logic to handle file conversion to entity...
+        byte[] songFileBytes = inputDto.getSongFile().getBytes();
+
+        return song;
+    }
+
     public SongDto addSong(SongInputDto inputDto) {
         try {
-            Song song = convertToEntity(inputDto);
+            logger.info("Starting to add a new song...");
+            // Use the enhanced convertFileToSongEntity method to handle file conversion
+            Song song = convertFileToSongEntity(inputDto);
             songRepository.save(song);
+            logger.info("Song added successfully: {}", song);
             return transferToSongDto(song);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to add Song. Check your request data.", e);
             throw new BadRequestException("Failed to add Song. Check your request data.");
         }
     }
@@ -81,27 +115,10 @@ public class SongService {
         song.setSongTitle(dto.getSongTitle());
 
         return song;
-   }
+    }
 
     private SongDto transferToSongDto(Song song) {
         return new SongDto(song.getId(), song.getSongTitle(), song.getArtistName());
-    }
-
-    private Song convertToEntity(SongInputDto inputDto) throws IOException {
-        Song song = new Song();
-        song.setSongTitle(inputDto.getSongTitle());
-
-        byte[] songFileBytes = inputDto.getSongFile().getBytes();
-        CustomMultipartFile songFile = new CustomMultipartFile(
-                songFileBytes,
-                "songFile", // Name - You can provide any name that makes sense in your context
-                "example.mp3", // Original Filename - Replace with the actual filename
-                "audio/mpeg" // Content Type - Replace with the actual content type
-        );
-
-        song.setSongFile(songFile);
-
-        return song;
     }
 
 }

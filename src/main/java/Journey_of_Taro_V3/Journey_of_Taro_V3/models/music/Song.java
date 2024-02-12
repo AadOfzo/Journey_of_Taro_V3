@@ -5,6 +5,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import jakarta.persistence.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "songs")
@@ -26,6 +27,9 @@ public class Song {
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
     private String artistName;
+    private String fileName;
+    private Long fileSize;
+    private LocalDateTime uploadTime;
 
     @ManyToOne
     @JoinColumn(name = "song_collection_id")
@@ -58,6 +62,9 @@ public class Song {
         // Convert CustomMultipartFile to byte[]
         try {
             this.songDataBytes = songFile.getBytes();
+            this.fileName = songFile.getOriginalFilename();
+            this.fileSize = songFile.getSize();
+            this.uploadTime = LocalDateTime.now();
         } catch (IOException e) {
             throw new RuntimeException("Failed to read song file data", e);
         }
@@ -66,36 +73,7 @@ public class Song {
         this.songFile = songFile;
     }
 
-
-    // Getter for CustomMultipartFile, which converts byte[] to CustomMultipartFile
-    public CustomMultipartFile getSongFile() {
-        if (songFile == null && songDataBytes != null) {
-            songFile = new CustomMultipartFile(
-                    songDataBytes,
-                    "songFile", // Name - You can provide any name that makes sense in your context
-                    "example.mp3", // Original Filename - Replace with the actual filename
-                    "audio/mpeg" // Content Type - Replace with the actual content type
-            );
-
-        }
-        return songFile;
-    }
-
-    // Setter for CustomMultipartFile, convert CustomMultipartFile to byte[]
-    public void setSongFile(CustomMultipartFile songFile) {
-        this.songFile = songFile;
-
-        try {
-            this.songDataBytes = songFile.getBytes();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read song file data", e);
-        }
-    }
-
-    public void setSongFileData(byte[] songDataBytes) {
-        this.songDataBytes = songDataBytes;
-    }
-
+    // Getters and setters for additional properties
 
     public Long getId() {
         return id;
@@ -103,6 +81,22 @@ public class Song {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public byte[] getSongDataBytes() {
+        return songDataBytes;
+    }
+
+    public void setSongDataBytes(byte[] songDataBytes) {
+        this.songDataBytes = songDataBytes;
+    }
+
+    public CustomMultipartFile getSongFile() {
+        return songFile;
+    }
+
+    public void setSongFile(CustomMultipartFile songFile) {
+        this.songFile = songFile;
     }
 
     public String getSongTitle() {
@@ -127,6 +121,30 @@ public class Song {
 
     public void setArtistName(String artistName) {
         this.artistName = artistName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public LocalDateTime getUploadTime() {
+        return uploadTime;
+    }
+
+    public void setUploadTime(LocalDateTime uploadTime) {
+        this.uploadTime = uploadTime;
     }
 
     public SongCollection getSongCollection() {

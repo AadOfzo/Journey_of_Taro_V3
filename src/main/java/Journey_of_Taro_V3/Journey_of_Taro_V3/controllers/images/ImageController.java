@@ -2,12 +2,12 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.images;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -36,8 +36,8 @@ public class ImageController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ImageDto> addImage(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("imageName") String imageName,
+            @RequestParam("file") CustomMultipartFile file,
+            @RequestParam("imageTitle") String imageName,
             @RequestParam("imageAltName") String imageAltName) {
         ImageInputDto inputDto = new ImageInputDto();
         inputDto.setImageFile(file);
@@ -47,7 +47,6 @@ public class ImageController {
         ImageDto dto = imageService.addImage(inputDto);
         return ResponseEntity.created(null).body(dto);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteImage(@PathVariable Long id) {
