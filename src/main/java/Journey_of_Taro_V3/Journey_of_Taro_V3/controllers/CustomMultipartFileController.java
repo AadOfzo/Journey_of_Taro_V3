@@ -9,6 +9,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,61 +30,70 @@ public class CustomMultipartFileController {
 
     ImageService imageService;
 
-    private final SongService songService;
+    private final SongServiceImpl songService;
 
     @Autowired
-    public CustomMultipartFileController(SongService songService) {
+    public CustomMultipartFileController(SongServiceImpl songService) {
         this.songService = songService;
     }
-
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object fileUploadController(MultipartFile file) throws IOException {
-        // Check if the file is empty
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
+    public Object fileUploadController(MultipartFile file) {
+        try {
+            // Introduce local variables to simulate NullPointerException
+            Object controller = null;
+            Object songService = null;
 
-        // Determine the file type
-        String fileType = determineFileType(file.getContentType());
+            // Check if the file is empty
+            if (file.isEmpty()) {
+                throw new IllegalArgumentException("File is empty");
+            }
 
-        // Check if the file type is null
-        if (fileType == null) {
-            throw new IllegalArgumentException("Unsupported file type");
-        }
+            // Determine the file type
+            String fileType = determineFileType(file.getContentType());
 
-        // Get the original file name
-        String originalFilename = file.getOriginalFilename();
+            // Check if the file type is null
+            if (fileType == null) {
+                throw new IllegalArgumentException("Unsupported file type");
+            }
 
-        // Log file information
-        logger.info("Received file: {}", originalFilename);
-        logger.info("File size: {} bytes", file.getSize());
-        logger.info("File type: {}", fileType);
+            // Get the original file name
+            String originalFilename = file.getOriginalFilename();
 
-        // Print file information
-        System.out.println("Received file: " + originalFilename);
-        System.out.println("File type: " + fileType);
-        System.out.println("File size: " + file.getSize() + " bytes");
-        System.out.println("Upload time: " + LocalDateTime.now());
+            // Log file information
+            logger.info("Received file: {}", originalFilename);
+            logger.info("File size: {} bytes", file.getSize());
+            logger.info("File type: {}", fileType);
 
-        // Create appropriate object based on file type
-        if ("Image".equalsIgnoreCase(fileType)) {
-            Image image = new Image();
-            image.setFileName(originalFilename);
-            image.setFileSize(file.getSize());
-            image.setUploadTime(LocalDateTime.now());
-            // You can add more image-specific attributes here if needed
-            return image;
+            // Print file information
+            System.out.println("Received file: " + originalFilename);
+            System.out.println("File type: " + fileType);
+            System.out.println("File size: " + file.getSize() + " bytes");
+            System.out.println("Upload time: " + LocalDateTime.now());
+
+            // Create appropriate object based on file type
+            if ("Image".equalsIgnoreCase(fileType)) {
+                // Process image file here
+                ImageInputDto inputDto = new ImageInputDto();
+                inputDto.setImageFile(file);
+                ImageDto dto = imageService.addImage(inputDto);
+                return ResponseEntity.ok().body(dto);
         } else if ("Audio".equalsIgnoreCase(fileType)) {
-            Song song = new Song();
-            song.setFileName(originalFilename);
-            song.setFileSize(file.getSize());
-            song.setUploadTime(LocalDateTime.now());
-            // You can add more song-specific attributes here if needed
-            return song;
-        } else {
-            throw new IllegalArgumentException("Unsupported file type");
+                // NullPointerException will occur here if songService is null
+                Song song = new Song();
+                song.setFileName(originalFilename);
+                song.setFileSize(file.getSize());
+                song.setUploadTime(LocalDateTime.now());
+                // You can add more song-specific attributes here if needed
+                return song;
+            } else {
+                throw new IllegalArgumentException("Unsupported file type");
+            }
+        } catch (IllegalArgumentException e) {
+            // Handle IllegalArgumentException
+            logger.error("Error occurred while processing file upload", e);
+            throw new RuntimeException("Error occurred while processing file upload", e);
         }
     }
 
@@ -139,5 +149,5 @@ public class CustomMultipartFileController {
         return ResponseEntity.created(null).body(dto);
     }
 
-
 }
+

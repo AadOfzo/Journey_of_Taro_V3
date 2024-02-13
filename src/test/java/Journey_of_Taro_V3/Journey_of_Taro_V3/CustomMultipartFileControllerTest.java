@@ -40,9 +40,15 @@ public class CustomMultipartFileControllerTest {
         // Mock the behavior of determineFileType method
         when(controller.determineFileType(anyString())).thenReturn("Audio");
 
-        // Call the method and assert the returned object type
+        // Mock the behavior of songService.addSong method
+        when(songService.addSong(any(SongInputDto.class))).thenReturn(new SongDto());
+
+        // Call the method
         Object result = controller.fileUploadController(file);
-        assertThat(result).isInstanceOf(Song.class);
+
+        // Assert that the returned object is not null and is an instance of SongDto
+        assertThat(result).isNotNull();
+        assertThat(result).isInstanceOf(SongDto.class);
 
         // You can add more assertions based on your requirements
     }

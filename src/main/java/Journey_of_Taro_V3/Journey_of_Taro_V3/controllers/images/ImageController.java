@@ -2,6 +2,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.images;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,12 @@ public class ImageController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ImageDto> getImage(@PathVariable("id") Long id) {
-        ImageDto image = imageService.getImageById(id);
-        return ResponseEntity.ok().body(image);
+        try {
+            ImageDto image = imageService.getImageById(id);
+            return ResponseEntity.ok().body(image);
+        } catch (RecordNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

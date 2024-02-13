@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin
@@ -40,22 +41,26 @@ public class SongController {
     public ResponseEntity<SongDto> addSong(
             @RequestPart("songFile") CustomMultipartFile songFile,
             @RequestPart("songTitle") String songTitle) {
-        if (!(songFile instanceof CustomMultipartFile)) {
-            // Handle the case where the received file is not a CustomMultipartFile
-            // You may throw an exception or handle it based on your requirements
+        try {
+            if (!(songFile instanceof CustomMultipartFile)) {
+                throw new BadRequestException("Invalid file type. Please provide a CustomMultipartFile.");
+            }
+
+            CustomMultipartFile customMultipartFile = (CustomMultipartFile) songFile;
+
+            SongInputDto inputDto = new SongInputDto();
+            inputDto.setSongFile(customMultipartFile);
+            inputDto.setSongTitle(songTitle);
+
+            SongDto dto = songService.addSong(inputDto);
+            return ResponseEntity.created(null).body(dto);
+        } catch (IOException e) {
+            // Handle the IOException
             // For example:
-             throw new BadRequestException("Invalid file type. Please provide a CustomMultipartFile.");
+            throw new RuntimeException("Failed to process the uploaded file.", e);
         }
-
-        CustomMultipartFile customMultipartFile = (CustomMultipartFile) songFile;
-
-        SongInputDto inputDto = new SongInputDto();
-        inputDto.setSongFile(customMultipartFile);
-        inputDto.setSongTitle(songTitle);
-
-        SongDto dto = songService.addSong(inputDto);
-        return ResponseEntity.created(null).body(dto);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSong(@PathVariable Long id) {

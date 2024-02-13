@@ -1,6 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.config.security;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.filter.JwtRequestFilter;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurityConfig {
 
     public final CustomUserDetailsService customUserDetailsService;
-
     private final JwtRequestFilter jwtRequestFilter;
     private final PasswordEncoder passwordEncoder;
 
@@ -43,8 +43,6 @@ public class SpringSecurityConfig {
                 .and()
                 .build();
     }
-
-
 
     // Authorizatie met jwt
     @Bean
@@ -95,5 +93,6 @@ public class SpringSecurityConfig {
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 
 }

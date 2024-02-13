@@ -4,14 +4,16 @@ public class ImageDto {
     private Long id;
     private String imageName;
     private String imageAltName;
+    private String imageUrl; // Add imageUrl to hold the URL of the uploaded image
 
     public ImageDto() {
     }
 
-    public ImageDto(Long id, String imageName, String imageAltName) {
+    public ImageDto(Long id, String imageName, String imageAltName, String imageUrl) {
         this.id = id;
         this.imageName = imageName;
         this.imageAltName = imageAltName;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -36,5 +38,13 @@ public class ImageDto {
 
     public void setImageAltName(String imageAltName) {
         this.imageAltName = imageAltName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
