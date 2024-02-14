@@ -63,12 +63,20 @@ public class ImageServiceImpl implements ImageService {
     private ImageDto transferToImageDto(Image image) {
         ImageDto dto = new ImageDto();
         // Set properties of ImageDto from Image entity
+        dto.setId(image.getId());
+        dto.setImageName(image.getImageName());
+        dto.setImageAltName(image.getImageAltName());
+        // Set other properties as needed
         return dto;
     }
 
     private Image transferToImage(ImageInputDto dto) {
         Image image = new Image();
         // Set properties of Image entity from ImageInputDto
+        image.setFileName(dto.getImageFile().getOriginalFilename());
+        image.setImageName(dto.getImageFile().getOriginalFilename()); // Set imageName using the original file name
+        image.setImageAltName(dto.getImageFile().getOriginalFilename());
+        // Set other properties as needed
         return image;
     }
 

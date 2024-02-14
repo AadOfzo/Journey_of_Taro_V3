@@ -27,24 +27,20 @@ import java.time.LocalDateTime;
 public class CustomMultipartFileController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomMultipartFileController.class);
-
-    ImageService imageService;
-
+    private final ImageService imageService;
     private final SongServiceImpl songService;
 
     @Autowired
-    public CustomMultipartFileController(SongServiceImpl songService) {
+    public CustomMultipartFileController(ImageService imageService, SongServiceImpl songService) {
+        this.imageService = imageService;
         this.songService = songService;
     }
+
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Object fileUploadController(MultipartFile file) {
         try {
-            // Introduce local variables to simulate NullPointerException
-            Object controller = null;
-            Object songService = null;
-
             // Check if the file is empty
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("File is empty");
@@ -74,17 +70,24 @@ public class CustomMultipartFileController {
 
             // Create appropriate object based on file type
             if ("Image".equalsIgnoreCase(fileType)) {
+
                 // Process image file here
                 ImageInputDto inputDto = new ImageInputDto();
                 inputDto.setImageFile(file);
+                inputDto.setImageName(originalFilename); // Assign original file name to imageName
+                inputDto.setImageAltName(originalFilename); // Assign original file name to imageAltName for now
                 ImageDto dto = imageService.addImage(inputDto);
                 return ResponseEntity.ok().body(dto);
+
         } else if ("Audio".equalsIgnoreCase(fileType)) {
-                // NullPointerException will occur here if songService is null
+
+                // Process audio file here
                 Song song = new Song();
                 song.setFileName(originalFilename);
                 song.setFileSize(file.getSize());
                 song.setUploadTime(LocalDateTime.now());
+                song.setSongTitle(originalFilename);
+                // Assign original file name to songTitle
                 // You can add more song-specific attributes here if needed
                 return song;
             } else {
@@ -96,6 +99,7 @@ public class CustomMultipartFileController {
             throw new RuntimeException("Error occurred while processing file upload", e);
         }
     }
+
 
     // Method to determine file type based on content type
     public String determineFileType(String contentType) {

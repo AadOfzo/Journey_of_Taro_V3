@@ -46,8 +46,8 @@ public class ImageController {
             @RequestParam("imageAltName") String imageAltName) {
         ImageInputDto inputDto = new ImageInputDto();
         inputDto.setImageFile(file);
-        inputDto.setImageName(imageName);
-        inputDto.setImageAltName(imageAltName);
+        inputDto.setImageName(file.getOriginalFilename());
+        inputDto.setImageAltName(file.getOriginalFilename());
 
         ImageDto dto = imageService.addImage(inputDto);
         return ResponseEntity.created(null).body(dto);
