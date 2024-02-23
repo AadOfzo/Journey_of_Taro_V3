@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Images")
+@Table(name = "images")
 public class Image {
 
     @Id
@@ -39,7 +39,6 @@ public class Image {
             // Handle exception appropriately
         }
     }
-
 
     public Long getId() {
         return id;

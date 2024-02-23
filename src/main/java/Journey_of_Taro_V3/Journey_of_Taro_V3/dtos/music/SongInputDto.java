@@ -1,6 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 
 public class SongInputDto {
 
@@ -29,11 +30,11 @@ public class SongInputDto {
         this.songTitle = songTitle;
     }
 
-    public String getArtist() {
+    public String getArtistName() {
         return artist;
     }
 
-    public void setArtist(String artist) {
-        this.artist = artist;
+    public void setArtistName(User artist) {
+        this.artist = artist.getUsername(); // Or use any other property of User that you want to set
     }
 }

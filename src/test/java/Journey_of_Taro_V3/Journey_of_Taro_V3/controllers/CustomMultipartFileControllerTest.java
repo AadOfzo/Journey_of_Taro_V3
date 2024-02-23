@@ -1,4 +1,4 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.CustomMultipartFileController;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;

@@ -5,11 +5,9 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +26,10 @@ public class CustomMultipartFileController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomMultipartFileController.class);
     private final ImageService imageService;
-    private final SongServiceImpl songService;
+    private final SongService songService;
 
     @Autowired
-    public CustomMultipartFileController(ImageService imageService, SongServiceImpl songService) {
+    public CustomMultipartFileController(ImageService imageService, SongService songService) {
         this.imageService = imageService;
         this.songService = songService;
     }
@@ -79,17 +77,15 @@ public class CustomMultipartFileController {
                 ImageDto dto = imageService.addImage(inputDto);
                 return ResponseEntity.ok().body(dto);
 
-        } else if ("Audio".equalsIgnoreCase(fileType)) {
+            } else if ("Audio".equalsIgnoreCase(fileType)) {
 
-                // Process audio file here
-                Song song = new Song();
-                song.setFileName(originalFilename);
-                song.setFileSize(file.getSize());
-                song.setUploadTime(LocalDateTime.now());
-                song.setSongTitle(originalFilename);
-                // Assign original file name to songTitle
-                // You can add more song-specific attributes here if needed
-                return song;
+                CustomMultipartFile customFile = new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()); // Create CustomMultipartFile
+                SongInputDto inputDto = new SongInputDto();
+                inputDto.setSongFile(customFile);
+                inputDto.setSongTitle(originalFilename);
+                // You can add more attributes to the inputDto as needed
+                SongDto dto = songService.addSong(inputDto); // Use the songService to add the song
+                return ResponseEntity.ok().body(dto);  // Return the DTO
             } else {
                 throw new IllegalArgumentException("Unsupported file type");
             }
@@ -97,9 +93,12 @@ public class CustomMultipartFileController {
             // Handle IllegalArgumentException
             logger.error("Error occurred while processing file upload", e);
             throw new RuntimeException("Error occurred while processing file upload", e);
+        } catch (IOException e) {
+            // Handle IOException
+            logger.error("Error occurred while processing file", e);
+            throw new RuntimeException("Error occurred while processing file", e);
         }
     }
-
 
     // Method to determine file type based on content type
     public String determineFileType(String contentType) {
@@ -139,19 +138,26 @@ public class CustomMultipartFileController {
     public ResponseEntity<SongDto> addSong(
             @RequestParam("file") CustomMultipartFile file,
             @RequestParam(value = "songTitle", required = false) String songTitle,
-            @RequestParam(value = "artist", required = false) String artist) {
-        if (songTitle == null || songTitle.isEmpty()) {
-            songTitle = file.getOriginalFilename(); // Assign original file name if songTitle is not provided
+            @RequestParam(value = "artist", required = false) User artist) {
+        try {
+            if (songTitle == null || songTitle.isEmpty()) {
+                songTitle = file.getOriginalFilename(); // Assign original file name if songTitle is not provided
+            }
+
+            SongInputDto inputDto = new SongInputDto();
+            inputDto.setSongFile(file);
+            inputDto.setSongTitle(songTitle);
+            inputDto.setArtistName(artist);
+
+            SongDto dto = songService.addSong(inputDto);
+            return ResponseEntity.created(null).body(dto);
+        } catch (IOException e) {
+            // Handle IOException
+            logger.error("Error with processing file", e);
+            throw new RuntimeException("Error with processing file", e);
         }
-
-        SongInputDto inputDto = new SongInputDto();
-        inputDto.setSongFile(file);
-        inputDto.setSongTitle(songTitle);
-        inputDto.setArtist(artist);
-
-        SongDto dto = songService.addSong(inputDto);
-        return ResponseEntity.created(null).body(dto);
     }
+
 
 }
 

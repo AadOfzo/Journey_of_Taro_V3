@@ -50,7 +50,6 @@ public class SongCollectionController {
         return ResponseEntity.created(URI.create("/songCollections/" + savedSongCollection.getId())).build();
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSongCollection(@PathVariable Long id) {
         songCollectionService.deleteSongCollection(id);

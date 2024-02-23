@@ -27,9 +27,9 @@ public class UserService {
     public Optional<User> getUserByArtistName(String artistName) {
         return userRepository.findByArtistName(artistName);
     }
-//
+
 //    public User getOrCreateUserByArtistName(String artistName) {
-//        Optional<User> existingUser.get();
+//        Optional<User> existingUser.getArtistName();
 //    } else {
 //        User newUser = new User();
 //        newUser.setArtistName(artistName);
@@ -38,6 +38,7 @@ public class UserService {
 //
 //        return userRepository.save(newUser);
 //    }
+
     public List<UserDto> getUsers() {
         List<UserDto> collection = new ArrayList<>();
         List<User> list = userRepository.findAll();
@@ -75,8 +76,8 @@ public class UserService {
 
     public void updateUser(String username, UserDto newUser) {
         if (!userRepository.existsById(username)) throw new RecordNotFoundException();
-        User user = userRepository.findById(username).get();
-        user.setPassword(newUser.getPassword());
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
+        user.setPassword(passwordEncoder.encode(newUser.getPassword())); // Encode the password before setting
         userRepository.save(user);
     }
 

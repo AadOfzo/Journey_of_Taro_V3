@@ -8,6 +8,8 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class ImageServiceImpl implements ImageService {
 
             return transferToImageDto(image);
         } else {
-            throw new RecordNotFoundException("No Images found");
+            throw new RecordNotFoundException("No Images found" + (id));
         }
     }
 
@@ -39,25 +41,19 @@ public class ImageServiceImpl implements ImageService {
         return transferImageListToDtoList(images);
     }
 
+    private List<ImageDto> transferImageListToDtoList(List<Image> images) {
+        List<ImageDto> imageDtoList = new ArrayList<>();
+        for (Image image : images) {
+            imageDtoList.add(transferToImageDto(image)); // Add the transferred imageDTO to the list
+        }
+        return imageDtoList;
+    }
+
     @Override
     public ImageDto addImage(ImageInputDto inputDto) {
         Image image = transferToImage(inputDto);
         image = imageRepository.save(image); // Save the image and assign the returned value
         return transferToImageDto(image);
-    }
-
-
-    @Override
-    public void deleteImage(Long id) {
-        imageRepository.deleteById(id);
-    }
-
-    private List<ImageDto> transferImageListToDtoList(List<Image> images) {
-        List<ImageDto> imageDtoList = new ArrayList<>();
-        for (Image image : images) {
-            imageDtoList.add(transferToImageDto(image)); // Directly add the transferred DTO to the list
-        }
-        return imageDtoList;
     }
 
     private ImageDto transferToImageDto(Image image) {
@@ -74,8 +70,16 @@ public class ImageServiceImpl implements ImageService {
         Image image = new Image();
         // Set properties of Image entity from ImageInputDto
         image.setFileName(dto.getImageFile().getOriginalFilename());
-        image.setImageName(dto.getImageFile().getOriginalFilename()); // Set imageName using the original file name
-        image.setImageAltName(dto.getImageFile().getOriginalFilename());
+        image.setImageName(dto.getImageName()); // Set imageName from ImageInputDto
+        image.setImageAltName(dto.getImageAltName()); // Set imageAltName from ImageInputDto
+        image.setFileSize(dto.getImageFile().getSize()); // Set fileSize from ImageInputDto
+        image.setUploadTime(LocalDateTime.now()); // Set uploadTime to current time
+        try {
+            image.setImageData(dto.getImageFile().getBytes()); // Set imageData from ImageInputDto
+        } catch (IOException e) {
+            // Handle IOException appropriately
+            e.printStackTrace();
+        }
         // Set other properties as needed
         return image;
     }
@@ -85,6 +89,11 @@ public class ImageServiceImpl implements ImageService {
         Image image = transferToImage(inputDto);
         image = imageRepository.save(image); // Save the image and assign the returned value
         return transferToImageDto(image);
+    }
+
+    @Override
+    public void deleteImage(Long id) {
+        imageRepository.deleteById(id);
     }
 
 }

@@ -8,22 +8,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table( name = "song_collections")
+@Table(name = "song_collections")
 public class SongCollection extends Song {
     @Id
     @GeneratedValue
     private Long id;
 
-//  Error 3860:  'SongCollection.songs' is 'mappedBy' another entity and may not specify the '@JoinColumn'
-    @OneToMany(mappedBy = "songCollection", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Song> songs;
+    @ManyToMany
+    @JoinTable(
+            name = "song_collection_songs",
+            joinColumns = @JoinColumn(name = "song_collection_id"),
+            inverseJoinColumns = @JoinColumn(name = "song_id"))
+    private List<Song> songs = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
 
     private String songCollectionTitle;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "song_collection_image", nullable = false)
+    @JoinColumn(name = "song_collection_image", nullable = true)
     private Image image;
 
 
@@ -67,7 +70,7 @@ public class SongCollection extends Song {
         this.songs = songs;
     }
 
-    public void showSongCollectionInformation(){
+    public void showSongCollectionInformation() {
         System.out.println("There are " + songs.size() + "in Collection" + getSongCollectionType() + songCollectionTitle);
     }
 
@@ -107,8 +110,8 @@ public class SongCollection extends Song {
 
             stringBuilder.append("\n\r").append(song.toString()).append(",");
         }
-            stringBuilder.append("\n\r");
-            return stringBuilder.toString();
-        }
+        stringBuilder.append("\n\r");
+        return stringBuilder.toString();
     }
+}
 

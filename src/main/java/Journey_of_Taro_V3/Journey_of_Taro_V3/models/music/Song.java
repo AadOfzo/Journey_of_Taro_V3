@@ -2,10 +2,13 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import jakarta.persistence.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "songs")
@@ -17,7 +20,7 @@ public class Song {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private byte[] songDataBytes; // store the actual byte[] data
+    private byte[] songData; // store the actual byte[] data
 
     @Transient
     private CustomMultipartFile songFile; // transient, not persisted in the database
@@ -26,19 +29,25 @@ public class Song {
 
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
-    private String artistName;
+
+    @ManyToOne
+    @JoinColumn(name = "artist_username", referencedColumnName = "username")
+    private User artistName;
+
     private String fileName;
     private Long fileSize;
     private LocalDateTime uploadTime;
 
-    @ManyToOne
-    @JoinColumn(name = "song_collection_id")
-    private SongCollection songCollection;
+    //    @ManyToOne
+//    @JoinColumn(name = "song_collection_id")
+//    private SongCollection songCollection;
+    @ManyToMany(mappedBy = "songs")
+    private List<SongCollection> songCollection = new ArrayList<>();
 
     public Song() {
     }
 
-    public Song(String songTitle, CustomMultipartFile songFile, String artistName, String collectionType) {
+    public Song(String songTitle, CustomMultipartFile songFile, User artistName, SongCollectionType collectionType) {
         if (songTitle == null || songTitle.trim().isEmpty()) {
             throw new BadRequestException("Song title cannot be null or empty");
         }
@@ -47,21 +56,21 @@ public class Song {
             throw new BadRequestException("Please choose an mp3 Audio file");
         }
 
-        if (collectionType == null || collectionType.trim().isEmpty()) {
+        if (collectionType == null) {
             throw new BadRequestException("Please provide a collection type");
         }
 
-        if (artistName == null || artistName.trim().isEmpty()) {
+        if (artistName == null || artistName.getUsername() == null || artistName.getUsername().trim().isEmpty()) {
             throw new BadRequestException("Please provide an artist name");
         }
 
         this.songTitle = songTitle;
-        this.artistName = artistName;
-        this.songCollectionType = SongCollectionType.valueOf(collectionType);
+        this.artistName = artistName; // Assign the User object
+        this.songCollectionType = collectionType;
 
         // Convert CustomMultipartFile to byte[]
         try {
-            this.songDataBytes = songFile.getBytes();
+            this.songData = songFile.getBytes();
             this.fileName = songFile.getOriginalFilename();
             this.fileSize = songFile.getSize();
             this.uploadTime = LocalDateTime.now();
@@ -69,11 +78,9 @@ public class Song {
             throw new RuntimeException("Failed to read song file data", e);
         }
 
-        // Set the transient field
+        //
         this.songFile = songFile;
     }
-
-    // Getters and setters for additional properties
 
     public Long getId() {
         return id;
@@ -83,12 +90,12 @@ public class Song {
         this.id = id;
     }
 
-    public byte[] getSongDataBytes() {
-        return songDataBytes;
+    public byte[] getSongData() {
+        return songData;
     }
 
-    public void setSongDataBytes(byte[] songDataBytes) {
-        this.songDataBytes = songDataBytes;
+    public void setSongData(byte[] songData) {
+        this.songData = songData;
     }
 
     public CustomMultipartFile getSongFile() {
@@ -115,11 +122,11 @@ public class Song {
         this.songCollectionType = songCollectionType;
     }
 
-    public String getArtistName() {
+    public User getArtistName() {
         return artistName;
     }
 
-    public void setArtistName(String artistName) {
+    public void setArtistName(User artistName) {
         this.artistName = artistName;
     }
 
@@ -147,18 +154,26 @@ public class Song {
         this.uploadTime = uploadTime;
     }
 
-    public SongCollection getSongCollection() {
+//    public SongCollection getSongCollection() {
+//        return songCollection;
+//    }
+//
+//    public void setSongCollection(SongCollection songCollection) {
+//        this.songCollection = songCollection;
+//    }
+
+    public List<SongCollection> getSongCollection() {
         return songCollection;
     }
 
-    public void setSongCollection(SongCollection songCollection) {
+    public void setSongCollection(List<SongCollection> songCollection) {
         this.songCollection = songCollection;
     }
 
     // Song to String
     @Override
     public String toString() {
-        String string = songTitle + " " + artistName + " " + songCollectionType;
+        String string = songTitle + " " + artistName.getUsername() + " " + songCollectionType; // Use getUsername to get the artist's username
         if (songCollection != null) {
             string += " is in collection " + songCollection.toString() + ".";
         } else {
