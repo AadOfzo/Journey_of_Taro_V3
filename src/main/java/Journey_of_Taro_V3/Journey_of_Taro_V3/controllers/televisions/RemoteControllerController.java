@@ -42,7 +42,7 @@ public class RemoteControllerController {
     @DeleteMapping("/remotecontrollers/{id}")
     public ResponseEntity<Object> deleteRemoteController(@PathVariable("id") Long id) {
         Boolean check = remoteControllerService.deleteRemoteController(id);
-        // Als de service methode een true returned (succesvolle delete), returnen we een noContent, anders returnen we een badRequest
+        // Als de service methode een true returned (succesvolle SongDeleteController), returnen we een noContent, anders returnen we een badRequest
         if(check) {
             return ResponseEntity.noContent().build();
         } else {

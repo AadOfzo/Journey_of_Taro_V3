@@ -75,7 +75,7 @@ public class Song {
             this.fileSize = songFile.getSize();
             this.uploadTime = LocalDateTime.now();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read song file data", e);
+            throw new RuntimeException("Failed to SongReadController song file data", e);
         }
 
         //

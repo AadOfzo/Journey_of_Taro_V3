@@ -78,7 +78,7 @@ public class CustomMultipartFileTest {
         byte[] audioData = "Sample audio data".getBytes(); // Mocked audio data
         MultipartFile multipartFile = new MockMultipartFile("audioFile", "audio.mp3", "audio/mpeg", audioData);
 
-        // Create a mock for SongService
+        // SongCreateService a mock for SongService
         SongService songService = mock(SongService.class);
 
         // Instantiate the controller with the mocked SongService

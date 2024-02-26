@@ -50,7 +50,7 @@ public class CustomMultipartFileControllerTest {
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(SongDto.class);
 
-        // You can add more assertions based on your requirements
+        // You can SongCreateService more assertions based on your requirements
     }
 
     @Test
@@ -66,6 +66,6 @@ public class CustomMultipartFileControllerTest {
         SongDto result = songService.addSong(inputDto);
         assertThat(result).isNotNull();
 
-        // You can add more assertions based on your requirements
+        // You can SongCreateService more assertions based on your requirements
     }
 }

@@ -147,7 +147,7 @@ public class SongServiceImpl implements SongService {
     public List<Song> saveSongsForEPs(User artist, CustomMultipartFile mp3File) throws IOException {
         List<Song> savedSongs = new ArrayList<>();
 
-        // Create and save 4 songs
+        // SongCreateService and save 4 songs
         for (int i = 1; i <= 4; i++) {
             Song song = new Song("Test SongTitle " + i, mp3File, artist, SongCollectionType.EPs);
             savedSongs.add(songRepository.save(song));

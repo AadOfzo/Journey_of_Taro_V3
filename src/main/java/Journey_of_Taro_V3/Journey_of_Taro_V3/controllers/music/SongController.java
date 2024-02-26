@@ -31,8 +31,8 @@ public class SongController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<SongDto> getAllSongs() { return songService.getAllSongs(); }
+//    @GetMapping
+//    public List<SongDto> getAllSongs() { return songService.getAllSongs(); }
 
     @GetMapping("/{id}")
     public ResponseEntity<SongDto> getSong(@PathVariable("id") Long id) {

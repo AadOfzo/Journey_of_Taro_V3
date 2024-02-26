@@ -61,8 +61,8 @@ public class SongTest {
     public void givenAudioFile_whenUpload_thenSuccess() throws IOException {
         // Arrange
         MultipartFile audioMockMultipartFile = new MockMultipartFile("file", "test_audio.mp3", "audio/mp3", "content".getBytes());
-        SongDto songDto = new SongDto(); // Create a dummy SongDto object for mocking response
-        ResponseEntity<SongDto> responseEntity = ResponseEntity.ok(songDto); // Create ResponseEntity
+        SongDto songDto = new SongDto(); // SongCreateService a dummy SongDto object for mocking response
+        ResponseEntity<SongDto> responseEntity = ResponseEntity.ok(songDto); // SongCreateService ResponseEntity
 
         // Mocking the behavior of the song service
         when(songService.addSong(any())).thenReturn(responseEntity.getBody());
@@ -79,10 +79,10 @@ public class SongTest {
         // Given
         byte[] fileContent = "This is a mock audio file content".getBytes();
 
-        // Create a CustomMultipartFile
+        // SongCreateService a CustomMultipartFile
         CustomMultipartFile customFile = new CustomMultipartFile("test_audio.mp3", "audio/mp3", fileContent);
 
-        // Create a dummy SongDto object voor mocking
+        // SongCreateService a dummy SongDto object voor mocking
         SongDto songDto = new SongDto();
 
         ResponseEntity<SongDto> responseEntity = ResponseEntity.ok(songDto);
@@ -109,14 +109,14 @@ public class SongTest {
         // Set the username for the mocked User object
         when(artist.getUsername()).thenReturn("testuser");
 
-        // Create a mock mp3 file
+        // SongCreateService a mock mp3 file
         byte[] fileContent = "Mock audio file content for: Demos".getBytes();
         MockMultipartFile mp3File = new MockMultipartFile("file", "test_audio.mp3", "audio/mpeg", fileContent);
 
         // Adapt the MockMultipartFile to CustomMultipartFile
         CustomMultipartFile customMp3File = new MockMultipartFileAdapter(mp3File);
 
-        // Create the Song object with the mocked User object and the custom mp3 file
+        // SongCreateService the Song object with the mocked User object and the custom mp3 file
         Song song = new Song("Singles Song", customMp3File, artist, SongCollectionType.Demos);
 
         // Assertions
@@ -132,14 +132,14 @@ public class SongTest {
         // Set the username for the mocked User object
         when(artist.getUsername()).thenReturn("testuser");
 
-        // Create a mock mp3 file
+        // SongCreateService a mock mp3 file
         byte[] fileContent = "Mock audio file content for: Singles".getBytes();
         MockMultipartFile mp3File = new MockMultipartFile("file", "test_audio.mp3", "audio/mpeg", fileContent);
 
         // Adapt the MockMultipartFile to CustomMultipartFile
         CustomMultipartFile customMp3File = new MockMultipartFileAdapter(mp3File);
 
-        // Create the Song object with the mocked User object and the custom mp3 file
+        // SongCreateService the Song object with the mocked User object and the custom mp3 file
         Song song = new Song("Singles Song", customMp3File, artist, SongCollectionType.Singles);
 
         // Assertions
@@ -155,14 +155,14 @@ public class SongTest {
         // Set the username for the mocked User object
         when(artist.getUsername()).thenReturn("testuser");
 
-        // Create a mock mp3 file
+        // SongCreateService a mock mp3 file
         byte[] fileContent = "Mock audio file content for: Meditations".getBytes();
         MockMultipartFile mp3File = new MockMultipartFile("file", "test_audio.mp3", "audio/mpeg", fileContent);
 
         // Adapt the MockMultipartFile to CustomMultipartFile
         CustomMultipartFile customMp3File = new MockMultipartFileAdapter(mp3File);
 
-        // Create the Song object with the mocked User object and the custom mp3 file
+        // SongCreateService the Song object with the mocked User object and the custom mp3 file
         Song song = new Song("Singles Song", customMp3File, artist, SongCollectionType.Meditations);
 
         // Assertions
@@ -174,7 +174,7 @@ public class SongTest {
     // Multiple "songs" Tests [Werkt nog niet]
     @Test
     void testSongAttributesForEPs() throws IOException {
-        // Create a test user
+        // SongCreateService a test user
         User testUser = new User();
         testUser.setArtistName("Test Artist");
         testUser.setUsername("Test User");
@@ -184,7 +184,7 @@ public class SongTest {
         byte[] fileContent = "Mock audio file content for: Test Song".getBytes();
         CustomMultipartFile mp3File = new CustomMultipartFile("test_audio.mp3", "audio/mpeg", fileContent);
 
-        // Create mock songs
+        // SongCreateService mock songs
         List<Song> mockSongs = new ArrayList<>();
         for (int i = 1; i <= 4; i++) {
             Song song = new Song("Test SongTitle " + i, mp3File, testUser, SongCollectionType.EPs);
@@ -201,7 +201,7 @@ public class SongTest {
             return song;
         });
 
-        // Create a mock song service
+        // SongCreateService a mock song service
         SongServiceImpl songServiceImpl = new SongServiceImpl(songRepository, userRepository);
 
         // Call the method under test
@@ -215,7 +215,7 @@ public class SongTest {
     @Test
     public void testSongAttributesForAlbums() {
         User artist = mock(User.class);
-        // Create a mock CustomMultipartFile object
+        // SongCreateService a mock CustomMultipartFile object
         CustomMultipartFile mockFile = mock(CustomMultipartFile.class);
         Song song = new Song("Album Song", null, artist, SongCollectionType.Albums);
         assertEquals("Album Song", song.getSongTitle());

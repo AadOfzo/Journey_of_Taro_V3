@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public class SongCollectionInputDto {
-    @NotNull(message = "Please add a Title for your Song Collection")
+    @NotNull(message = "Please SongCreateService a Title for your Song Collection")
     private String songCollectionTitle;
     private List<SongDto> songs;
     private ImageDto image;

@@ -66,7 +66,7 @@ public class CustomMultipartFileController {
             System.out.println("File size: " + file.getSize() + " bytes");
             System.out.println("Upload time: " + LocalDateTime.now());
 
-            // Create appropriate object based on file type
+            // SongCreateService appropriate object based on file type
             if ("Image".equalsIgnoreCase(fileType)) {
 
                 // Process image file here
@@ -79,12 +79,12 @@ public class CustomMultipartFileController {
 
             } else if ("Audio".equalsIgnoreCase(fileType)) {
 
-                CustomMultipartFile customFile = new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()); // Create CustomMultipartFile
+                CustomMultipartFile customFile = new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()); // SongCreateService CustomMultipartFile
                 SongInputDto inputDto = new SongInputDto();
                 inputDto.setSongFile(customFile);
                 inputDto.setSongTitle(originalFilename);
-                // You can add more attributes to the inputDto as needed
-                SongDto dto = songService.addSong(inputDto); // Use the songService to add the song
+                // You can SongCreateService more attributes to the inputDto as needed
+                SongDto dto = songService.addSong(inputDto); // Use the songService to SongCreateService the song
                 return ResponseEntity.ok().body(dto);  // Return the DTO
             } else {
                 throw new IllegalArgumentException("Unsupported file type");
