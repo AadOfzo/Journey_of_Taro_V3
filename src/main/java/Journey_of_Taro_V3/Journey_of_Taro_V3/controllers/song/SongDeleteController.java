@@ -1,6 +1,8 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.song;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.song.SongDeleteService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,16 +10,19 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/songs")
 public class SongDeleteController {
+    private final SongDeleteService songDeleteService;
 
-    private final SongService songService;
-
-    public SongDeleteController(SongService songService) {
-        this.songService = songService;
+    public SongDeleteController(SongDeleteService songDeleteService) {
+        this.songDeleteService = songDeleteService;
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Object> deleteSong(@PathVariable Long id) {
-        songService.deleteSong(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteSong(@PathVariable Long id) {
+        try {
+            songDeleteService.deleteSong(id);
+            return ResponseEntity.ok("Song deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete song: " + e.getMessage());
+        }
     }
 }

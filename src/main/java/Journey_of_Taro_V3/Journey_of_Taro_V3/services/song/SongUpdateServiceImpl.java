@@ -23,11 +23,11 @@ public class SongUpdateServiceImpl implements SongUpdateService {
         Song song = songRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("No song found with ID: " + id));
 
-        // Update song attributes based on the input DTO
+        // Update song attributes in input DTO
         song.setSongTitle(inputDto.getSongTitle());
         // Update other attributes as needed...
 
-        // Save the updated song
+        // Save updated song
         Song updatedSong = songRepository.save(song);
 
         return transferToSongDto(updatedSong);
