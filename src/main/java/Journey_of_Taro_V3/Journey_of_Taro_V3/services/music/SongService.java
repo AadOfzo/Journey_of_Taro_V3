@@ -23,7 +23,9 @@ public interface SongService {
 
     SongDto getSongById(Long id);
 
+    // addSong is oude method
     SongDto addSong(SongInputDto inputDto) throws IOException;
+    SongDto create(SongInputDto inputDto) throws IOException;
 
     SongDto saveSong(SongInputDto inputDto);
 

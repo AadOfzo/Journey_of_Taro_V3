@@ -8,8 +8,6 @@ import java.io.IOException;
 
 
 @Service
-public interface SongCreateService {
-    SongDto create(SongInputDto inputDto) throws IOException;
-    SongDto saveSong(SongInputDto inputDto);
+public interface SongReadService {
 
 }

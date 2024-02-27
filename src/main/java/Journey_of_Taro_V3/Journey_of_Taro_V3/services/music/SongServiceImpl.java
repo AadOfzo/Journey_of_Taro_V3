@@ -7,7 +7,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
@@ -15,14 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class SongServiceImpl implements SongService {
 
     private static final Logger logger = LoggerFactory.getLogger(SongServiceImpl.class);
@@ -55,19 +55,16 @@ public class SongServiceImpl implements SongService {
         return transferSongListToDtoList(songs);
     }
 
-    private List<SongDto> transferSongListToDtoList(List<Song> songs) {
-        List<SongDto> songDtoList = new ArrayList<>();
-        for (Song song : songs) {
-            songDtoList.add(transferToSongDto(song));
-        }
-        return songDtoList;
-    }
-
     @Override
     public SongDto addSong(SongInputDto inputDto) {
         Song song = transferToSong(inputDto);
         song = songRepository.save(song);
         return transferToSongDto(song);
+    }
+
+    @Override
+    public SongDto create(SongInputDto inputDto) throws IOException {
+        return null;
     }
 
     SongDto transferToSongDto(Song song) {
@@ -77,6 +74,14 @@ public class SongServiceImpl implements SongService {
         dto.setSongTitle(song.getSongTitle());
 
         return dto;
+    }
+
+    private List<SongDto> transferSongListToDtoList(List<Song> songs) {
+        List<SongDto> songDtoList = new ArrayList<>();
+        for (Song song : songs) {
+            songDtoList.add(transferToSongDto(song));
+        }
+        return songDtoList;
     }
 
     private Song transferToSong(SongInputDto dto) {
@@ -144,16 +149,16 @@ public class SongServiceImpl implements SongService {
         return song;
     }
 
-    public List<Song> saveSongsForEPs(User artist, CustomMultipartFile mp3File) throws IOException {
-        List<Song> savedSongs = new ArrayList<>();
-
-        // SongCreateService and save 4 songs
-        for (int i = 1; i <= 4; i++) {
-            Song song = new Song("Test SongTitle " + i, mp3File, artist, SongCollectionType.EPs);
-            savedSongs.add(songRepository.save(song));
-            System.out.println("Saved Song " + i + ": " + song);
-        }
-
-        return savedSongs;
-    }
+//    public List<Song> saveSongsForEPs(User artist, CustomMultipartFile mp3File) throws IOException {
+//        List<Song> savedSongs = new ArrayList<>();
+//
+//        // SongCreateService and save 4 songs
+//        for (int i = 1; i <= 4; i++) {
+//            Song song = new Song("Test SongTitle " + i, mp3File, artist, SongCollectionType.EPs);
+//            savedSongs.add(songRepository.save(song));
+//            System.out.println("Saved Song " + i + ": " + song);
+//        }
+//
+//        return savedSongs;
+//    }
 }
