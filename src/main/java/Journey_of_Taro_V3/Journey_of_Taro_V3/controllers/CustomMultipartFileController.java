@@ -44,10 +44,10 @@ public class CustomMultipartFileController {
                 throw new IllegalArgumentException("File is empty");
             }
 
-            // Determine the file type
+            // Bepaal file type
             String fileType = determineFileType(file.getContentType());
 
-            // Check if the file type is null
+
             if (fileType == null) {
                 throw new IllegalArgumentException("Unsupported file type");
             }

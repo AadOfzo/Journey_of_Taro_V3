@@ -55,10 +55,10 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests()
                 // Wanneer je deze uncomments, staat je hele security open. Je hebt dan alleen nog een jwt nodig.
                 .requestMatchers("/**").permitAll()
-//                .requestMatchers(HttpMethod.POST, "/users").permitAll()
-//                .requestMatchers(HttpMethod.GET,"/users").authenticated()
-//                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers(HttpMethod.GET,"/users").authenticated()
+                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                 // RequestMatchers voor Televisions, deze kunnen later verwijderd worden.
 //                .requestMatchers(HttpMethod.POST, "/cimodules").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/cimodules/**").hasRole("ADMIN")

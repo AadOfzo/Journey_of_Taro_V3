@@ -47,7 +47,7 @@ public class SongCollectionServiceImpl implements SongCollectionService {
     @Override
     public SongCollectionDto createSongCollection(SongCollectionInputDto dto, MultipartFile imageFile, List<MultipartFile> songFiles) {
         SongCollection collection = convertToEntity(dto);
-        // Process imageFile and songFiles here using CustomMultipartFile
+        // Process imageFile en songFiles hier met CustomMultipartFile
         collectionRepository.save(collection);
         return convertToDto(collection);
     }

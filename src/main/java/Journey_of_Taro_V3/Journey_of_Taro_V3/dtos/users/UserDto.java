@@ -8,6 +8,7 @@ import java.util.Set;
 
 public class UserDto {
 
+//    public Long id;
     public String username;
     public String password;
     public Boolean enabled;
@@ -15,6 +16,14 @@ public class UserDto {
     public String email;
     public String artistName;
     public List<Role> roles;
+
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getUsername() {
         return username;

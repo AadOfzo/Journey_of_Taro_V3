@@ -25,9 +25,7 @@ public class SongUpdateServiceImpl implements SongUpdateService {
 
         // Update song attributes in input DTO
         song.setSongTitle(inputDto.getSongTitle());
-        // Update other attributes as needed...
 
-        // Save updated song
         Song updatedSong = songRepository.save(song);
 
         return transferToSongDto(updatedSong);

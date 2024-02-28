@@ -17,7 +17,7 @@ public class User {
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    @Column(name = "id")
 //    private Long id;
-
+// TODO: 28/02/2024 UserName ID moet overgezet worden in User ID 
     @Id
     @Column(nullable = false, unique = true)
     private String username;
