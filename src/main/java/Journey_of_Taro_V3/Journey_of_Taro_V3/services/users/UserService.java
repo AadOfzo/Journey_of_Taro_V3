@@ -20,6 +20,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    // TODO: 29/02/2024 Could not autowire PasswordEncoder 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -60,7 +62,7 @@ public class UserService {
     }
 
     public boolean userExists(String username) {
-        return userRepository.existsById(username);
+        return userRepository.existsByUsername(username);
     }
 
     public String createUser(UserDto userDto) {
@@ -75,14 +77,14 @@ public class UserService {
     }
 
     public void updateUser(String username, UserDto newUser) {
-        if (!userRepository.existsById(username)) throw new RecordNotFoundException();
+        if (!userRepository.existsByUsername(username)) throw new RecordNotFoundException();
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
         user.setPassword(passwordEncoder.encode(newUser.getPassword())); // Encode the password before setting
         userRepository.save(user);
     }
 
     public List<Role> getRoles(String username) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
+        if (!userRepository.existsByUsername(username)) throw new UsernameNotFoundException(username);
         User user = userRepository.findById(username).get();
         UserDto userDto = fromUser(user);
         return userDto.getRoles();
@@ -90,20 +92,13 @@ public class UserService {
 
     public void addRole(String username, String role) {
 
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
+        if (!userRepository.existsByUsername(username)) throw new UsernameNotFoundException(username);
+        User user = userRepository.findByUsername(username).get();
         user.addRole(new Role(role, List.of(user)));
         userRepository.save(user);
     }
 
-//
-//    public void removeAuthority(String username, String authority) {
-//        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-//        User user = userRepository.findById(username).get();
-//        Authority authorityToRemove = user.getAuthorities().stream().filter((a) -> a.getAuthority().equalsIgnoreCase(authority)).findAny().get();
-//        user.removeAuthority(authorityToRemove);
-//        userRepository.save(user);
-//    }
+
 
     public static UserDto fromUser(User user){
 

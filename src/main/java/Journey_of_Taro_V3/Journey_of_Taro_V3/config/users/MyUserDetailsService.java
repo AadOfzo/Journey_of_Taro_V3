@@ -5,9 +5,10 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Service
 public class MyUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepos;
@@ -17,7 +18,7 @@ public class MyUserDetailsService implements UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> ou = userRepos.findById(username);
+        Optional<User> ou = userRepos.findByUsername(username);
         if (ou.isPresent()) {
             User user = ou.get();
             return new MyUserDetails(user);
