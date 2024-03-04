@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
+// code gebruikt van: https://www.baeldung.com/java-convert-byte-array-to-multipartfile
 public class CustomMultipartFile implements MultipartFile {
     private final byte[] input;
     private final String name;
@@ -14,7 +15,7 @@ public class CustomMultipartFile implements MultipartFile {
 
     public CustomMultipartFile(String originalFilename, String contentType, byte[] inputArray) {
         this.input = inputArray.clone();
-        this.name = "file"; // You can set a default name if needed
+        this.name = "file"; // Set default name
         this.originalFilename = originalFilename;
         this.contentType = contentType;
     }
@@ -59,27 +60,6 @@ public class CustomMultipartFile implements MultipartFile {
         try (FileOutputStream fos = new FileOutputStream(destination)) {
             fos.write(input);
         }
-    }
-    // Convert Image to Entity
-
-    // Convert Song to Entity
-    private Song convertFileToSongEntity(SongInputDto inputDto) throws IOException {
-        Song song = new Song();
-        song.setSongTitle(inputDto.getSongTitle());
-
-        // Get the byte array from the SongInputDto
-        byte[] songFileBytes = inputDto.getSongFile().getBytes();
-
-        // Use the appropriate values for the CustomMultipartFile constructor
-        CustomMultipartFile songFile = new CustomMultipartFile(
-                inputDto.getSongTitle(), // Original filename
-                "audio/mpeg", // Content type - Replace with the actual content type
-                songFileBytes
-        );
-
-        song.setSongFile(songFile);
-
-        return song;
     }
 
 

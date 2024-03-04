@@ -21,7 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // TODO: 29/02/2024 Could not autowire PasswordEncoder 
+    // TODO: 29/02/2024 Could not autowire PasswordEncoder code werkt wel. Users kunnen aangemaakt worden.
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -29,17 +29,6 @@ public class UserService {
     public Optional<User> getUserByArtistName(String artistName) {
         return userRepository.findByArtistName(artistName);
     }
-
-//    public User getOrCreateUserByArtistName(String artistName) {
-//        Optional<User> existingUser.getArtistName();
-//    } else {
-//        User newUser = new User();
-//        newUser.setArtistName(artistName);
-//
-//        newUser.setUsername("Test Username");
-//
-//        return userRepository.save(newUser);
-//    }
 
     public List<UserDto> getUsers() {
         List<UserDto> collection = new ArrayList<>();

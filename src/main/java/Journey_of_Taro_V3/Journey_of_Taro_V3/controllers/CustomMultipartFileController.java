@@ -60,16 +60,11 @@ public class CustomMultipartFileController {
             logger.info("File size: {} bytes", file.getSize());
             logger.info("File type: {}", fileType);
 
-            // Print file information
-            System.out.println("Received file: " + originalFilename);
-            System.out.println("File type: " + fileType);
-            System.out.println("File size: " + file.getSize() + " bytes");
-            System.out.println("Upload time: " + LocalDateTime.now());
 
-            // SongCreateService appropriate object based on file type
+            // SongCreateService object based on file type
             if ("Image".equalsIgnoreCase(fileType)) {
 
-                // Process image file here
+                // Process image file:
                 ImageInputDto inputDto = new ImageInputDto();
                 inputDto.setImageFile(file);
                 inputDto.setImageName(originalFilename); // Assign original file name to imageName
@@ -79,28 +74,28 @@ public class CustomMultipartFileController {
 
             } else if ("Audio".equalsIgnoreCase(fileType)) {
 
+                // Process audio file:
                 CustomMultipartFile customFile = new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()); // SongCreateService CustomMultipartFile
                 SongInputDto inputDto = new SongInputDto();
                 inputDto.setSongFile(customFile);
                 inputDto.setSongTitle(originalFilename);
-                // You can SongCreateService more attributes to the inputDto as needed
-                SongDto dto = songService.addSong(inputDto); // Use the songService to SongCreateService the song
+                SongDto dto = songService.addSong(inputDto);
                 return ResponseEntity.ok().body(dto);  // Return the DTO
             } else {
                 throw new IllegalArgumentException("Unsupported file type");
             }
         } catch (IllegalArgumentException e) {
-            // Handle IllegalArgumentException
+
             logger.error("Error occurred while processing file upload", e);
             throw new RuntimeException("Error occurred while processing file upload", e);
         } catch (IOException e) {
-            // Handle IOException
+
             logger.error("Error occurred while processing file", e);
             throw new RuntimeException("Error occurred while processing file", e);
         }
     }
 
-    // Method to determine file type based on content type
+    // Method voor content type:
     public String determineFileType(String contentType) {
         if (contentType != null && contentType.startsWith("image")) {
             return "Image";
@@ -111,6 +106,7 @@ public class CustomMultipartFileController {
         }
     }
 
+    // POST Voor Images:
     @PostMapping("/images")
     public ResponseEntity<ImageDto> addImage(
             @RequestParam("file") CustomMultipartFile file,
@@ -120,7 +116,6 @@ public class CustomMultipartFileController {
             imageTitle = file.getOriginalFilename(); // Assign original file name if imageTitle is not provided
         }
 
-        // For image, set both imageTitle and imageAltName to the same value if imageAltName is not provided
         if (imageAltName == null || imageAltName.isEmpty()) {
             imageAltName = imageTitle;
         }
@@ -134,6 +129,7 @@ public class CustomMultipartFileController {
         return ResponseEntity.created(null).body(dto);
     }
 
+    // POST Voor Audio:
     @PostMapping("/songs")
     public ResponseEntity<SongDto> addSong(
             @RequestParam("file") CustomMultipartFile file,

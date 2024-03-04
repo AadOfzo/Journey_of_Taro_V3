@@ -1,6 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,10 +16,11 @@ public class AuthorityTest {
     private Authority authority;
 
     @Test
-    public void testGetUsername() {
-        String expectedUsername = "test_user";
-        authority.setUsername(expectedUsername);
-        assertEquals(expectedUsername, authority.getUsername());
+    public void testGetUser() {
+        User user = new User();
+        user.setUsername("test_user");
+        authority.setUser(user);
+        assertEquals(user, authority.getUser());
     }
 
     @Test
@@ -28,12 +30,23 @@ public class AuthorityTest {
         assertEquals(expectedAuthority, authority.getAuthority());
     }
 
+//    @Test
+//    public void testConstructor() {
+//
+//        User expectedUsername = "test_user";
+//        String expectedAuthority = "ROLE_ADMIN";
+//        Authority authority = new Authority(expectedUsername, expectedAuthority);
+//        assertEquals(expectedUsername, authority.getUser());
+//        assertEquals(expectedAuthority, authority.getAuthority());
+//    }
+
     @Test
     public void testConstructor() {
-        String expectedUsername = "test_user";
+        User user = new User();
+        user.setUsername("test_user");
         String expectedAuthority = "ROLE_ADMIN";
-        Authority authority = new Authority(expectedUsername, expectedAuthority);
-        assertEquals(expectedUsername, authority.getUsername());
+        Authority authority = new Authority(user, expectedAuthority);
+        assertEquals(user, authority.getUser());
         assertEquals(expectedAuthority, authority.getAuthority());
     }
 }

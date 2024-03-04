@@ -1,7 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.filter;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.config.users.MyUserDetailsService;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.CustomUserDetailsService;
+
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
