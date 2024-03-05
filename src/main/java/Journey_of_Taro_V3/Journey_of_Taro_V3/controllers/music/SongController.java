@@ -1,6 +1,5 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -31,8 +30,8 @@ public class SongController {
         this.userService = userService;
     }
 
-//    @GetMapping
-//    public List<SongDto> getAllSongs() { return songService.getAllSongs(); }
+    @GetMapping
+    public List<SongDto> getAllSongs() { return songService.getAllSongs(); }
 
     @GetMapping("/{id}")
     public ResponseEntity<SongDto> getSong(@PathVariable("id") Long id) {
@@ -51,9 +50,9 @@ public class SongController {
             @RequestPart("songTitle") String songTitle) {
         try {
             // Todo: Move to other method if nesseccary, trigger when
-//            // Retrieve the user based on the provided artistName
-//            User artist = userService.getUserByArtistName(artistName)
-//                    .orElseThrow(() -> new RecordNotFoundException("No user found with artist name: " + artistName));
+            // Retrieve the user based on the provided artistName
+            User artist = userService.getUserByArtistName(artistName)
+                    .orElseThrow(() -> new RecordNotFoundException("No user found with artist name: " + artistName));
 
             // Create a SongInputDto object with the provided data
             SongInputDto inputDto = new SongInputDto();
@@ -67,7 +66,6 @@ public class SongController {
             return ResponseEntity.created(null).body(dto);
         } catch (IOException e) {
             // Handle the IOException
-            // For example:
             throw new RuntimeException("Failed to process the uploaded file.", e);
         }
     }

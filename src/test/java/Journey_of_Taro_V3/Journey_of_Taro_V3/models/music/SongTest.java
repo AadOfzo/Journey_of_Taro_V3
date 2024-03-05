@@ -1,12 +1,15 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.CustomMultipartFileController;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music.SongController;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongServiceImpl;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,15 +22,21 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class SongTest {
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private UserRepository userRepository;
@@ -37,6 +46,9 @@ public class SongTest {
 
     @Mock
     private SongRepository songRepository;
+
+    @InjectMocks
+    private SongController songController;
 
     @InjectMocks
     private CustomMultipartFileController customMultipartFileController;
@@ -113,6 +125,66 @@ public class SongTest {
         assertEquals("Single Song Test", song.getSongTitle());
     }
 
+    @Test
+    void testGetSong() {
+        // Arrange
+        Long id = 1L;
+        // Mock behavior of songService
+        when(songService.getSongById(id)).thenReturn(new SongDto(/* mock song data */));
 
+        // Act
+        ResponseEntity<SongDto> response = songController.getSong(id);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void testAddSong() {
+        // Arrange
+        String artistName = "testArtist";
+        CustomMultipartFile file = new CustomMultipartFile("test_audio.mp3", "audio/mp3", new byte[0]);
+        String songTitle = "Test Song";
+
+        // Mock behavior of userService and songService
+        when(userService.getUserByArtistName(anyString())).thenReturn(Optional.of(new User())); // Adjust as needed
+        when(songService.addSong(any())).thenReturn(new SongDto(/* mock song data */));
+
+        // Act
+        ResponseEntity<SongDto> response = songController.addSong(artistName, file, songTitle);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void testDeleteSong() {
+        // Arrange
+        Long id = 1L;
+
+        // Act
+        ResponseEntity<Object> response = songController.deleteSong(id);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void testUpdateSong() {
+        // Arrange
+        Long id = 1L;
+        SongInputDto inputDto = new SongInputDto(/* provide required data */);
+
+        // Mock behavior of songService
+        when(songService.updateSong(id, inputDto)).thenReturn(new SongDto(/* mock updated song data */));
+
+        // Act
+        ResponseEntity<Object> response = songController.updateSong(id, inputDto);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 
 }
