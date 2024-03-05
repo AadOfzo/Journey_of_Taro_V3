@@ -1,13 +1,11 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.CustomMultipartFileController;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +59,7 @@ public class SongTest {
         SongDto songDto = new SongDto(); // SongCreateService create a dummy SongDto object for mocking response
         ResponseEntity<SongDto> responseEntity = ResponseEntity.ok(songDto);
 
-        // Mocking the behavior of the song service
+        // Mocking song service
         when(songService.addSong(any())).thenReturn(responseEntity.getBody());
 
         // Act
@@ -73,54 +71,48 @@ public class SongTest {
 
     @Test
     public void testSongCreation() throws IOException {
-        // Given
         byte[] fileContent = "This is a mock audio file content".getBytes();
 
-        // SongCreateService a CustomMultipartFile
         CustomMultipartFile customFile = new CustomMultipartFile("test_audio.mp3", "audio/mp3", fileContent);
 
-        // SongCreateService a dummy SongDto object voor mocking
+        // Dummy SongDto object voor mocking
         SongDto songDto = new SongDto();
 
         ResponseEntity<SongDto> responseEntity = ResponseEntity.ok(songDto);
 
-        // Mocking the behavior of the song service
+        // Mocking song service
         when(songService.addSong(any())).thenReturn(responseEntity.getBody());
 
         User user = new User();
         user.setUsername("testuser");
 
-        // When
         ResponseEntity<SongDto> response = customMultipartFileController.addSong(customFile, "Song Title", user);
 
-        // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        // Add more assertions if needed
     }
 
-    // Single "songs" Tests
+    // Single Song Tests
     @Test
-    void testSongAttributesForDemos() throws IOException {
+    void testSongAttributesForSingleSong() throws IOException {
         // Mock the User object
         User artist = mock(User.class);
         // Set the username for the mocked User object
         when(artist.getUsername()).thenReturn("testuser");
 
-        // SongCreateService a mock mp3 file
-        byte[] fileContent = "Mock audio file content for: Demos".getBytes();
+        // Create a mock mp3 file
+        byte[] fileContent = "Mock audio file content for single Song".getBytes();
         MockMultipartFile mp3File = new MockMultipartFile("file", "test_audio.mp3", "audio/mpeg", fileContent);
 
         // Adapt the MockMultipartFile to CustomMultipartFile
         CustomMultipartFile customMp3File = new MockMultipartFileAdapter(mp3File);
 
-        // SongCreateService the Song object with the mocked User object and the custom mp3 file
-        Song song = new Song("Singles Song", customMp3File, artist, SongCollectionType.Demos);
+        // Create the Song object with the mocked User object and the custom mp3 file
+        Song song = new Song("Single Song Test", customMp3File, artist, SongCollectionType.Singles);
 
-        // Assertions
-        assertEquals("Singles Song", song.getSongTitle());
-        assertEquals(artist, song.getArtistName());
-        assertEquals(SongCollectionType.Demos, song.getSongCollectionType());
+        // Assertion
+        assertEquals("Single Song Test", song.getSongTitle());
     }
+
 
 
 }

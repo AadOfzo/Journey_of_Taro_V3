@@ -14,7 +14,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomMultipartFileTest {
@@ -60,16 +64,21 @@ public class CustomMultipartFileTest {
     }
 
     @Test
-    public void testDetermineFileType_Image() {
+    public void testDetermineFileType_Image() throws IOException {
         // Arrange
         byte[] imageData = "Sample image data".getBytes();
         MultipartFile multipartFile = new MockMultipartFile("imageFile", "image.jpg", "image/jpeg", imageData);
+
+        ImageService imageService = mock(ImageService.class);
+        SongService songService = mock(SongService.class); // Add mock for SongService
+
+        CustomMultipartFileController controller = new CustomMultipartFileController(imageService, songService);
 
         // Act
         String result = controller.determineFileType(multipartFile.getContentType()); // Pass content type as argument
 
         // Assert
-        // Add your assertions here based on the expected behavior
+        assertEquals("image", result.toLowerCase());
     }
 
     @Test
@@ -89,6 +98,54 @@ public class CustomMultipartFileTest {
 
         // Assert
         assertEquals("audio", result.toLowerCase()); // Ignore case when comparing
+    }
+
+    @Test
+    public void testCustomMultipartFile() {
+        // Prepare test data
+        String originalFilename = "test_song.mp3";
+        String contentType = "audio/mpeg";
+        byte[] fileContent = {1, 2, 3, 4, 5}; // Sample file content
+
+        // Create a CustomMultipartFile instance
+        MultipartFile multipartFile = new CustomMultipartFile(originalFilename, contentType, fileContent);
+
+        // Test methods of CustomMultipartFile
+        assertEquals("file", multipartFile.getName());
+        assertEquals(originalFilename, multipartFile.getOriginalFilename());
+        assertEquals(contentType, multipartFile.getContentType());
+        assertTrue(!multipartFile.isEmpty());
+        assertEquals(fileContent.length, multipartFile.getSize());
+
+        try {
+            byte[] content = multipartFile.getBytes();
+            assertEquals(fileContent.length, content.length);
+            for (int i = 0; i < fileContent.length; i++) {
+                assertEquals(fileContent[i], content[i]);
+            }
+
+            // Test InputStream
+            InputStream inputStream = multipartFile.getInputStream();
+            byte[] buffer = new byte[1024];
+            int bytesRead = inputStream.read(buffer);
+            assertEquals(fileContent.length, bytesRead);
+            for (int i = 0; i < fileContent.length; i++) {
+                assertEquals(fileContent[i], buffer[i]);
+            }
+
+            // Test transferTo
+            File destinationFile = new File("destination_file.mp3");
+            multipartFile.transferTo(destinationFile);
+            byte[] transferredContent = Files.readAllBytes(destinationFile.toPath());
+            assertEquals(fileContent.length, transferredContent.length);
+            for (int i = 0; i < fileContent.length; i++) {
+                assertEquals(fileContent[i], transferredContent[i]);
+            }
+            // Clean up
+            destinationFile.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

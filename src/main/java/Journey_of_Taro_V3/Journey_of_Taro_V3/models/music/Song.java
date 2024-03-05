@@ -20,7 +20,7 @@ public class Song {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private byte[] songData; // store the actual byte[] data
+    private byte[] songData; // store byte[] data
 
     @Transient
     private CustomMultipartFile songFile; // transient, not persisted in the database
@@ -37,12 +37,9 @@ public class Song {
     private String fileName;
     private Long fileSize;
     private LocalDateTime uploadTime;
-
-    //    @ManyToOne
-//    @JoinColumn(name = "song_collection_id")
-//    private SongCollection songCollection;
-    @ManyToMany(mappedBy = "songs")
-    private List<SongCollection> songCollection = new ArrayList<>();
+//
+//    @ManyToMany(mappedBy = "songs")
+//    private List<SongCollection> songCollection = new ArrayList<>();
 
     public Song() {
     }
@@ -162,23 +159,23 @@ public class Song {
 //        this.songCollection = songCollection;
 //    }
 
-    public List<SongCollection> getSongCollection() {
-        return songCollection;
-    }
-
-    public void setSongCollection(List<SongCollection> songCollection) {
-        this.songCollection = songCollection;
-    }
+//    public List<SongCollection> getSongCollection() {
+//        return songCollection;
+//    }
+//
+//    public void setSongCollection(List<SongCollection> songCollection) {
+//        this.songCollection = songCollection;
+//    }
 
     // Song to String
     @Override
     public String toString() {
         String string = songTitle + " " + artistName.getUsername() + " " + songCollectionType; // Use getUsername to get the artist's username
-        if (songCollection != null) {
-            string += " is in collection " + songCollection.toString() + ".";
-        } else {
-            string += " has no collection.";
-        }
+//        if (songCollection != null) {
+//            string += " is in collection " + songCollection.toString() + ".";
+//        } else {
+//            string += " has no collection.";
+//        }
         return string;
     }
 }

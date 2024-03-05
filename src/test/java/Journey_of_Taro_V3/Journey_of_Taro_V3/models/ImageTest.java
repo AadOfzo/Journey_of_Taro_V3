@@ -1,14 +1,9 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-
-public class SongAndImageTest {
+public class ImageTest {
 
     @Test
     public void testImageAttributes() {

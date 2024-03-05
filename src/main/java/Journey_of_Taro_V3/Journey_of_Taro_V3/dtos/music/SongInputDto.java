@@ -8,7 +8,7 @@ public class SongInputDto {
 
     private MultipartFile songFile;
     private String songTitle;
-    private String artist;
+    private String artistName;
 
     // Constructor
     public SongInputDto() {
@@ -32,10 +32,10 @@ public class SongInputDto {
     }
 
     public String getArtistName() {
-        return artist;
+        return artistName;
     }
 
-    public void setArtistName(User artist) {
-        this.artist = artist.getUsername(); // Or use any other property of User that you want to set
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 }

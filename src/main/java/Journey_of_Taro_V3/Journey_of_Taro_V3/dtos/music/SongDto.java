@@ -11,10 +11,10 @@ public class SongDto {
     public SongDto() {
     }
 
-    public SongDto(Long id, String songTitle, User artist) {
+    public SongDto(Long id, String songTitle, String artistName) {
         this.id = id;
         this.songTitle = songTitle;
-        this.artistName = artist.getUsername(); // Assuming you want to use the username as the artist name
+        this.artistName = artistName;
     }
 
     public Long getId() {

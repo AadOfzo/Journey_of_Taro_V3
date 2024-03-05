@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @RestController
 public class CustomMultipartFileController {
@@ -37,7 +36,7 @@ public class CustomMultipartFileController {
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object fileUploadController(MultipartFile file) {
+    public ResponseEntity<?> fileUploadController(MultipartFile file) {
         try {
             // Check if the file is empty
             if (file.isEmpty()) {
@@ -143,7 +142,7 @@ public class CustomMultipartFileController {
             SongInputDto inputDto = new SongInputDto();
             inputDto.setSongFile(file);
             inputDto.setSongTitle(songTitle);
-            inputDto.setArtistName(artist);
+            inputDto.setArtistName(artist.getArtistName());
 
             SongDto dto = songService.addSong(inputDto);
             return ResponseEntity.created(null).body(dto);
