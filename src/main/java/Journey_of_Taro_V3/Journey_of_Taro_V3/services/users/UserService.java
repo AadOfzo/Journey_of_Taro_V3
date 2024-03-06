@@ -26,6 +26,7 @@ public class UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     public Optional<User> getUserByArtistName(String artistName) {
         return userRepository.findByArtistName(artistName);
     }
@@ -42,9 +43,9 @@ public class UserService {
     public UserDto getUser(String username) {
         UserDto dto = new UserDto();
         Optional<User> user = userRepository.findById(username);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             dto = fromUser(user.get());
-        }else {
+        } else {
             throw new UsernameNotFoundException(username);
         }
         return dto;
@@ -79,17 +80,19 @@ public class UserService {
         return userDto.getRoles();
     }
 
-    public void addRole(String username, String role) {
+    public void addRole(String username, String roleName) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new UsernameNotFoundException(username);
+        }
 
-        if (!userRepository.existsByUsername(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findByUsername(username).get();
-        user.addRole(new Role(role, List.of(user)));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        Role role = new Role();
+        role.setRoleName(roleName);
+        user.addRole(role);
         userRepository.save(user);
     }
 
-
-
-    public static UserDto fromUser(User user){
+    public static UserDto fromUser(User user) {
 
         var dto = new UserDto();
 

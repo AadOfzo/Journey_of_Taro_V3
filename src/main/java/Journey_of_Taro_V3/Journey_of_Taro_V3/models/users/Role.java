@@ -1,34 +1,68 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.users;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "roles")
 public class Role {
     @Id
-    private String rolename;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String roleName;
 
     @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
+    private List<User> users;
+
+    @ElementCollection(targetClass = String.class)
+    @CollectionTable(name = "role_authorities", joinColumns = @JoinColumn(name = "role_id"))
+    @Column(name = "authority")
+    private List<String> authorities;
 
     public Role() {
     }
 
-    public Role(String rolename, Collection<User> users) {
-        this.rolename = rolename;
+    public Role(Long id, String roleName, List<User> users, List<String> authorities) {
+        this.id = id;
+        this.roleName = roleName;
+        this.users = users;
+        this.authorities = authorities;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 
-    public String getRolename() {
-        return rolename;
+    public List<String> getAuthorities() {
+        return authorities;
     }
 
-    public void setRolename(String rolename) {
-        this.rolename = rolename;
+    public void setAuthorities(List<String> authorities) {
+        this.authorities = authorities;
     }
+
 }

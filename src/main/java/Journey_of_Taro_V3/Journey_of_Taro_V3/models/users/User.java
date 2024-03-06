@@ -18,7 +18,7 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = false)
     private String username;
 
     @Column(nullable = false, length = 255)
@@ -50,13 +50,13 @@ public class User {
     @OneToMany(mappedBy = "artistName", cascade = CascadeType.ALL)
     private List<Song> songs;
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
