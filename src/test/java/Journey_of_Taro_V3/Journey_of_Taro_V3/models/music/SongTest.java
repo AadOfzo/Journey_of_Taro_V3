@@ -27,8 +27,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -143,12 +142,16 @@ public class SongTest {
     @Test
     void testAddSong() {
         // Arrange
-        String artistName = "testArtist";
         CustomMultipartFile file = new CustomMultipartFile("test_audio.mp3", "audio/mp3", new byte[0]);
         String songTitle = "Test Song";
+        String artistName = "Test Artist"; // Change artist name to "Test Artist"
+
+        // Create a mock User instance
+        User user = new User();
+        user.setArtistName(artistName);
 
         // Mock behavior of userService and songService
-        when(userService.getUserByArtistName(anyString())).thenReturn(Optional.of(new User())); // Adjust as needed
+        when(userService.getUserByArtistName(eq(artistName))).thenReturn(Optional.of(user)); // Use "eq(artistName)" to match the argument
         when(songService.addSong(any())).thenReturn(new SongDto(/* mock song data */));
 
         // Act

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -57,15 +58,31 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public SongDto addSong(SongInputDto inputDto) {
-        Song song = transferToSong(inputDto);
-        song = songRepository.save(song);
-        return transferToSongDto(song);
-    }
+        // Fetch the User based on the artistName provided in the inputDto
+        String artistName = inputDto.getArtistName();
+        logger.info("Searching for user with artistName: {}", artistName);
 
-//    @Override
-//    public SongDto create(SongInputDto inputDto) throws IOException {
-//        return null;
-//    }
+        Optional<User> optionalUser = userRepository.findByArtistName(artistName);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            logger.info("User found with artistName: {}", artistName);
+
+            // Transfer inputDto to Song entity
+            Song song = transferToSong(inputDto);
+
+            // Set the fetched User as the owner of the Song
+            song.setArtistName(user);
+
+            // Save the Song entity and assign the returned value
+            song = songRepository.save(song);
+
+            // Transfer the saved Song entity to SongDto and return
+            return transferToSongDto(song);
+        } else {
+            logger.error("User not found with artistName: {}", artistName);
+            throw new RecordNotFoundException("User not found with artistName: " + artistName);
+        }
+    }
 
     SongDto transferToSongDto(Song song) {
         SongDto dto = new SongDto();
@@ -106,16 +123,12 @@ public class SongServiceImpl implements SongService {
         User user = userRepository.findByArtistName(inputDto.getArtistName())
                 .orElseThrow(() -> new RecordNotFoundException("User not found with artistName: " + inputDto.getArtistName()));
 
-        // Transfer inputDto to Song entity
         Song song = transferToSong(inputDto);
 
-        // Set the fetched User as the owner of the Song
         song.setArtistName(user);
 
-        // Save the Song entity and assign the returned value
         song = songRepository.save(song);
 
-        // Transfer the saved Song entity to SongDto and return
         return transferToSongDto(song);
     }
 
@@ -126,9 +139,7 @@ public class SongServiceImpl implements SongService {
 
         // Update song attributes based on the input DTO
         song.setSongTitle(inputDto.getSongTitle());
-        // Update other attributes as needed...
 
-        // Save the updated song
         Song updatedSong = songRepository.save(song);
 
         return transferToSongDto(updatedSong);
@@ -144,21 +155,7 @@ public class SongServiceImpl implements SongService {
         Song song = new Song();
         song.setSongTitle(inputDto.getSongTitle());
 
-        // Additional conversion logic as needed...
-
         return song;
     }
 
-//    public List<Song> saveSongsForEPs(User artist, CustomMultipartFile mp3File) throws IOException {
-//        List<Song> savedSongs = new ArrayList<>();
-//
-//        // SongCreateService and save 4 songs
-//        for (int i = 1; i <= 4; i++) {
-//            Song song = new Song("Test SongTitle " + i, mp3File, artist, SongCollectionType.EPs);
-//            savedSongs.add(songRepository.save(song));
-//            System.out.println("Saved Song " + i + ": " + song);
-//        }
-//
-//        return savedSongs;
-//    }
 }

@@ -25,16 +25,15 @@ public class SongCollection extends Song {
     private SongCollectionType songCollectionType;
 
     private String songCollectionTitle;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "song_collection_image", nullable = true)
     private Image image;
-
 
     public SongCollection() {
     }
 
     public SongCollection(SongCollectionType songCollectionType, String songCollectionTitle, Image image) {
-        this.songs = new ArrayList<>();
         this.songCollectionType = songCollectionType;
         this.songCollectionTitle = songCollectionTitle;
         this.image = image;
@@ -112,6 +111,20 @@ public class SongCollection extends Song {
         }
         stringBuilder.append("\n\r");
         return stringBuilder.toString();
+    }
+
+    public void addSong(Song song) {
+        this.songs.add(song);
+    }
+
+    public void displaySongCollectionInformation() {
+        System.out.println("Song Collection: " + songCollectionTitle);
+        System.out.println("Type: " + songCollectionType);
+        System.out.println("Number of songs: " + songs.size());
+        System.out.println("Songs:");
+        for (Song song : songs) {
+            System.out.println(song);
+        }
     }
 }
 

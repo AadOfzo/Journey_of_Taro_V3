@@ -2,18 +2,21 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models.users;
 
 import jakarta.persistence.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "roles")
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String roleName;
+
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    public static final String ROLE_USER = "ROLE_USER";
 
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
@@ -22,6 +25,7 @@ public class Role {
     @CollectionTable(name = "role_authorities", joinColumns = @JoinColumn(name = "role_id"))
     @Column(name = "authority")
     private List<String> authorities;
+
 
     public Role() {
     }

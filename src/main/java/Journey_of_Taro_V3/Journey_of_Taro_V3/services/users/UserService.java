@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role.ROLE_ADMIN;
+
 @Service
 public class UserService {
 
@@ -84,13 +86,12 @@ public class UserService {
         if (!userRepository.existsByUsername(username)) {
             throw new UsernameNotFoundException(username);
         }
-
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        Role role = new Role();
-        role.setRoleName(roleName);
-        user.addRole(role);
-        userRepository.save(user);
-    }
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+            Role role = new Role();
+            role.setRoleName(roleName);
+            user.addRole(role);
+            userRepository.save(user);
+        }
 
     public static UserDto fromUser(User user) {
 
@@ -120,5 +121,15 @@ public class UserService {
 
         return user;
     }
+
+    public void grantAdminPrivilege(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        Role adminRole = new Role();
+        adminRole.setRoleName(Role.ROLE_ADMIN);
+        user.addRole(adminRole);
+        userRepository.save(user);
+    }
+
 
 }

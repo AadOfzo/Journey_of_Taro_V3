@@ -10,9 +10,11 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,24 +48,23 @@ public class SongController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SongDto> addSong(
             @RequestParam("artistName") String artistName,
-            @RequestParam("file") CustomMultipartFile file,
+            @RequestParam("file") MultipartFile file,
             @RequestPart("songTitle") String songTitle) {
         try {
-            // Todo: Move to other method if nesseccary, trigger when
-            // Retrieve the user based on the provided artistName
-            User artist = userService.getUserByArtistName(artistName)
-                    .orElseThrow(() -> new RecordNotFoundException("No user found with artist name: " + artistName));
-
             // Create a SongInputDto object with the provided data
             SongInputDto inputDto = new SongInputDto();
             inputDto.setSongFile(file);
             inputDto.setSongTitle(songTitle);
-//            inputDto.setArtistName(artist);
+            inputDto.setArtistName(artistName); // Set the artistName
 
             // Add the song using the service
             SongDto dto = songService.addSong(inputDto);
-            System.out.println("added " + songTitle +" to database");
-            return ResponseEntity.created(null).body(dto);
+
+            // Log the success message
+            System.out.println("Added " + songTitle + " to the database.");
+
+            // Return a 201 CREATED response with the created song DTO
+            return ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (IOException e) {
             // Handle the IOException
             throw new RuntimeException("Failed to process the uploaded file.", e);
