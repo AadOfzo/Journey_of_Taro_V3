@@ -106,53 +106,117 @@ public class CustomMultipartFileController {
     }
 
     // POST Voor Images:
+//    @PostMapping("/images")
+//    public ResponseEntity<ImageDto> addImage(
+//            @RequestParam("file") CustomMultipartFile file,
+//            @RequestParam(value = "imageTitle", required = false) String imageTitle,
+//            @RequestParam(value = "imageAltName", required = false) String imageAltName) {
+//        if (imageTitle == null || imageTitle.isEmpty()) {
+//            imageTitle = file.getOriginalFilename(); // Assign original file name if imageTitle is not provided
+//        }
+//
+//        if (imageAltName == null || imageAltName.isEmpty()) {
+//            imageAltName = imageTitle;
+//        }
+//
+//        ImageInputDto inputDto = new ImageInputDto();
+//        inputDto.setImageFile(file);
+//        inputDto.setImageName(imageTitle);
+//        inputDto.setImageAltName(imageAltName);
+//
+//        ImageDto dto = imageService.addImage(inputDto);
+//        return ResponseEntity.created(null).body(dto);
+//    }
+//
+//    // POST Voor Audio:
+//    @PostMapping("/songs")
+//    public ResponseEntity<SongDto> addSong(
+//            @RequestParam("file") CustomMultipartFile file,
+//            @RequestParam(value = "songTitle", required = false) String songTitle,
+//            @RequestParam(value = "artist", required = false) User artist) {
+//        try {
+//            if (songTitle == null || songTitle.isEmpty()) {
+//                songTitle = file.getOriginalFilename(); // Assign original file name if songTitle is not provided
+//            }
+//
+//            SongInputDto inputDto = new SongInputDto();
+//            inputDto.setSongFile(file);
+//            inputDto.setSongTitle(songTitle);
+//            inputDto.setArtistName(artist.getArtistName());
+//
+//            SongDto dto = songService.addSong(inputDto);
+//            return ResponseEntity.created(null).body(dto);
+//        } catch (IOException e) {
+//            // Handle IOException
+//            logger.error("Error with processing file", e);
+//            throw new RuntimeException("Error with processing file", e);
+//        }
+//    }
     @PostMapping("/images")
     public ResponseEntity<ImageDto> addImage(
             @RequestParam("file") CustomMultipartFile file,
             @RequestParam(value = "imageTitle", required = false) String imageTitle,
             @RequestParam(value = "imageAltName", required = false) String imageAltName) {
-        if (imageTitle == null || imageTitle.isEmpty()) {
-            imageTitle = file.getOriginalFilename(); // Assign original file name if imageTitle is not provided
+        // Determine the file type
+        String fileType = determineFileType(file.getContentType());
+        if (!"Image".equals(fileType)) {
+            throw new IllegalArgumentException("File type must be an image");
         }
 
+        // Set default image title if not provided
+        if (imageTitle == null || imageTitle.isEmpty()) {
+            imageTitle = file.getOriginalFilename();
+        }
+
+        // Set default alt name if not provided
         if (imageAltName == null || imageAltName.isEmpty()) {
             imageAltName = imageTitle;
         }
 
+        // Prepare input DTO
         ImageInputDto inputDto = new ImageInputDto();
         inputDto.setImageFile(file);
         inputDto.setImageName(imageTitle);
         inputDto.setImageAltName(imageAltName);
 
+        // Add image
         ImageDto dto = imageService.addImage(inputDto);
         return ResponseEntity.created(null).body(dto);
     }
 
-    // POST Voor Audio:
+    // POST method for uploading songs
     @PostMapping("/songs")
     public ResponseEntity<SongDto> addSong(
             @RequestParam("file") CustomMultipartFile file,
             @RequestParam(value = "songTitle", required = false) String songTitle,
             @RequestParam(value = "artist", required = false) User artist) {
         try {
-            if (songTitle == null || songTitle.isEmpty()) {
-                songTitle = file.getOriginalFilename(); // Assign original file name if songTitle is not provided
+            // Determine the file type
+            String fileType = determineFileType(file.getContentType());
+            if (!"Audio".equals(fileType)) {
+                throw new IllegalArgumentException("File type must be an audio file");
             }
 
+            // Set default song title if not provided
+            if (songTitle == null || songTitle.isEmpty()) {
+                songTitle = file.getOriginalFilename();
+            }
+
+            // Prepare input DTO
             SongInputDto inputDto = new SongInputDto();
             inputDto.setSongFile(file);
             inputDto.setSongTitle(songTitle);
             inputDto.setArtistName(artist.getArtistName());
 
+            // Add song
             SongDto dto = songService.addSong(inputDto);
             return ResponseEntity.created(null).body(dto);
         } catch (IOException e) {
             // Handle IOException
-            logger.error("Error with processing file", e);
-            throw new RuntimeException("Error with processing file", e);
+            logger.error("Error with processing song file", e);
+            throw new RuntimeException("Error with processing song file", e);
         }
+
     }
-
-
 }
 

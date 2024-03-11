@@ -1,11 +1,10 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.music;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
@@ -30,6 +29,7 @@ public class SongServiceImpl implements SongService {
 
     private final UserRepository userRepository;
     private final SongRepository songRepository;
+
 
     @Autowired
     public SongServiceImpl(SongRepository songRepository, UserRepository userRepository) {
@@ -150,12 +150,17 @@ public class SongServiceImpl implements SongService {
         songRepository.deleteById(id);
     }
 
-    private Song convertToEntity(SongInputDto inputDto) throws IOException {
-        // Convert the input DTO to a Song entity
-        Song song = new Song();
-        song.setSongTitle(inputDto.getSongTitle());
-
-        return song;
-    }
+//    @Override
+//    public SongCollectionDto addSongs(SongCollectionInputDto inputDto, SongDto dto) {
+//        return null;
+//    }
+//
+//    private Song convertToEntity(SongInputDto inputDto) throws IOException {
+//        // Convert the input DTO to a Song entity
+//        Song song = new Song();
+//        song.setSongTitle(inputDto.getSongTitle());
+//
+//        return song;
+//    }
 
 }

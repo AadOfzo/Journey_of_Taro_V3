@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role.ROLE_ADMIN;
 
 @Service
 public class UserService {

@@ -15,6 +15,7 @@ public class Image {
     private Long id;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
 
     private String imageName;

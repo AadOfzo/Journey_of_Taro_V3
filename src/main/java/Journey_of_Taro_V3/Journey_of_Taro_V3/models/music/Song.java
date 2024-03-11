@@ -37,7 +37,7 @@ public class Song {
     private String fileName;
     private Long fileSize;
     private LocalDateTime uploadTime;
-//
+
 //    @ManyToMany(mappedBy = "songs")
 //    private List<SongCollection> songCollection = new ArrayList<>();
 
@@ -53,17 +53,17 @@ public class Song {
             throw new BadRequestException("Please choose an mp3 Audio file");
         }
 
-        if (collectionType == null) {
-            throw new BadRequestException("Please provide a collection type");
-        }
-
-        if (artistName == null || artistName.getUsername() == null || artistName.getUsername().trim().isEmpty()) {
-            throw new BadRequestException("Please provide an artist name");
-        }
+//        if (collectionType == null) {
+//            throw new BadRequestException("Please provide a collection type");
+//        }
+//
+//        if (artistName == null || artistName.getUsername() == null || artistName.getUsername().trim().isEmpty()) {
+//            throw new BadRequestException("Please provide an artist name");
+//        }
 
         this.songTitle = songTitle;
         this.artistName = artistName; // Assign the User object
-        this.songCollectionType = collectionType;
+//        this.songCollectionType = collectionType;
 
         // Convert CustomMultipartFile to byte[]
         try {
