@@ -1,7 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
+
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
@@ -38,16 +37,20 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    public SongDto getSong(Long id) {
+        // Retrieve the song entity from the repository
+        Song song = songRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Song not found"));
+
+        // Convert the song entity to a DTO
+        return transferToSongDto(song);
+    }
+
+    @Override
     public SongDto getSongById(Long id) {
-
-        if (songRepository.findById(id).isPresent()) {
-            Song song = songRepository.findById(id).get();
-            SongDto dto = transferToSongDto(song);
-
-            return transferToSongDto(song);
-        } else {
-            throw new RecordNotFoundException("No Song found with ID:" + (id));
-        }
+        return songRepository.findById(id)
+                .map(this::transferToSongDto)
+                .orElseThrow(() -> new RecordNotFoundException("No Song found with ID:" + id));
     }
 
     @Override
@@ -84,14 +87,29 @@ public class SongServiceImpl implements SongService {
         }
     }
 
-    SongDto transferToSongDto(Song song) {
+    private SongDto transferToSongDto(Song song) {
         SongDto dto = new SongDto();
 
         dto.setId(song.getId());
         dto.setSongTitle(song.getSongTitle());
 
+//        // Check if the artistName is not null before accessing its username
+//        if (song.getArtistName() != null) {
+//            dto.setArtistName(song.getArtistName().getUsername());
+//        }
+
         return dto;
     }
+
+
+//    SongDto transferToSongDto(Song song) {
+//        SongDto dto = new SongDto();
+//
+//        dto.setId(song.getId());
+//        dto.setSongTitle(song.getSongTitle());
+//
+//        return dto;
+//    }
 
     private List<SongDto> transferSongListToDtoList(List<Song> songs) {
         List<SongDto> songDtoList = new ArrayList<>();

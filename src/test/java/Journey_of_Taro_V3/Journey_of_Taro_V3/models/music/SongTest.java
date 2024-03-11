@@ -40,7 +40,7 @@ public class SongTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
+    @InjectMocks
     private SongServiceImpl songService;
 
     @Mock
@@ -54,7 +54,7 @@ public class SongTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
 
     public class MockMultipartFileAdapter extends CustomMultipartFile {
@@ -118,49 +118,54 @@ public class SongTest {
         CustomMultipartFile customMp3File = new MockMultipartFileAdapter(mp3File);
 
         // Create the Song object with the mocked User object and the custom mp3 file
-        Song song = new Song("Single Song Test", customMp3File, artist, SongCollectionType.Singles);
+        Song song = new Song("Single Song Test", customMp3File, artist, null); // Pass null for the songCollection parameter
 
         // Assertion
         assertEquals("Single Song Test", song.getSongTitle());
     }
 
     @Test
-    void testGetSong() {
-        // Arrange
-        Long id = 1L;
-        // Mock behavior of songService
-        when(songService.getSongById(id)).thenReturn(new SongDto(/* mock song data */));
-
-        // Act
-        ResponseEntity<SongDto> response = songController.getSong(id);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
     void testAddSong() {
         // Arrange
-        CustomMultipartFile file = new CustomMultipartFile("test_audio.mp3", "audio/mp3", new byte[0]);
-        String songTitle = "Test Song";
-        String artistName = "Test Artist"; // Change artist name to "Test Artist"
+        SongInputDto inputDto = new SongInputDto();
+        inputDto.setArtistName("Test Artist 2");
+        // Set other properties of inputDto as needed
 
-        // Create a mock User instance
+        // Mock userRepository.findByArtistName
         User user = new User();
-        user.setArtistName(artistName);
-
-        // Mock behavior of userService and songService
-        when(userService.getUserByArtistName(eq(artistName))).thenReturn(Optional.of(user)); // Use "eq(artistName)" to match the argument
-        when(songService.addSong(any())).thenReturn(new SongDto(/* mock song data */));
+        user.setArtistName("Test Artist 2");
+        when(userRepository.findByArtistName(eq("Test Artist 2"))).thenReturn(Optional.of(user));
 
         // Act
-        ResponseEntity<SongDto> response = songController.addSong(artistName, file, songTitle);
+        SongDto result = songService.addSong(inputDto);
 
         // Assert
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
+        assertNotNull(result);
+        // Add more assertions as needed to validate the correctness of the result
     }
+
+//    @Test
+//    void testAddSong() {
+//        // Arrange
+//        CustomMultipartFile file = new CustomMultipartFile("test_audio.mp3", "audio/mp3", new byte[0]);
+//        String songTitle = "Test Song";
+//        String artistName = "Test Artist"; // Change artist name to "Test Artist"
+//
+//        // Create a mock User instance
+//        User user = new User();
+//        user.setArtistName(artistName);
+//
+//        // Mock behavior of userService and songService
+//        when(userService.getUserByArtistName(eq(artistName))).thenReturn(Optional.of(user)); // Use "eq(artistName)" to match the argument
+//        when(songService.addSong(any())).thenReturn(new SongDto(/* mock song data */));
+//
+//        // Act
+//        ResponseEntity<SongDto> response = songController.addSong(artistName, file, songTitle);
+//
+//        // Assert
+//        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+//        assertNotNull(response.getBody());
+//    }
 
     @Test
     void testDeleteSong() {

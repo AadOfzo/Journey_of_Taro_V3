@@ -9,18 +9,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-//@Table(name = "song_collections")
+@Table(name = "song_collections")
 public class SongCollection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "song_collection_songs",
-//            joinColumns = @JoinColumn(name = "song_collection_id"),
-//            inverseJoinColumns = @JoinColumn(name = "song_id"));
+    @ManyToMany
+    @JoinTable(
+            name = "song_collection_song",
+            joinColumns = @JoinColumn(name = "song_collection_id"),
+            inverseJoinColumns = @JoinColumn(name = "song_id"))
+    private List<Song> songs = new ArrayList<>();
+
+    public void addSong(Song song) {
+        songs.add(song);
+        song.getSongCollections().add(this); // Bidirectional association
+    }
+
+    public void addSongs(List<Song> songs) {
+        this.songs.addAll(songs);
+        for (Song song : songs) {
+            song.getSongCollections().add(this); // Bidirectional association
+        }
+    }
+
 
 //    @ManyToOne
 //    @JoinColumn(name = "song_collection_songs", referencedColumnName = "song_id")
