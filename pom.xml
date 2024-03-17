@@ -23,10 +23,10 @@
         </dependency>
 <!--        Deze security dependency is nodig voor Spring security.-->
 <!--        Zodra je deze dependency inlaadt, is je app beveiligd en kan je er alleen nog in met credentials-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-security</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 <!--        Deze 3 depedencies zijn nodig voor jwt-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

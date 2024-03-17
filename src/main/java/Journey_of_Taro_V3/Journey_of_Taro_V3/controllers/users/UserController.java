@@ -2,7 +2,9 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -38,6 +40,16 @@ public class UserController {
 
         return ResponseEntity.ok().body(optionalUser);
 
+    }
+
+    @GetMapping(value = "/apikey/{apikey}")
+    public ResponseEntity<UserDto> getUserByApiKey(@PathVariable("apikey") String apikey) {
+        UserDto userDto = userService.getUserByApiKey(apikey);
+        if (userDto != null) {
+            return ResponseEntity.ok().body(userDto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(value = "")
@@ -76,6 +88,7 @@ public class UserController {
             throw new BadRequestException();
         }
     }
+
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {

@@ -8,11 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SecureRandom;
 import java.security.Signature;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import static Journey_of_Taro_V3.Journey_of_Taro_V3.services.security.JwtService.SECRET_KEY;
 
 @Service
 public class JwtUtil {

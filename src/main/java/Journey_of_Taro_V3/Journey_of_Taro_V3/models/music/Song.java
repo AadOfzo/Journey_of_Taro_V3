@@ -38,8 +38,9 @@ public class Song {
     private Long fileSize;
     private LocalDateTime uploadTime;
 
-//    @ManyToMany(mappedBy = "songs")
-//    private List<SongCollection> songCollection = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "collection_id")
+    private SongCollection songCollection;
 
     public Song() {
     }
@@ -151,21 +152,13 @@ public class Song {
         this.uploadTime = uploadTime;
     }
 
-//    public SongCollection getSongCollection() {
-//        return songCollection;
-//    }
-//
-//    public void setSongCollection(SongCollection songCollection) {
-//        this.songCollection = songCollection;
-//    }
+    public void setSongCollection(SongCollection songCollection) {
+        this.songCollection = songCollection;
+    }
 
-//    public List<SongCollection> getSongCollection() {
-//        return songCollection;
-//    }
-//
-//    public void setSongCollection(List<SongCollection> songCollection) {
-//        this.songCollection = songCollection;
-//    }
+    public SongCollection getSongCollection() {
+        return songCollection;
+    }
 
     // Song to String
     @Override

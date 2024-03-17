@@ -1,8 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
@@ -24,12 +22,10 @@ import java.util.List;
 @RequestMapping(value = "/songs")
 public class SongController {
     private final SongService songService;
-    private final UserService userService;
 
     @Autowired
     public SongController(SongService songService, UserService userService) {
         this.songService = songService;
-        this.userService = userService;
     }
 
     @GetMapping

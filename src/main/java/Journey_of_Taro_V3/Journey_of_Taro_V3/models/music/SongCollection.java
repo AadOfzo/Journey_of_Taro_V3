@@ -9,12 +9,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-//@Table(name = "song_collections")
+@Table(name = "song_collections")
 public class SongCollection {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "songCollection")
+    private List<Song> songs;
+
+    public SongCollection() {
+        songs = new ArrayList<>();
+    }
+
+    public void addSong(Song song) {
+        songs.add(song);
+        song.setSongCollection(this);
+    }
+
+    public List<Song> getSongs() {
+        List<Song> songList = new ArrayList<>();
+        songs.add(new Song());
+        return songs;
+    }
+
+
 
 //    @ManyToMany
 //    @JoinTable(
@@ -42,16 +61,16 @@ public class SongCollection {
 //        return songIds;
 //    }
 //
-//    @Override
-//    public String toString() {
-//        StringBuilder stringBuilder = new StringBuilder();
-//        stringBuilder.append("Song Collection: ").append(id).append("\n")
-//                .append("Number of songs: ").append(songIds.size()).append("\n")
-//                .append("Songs:\n");
-//        for (Long songId : songIds) {
-//            stringBuilder.append(songId).append("\n");
-//        }
-//        return stringBuilder.toString();
-//    }
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Song Collection: ").append(id).append("\n")
+                .append("Number of songs: ").append(songs.size()).append("\n")
+                .append("Songs:\n");
+        for (Song songId : songs) {
+            stringBuilder.append(songId).append("\n");
+        }
+        return stringBuilder.toString();
+    }
 }
 

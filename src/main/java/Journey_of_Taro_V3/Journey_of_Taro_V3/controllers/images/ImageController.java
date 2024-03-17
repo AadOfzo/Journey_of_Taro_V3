@@ -39,6 +39,11 @@ public class ImageController {
         }
     }
 
+    @GetMapping("/images/test")
+    public ResponseEntity<String> testImageEndpoint() {
+        return ResponseEntity.ok("Test Image Endpoint successful");
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ImageDto> addImage(
             @RequestParam("file") CustomMultipartFile file,

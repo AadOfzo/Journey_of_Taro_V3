@@ -23,6 +23,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // TODO: 29/02/2024 Could not autowire PasswordEncoder code werkt wel. Users kunnen aangemaakt worden.
+    // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -30,6 +31,15 @@ public class UserService {
 
     public Optional<User> getUserByArtistName(String artistName) {
         return userRepository.findByArtistName(artistName);
+    }
+
+    public UserDto getUserByApiKey(String apikey) {
+        User user = userRepository.findByApikey(apikey);
+        if (user != null) {
+            return fromUser(user);
+        } else {
+            throw new UsernameNotFoundException("User not found with apikey: " + apikey);
+        }
     }
 
     public List<UserDto> getUsers() {

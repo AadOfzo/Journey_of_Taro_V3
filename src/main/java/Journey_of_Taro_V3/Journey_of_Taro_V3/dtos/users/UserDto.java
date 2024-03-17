@@ -2,6 +2,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 
 import java.util.List;
 import java.util.Set;
@@ -80,4 +81,6 @@ public class UserDto {
     public void setArtistName(String artistName) {
         this.artistName = artistName;
     }
+
+
 }

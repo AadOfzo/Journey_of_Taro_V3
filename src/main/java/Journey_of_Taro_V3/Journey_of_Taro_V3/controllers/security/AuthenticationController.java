@@ -40,6 +40,7 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(principal);
     }
 
+
     /*
     Deze methode geeft het JWT token terug wanneer de gebruiker de juiste inloggegevens op geeft.
      */
@@ -65,5 +66,6 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
+
 
 }

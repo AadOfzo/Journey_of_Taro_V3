@@ -45,7 +45,7 @@ public class SpringSecurityConfig {
                 .build();
     }
 
-    // Authorizatie met jwt
+    // Authorisatie met jwt
     @Bean
     protected SecurityFilterChain filter (HttpSecurity http) throws Exception {
 
@@ -58,8 +58,11 @@ public class SpringSecurityConfig {
                 .requestMatchers("/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET,"/users").authenticated()
+//                .requestMatchers(HttpMethod.GET,"/users").loggedIn()
                 .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ROLE_ADMIN")
                 // RequestMatchers voor Televisions, deze kunnen later verwijderd worden.
 //                .requestMatchers(HttpMethod.POST, "/cimodules").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/cimodules/**").hasRole("ADMIN")
@@ -88,6 +91,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/songs", "/images").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticated").authenticated()
+                .requestMatchers("/login").permitAll()
                 .requestMatchers("/authenticate").permitAll()
                 .anyRequest().denyAll()
                 .and()
