@@ -15,6 +15,8 @@ public class SongCollection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String songCollectionTitle;
+
     @OneToMany(mappedBy = "songCollection")
     private List<Song> songs;
 
@@ -28,14 +30,19 @@ public class SongCollection {
     }
 
     public List<Song> getSongs() {
-        List<Song> songList = new ArrayList<>();
-        songs.add(new Song());
         return songs;
     }
 
+    public String getSongCollectionTitle() {
+        return songCollectionTitle;
+    }
+
+    public void setSongCollectionTitle(String songCollectionTitle) {
+        this.songCollectionTitle = songCollectionTitle;
+    }
 
 
-//    @ManyToMany
+    //    @ManyToMany
 //    @JoinTable(
 //            name = "song_collection_songs",
 //            joinColumns = @JoinColumn(name = "song_collection_id"),
@@ -53,14 +60,21 @@ public class SongCollection {
 //        this.songIds = songIds;
 //    }
 //
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public List<Long> getSongIds() {
-//        return songIds;
-//    }
-//
+
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -71,6 +85,12 @@ public class SongCollection {
             stringBuilder.append(songId).append("\n");
         }
         return stringBuilder.toString();
+    }
+
+
+    public void addSongsToCollection(List<Song> songsToAdd) {
+
+        songs.addAll(songsToAdd);
     }
 }
 

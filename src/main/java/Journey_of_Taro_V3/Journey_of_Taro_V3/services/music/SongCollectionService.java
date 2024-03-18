@@ -13,18 +13,18 @@ import java.util.List;
 @Service
 public interface SongCollectionService {
 
-//    void addSongsToCollection(Long collectionId, List<Long> songIds);
-//    List<SongDto> getSongsByCollection(Long collectionId);
-//    void removeSongsFromCollection(Long collectionId, List<Long> songIds);
+    void addSongsToCollection(Long collectionId, List<Long> songIds);
+    List<SongDto> getSongsByCollection(Long collectionId);
+    void removeSongsFromCollection(Long collectionId, List<Long> songIds);
 
-//    List<SongCollectionDto> getAllSongCollections();
-//    SongCollectionDto getSongCollectionById(Long id);
-//    SongCollectionDto createSongCollection(SongCollectionInputDto dto);
-//    void deleteSongCollection(Long id);
-//    SongCollectionDto updateSongCollection(Long id, SongCollectionInputDto dto);
-//
-//
-//    void addImageToSongCollection(Long collectionId, Image image);
+    List<SongCollectionDto> getAllSongCollections();
+    SongCollectionDto getSongCollectionById(Long id);
+    SongCollectionDto createSongCollection(SongCollectionInputDto dto);
+    void deleteSongCollection(Long id);
+    SongCollectionDto updateSongCollection(Long id, SongCollectionInputDto dto);
+
+
+    void addImageToSongCollection(Long collectionId, Image image);
 
 
 }

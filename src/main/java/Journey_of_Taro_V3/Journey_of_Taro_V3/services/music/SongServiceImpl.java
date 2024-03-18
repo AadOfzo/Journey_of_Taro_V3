@@ -111,7 +111,7 @@ public class SongServiceImpl implements SongService {
 //        return dto;
 //    }
 
-    private List<SongDto> transferSongListToDtoList(List<Song> songs) {
+    public List<SongDto> transferSongListToDtoList(List<Song> songs) {
         List<SongDto> songDtoList = new ArrayList<>();
         for (Song song : songs) {
             songDtoList.add(transferToSongDto(song));
