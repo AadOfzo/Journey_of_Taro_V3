@@ -4,16 +4,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ImageInputDto {
 
+    private MultipartFile imageFile;
     private String imageName;
     private String imageAltName;
-    private MultipartFile imageFile;
 
     public ImageInputDto() {
     }
 
-    public ImageInputDto(String imageName, String imageAltName, MultipartFile imageFile) {
+    public ImageInputDto(MultipartFile imageFile, String imageName, String imageAltName) {
+        this.imageFile = imageFile;
         this.imageName = imageName;
         this.imageAltName = imageAltName;
+    }
+
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
         this.imageFile = imageFile;
     }
 
@@ -31,13 +39,5 @@ public class ImageInputDto {
 
     public void setImageAltName(String imageAltName) {
         this.imageAltName = imageAltName;
-    }
-
-    public MultipartFile getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(MultipartFile imageFile) {
-        this.imageFile = imageFile;
     }
 }
