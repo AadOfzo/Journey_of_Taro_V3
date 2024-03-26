@@ -1,10 +1,13 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.RandomStringGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,12 +23,14 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SongRepository songRepository;
     private final PasswordEncoder passwordEncoder;
 
     // TODO: 29/02/2024 Could not autowire PasswordEncoder code werkt wel. Users kunnen aangemaakt worden.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, SongRepository songRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.songRepository = songRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -71,6 +76,22 @@ public class UserService {
         userDto.setApikey(randomString);
         User newUser = userRepository.save(toUser(userDto));
         return newUser.getUsername();
+    }
+
+    // todo Connect User artistName & Song artistName
+    public void updateArtistNameIfMatch(UserDto userDto, SongDto songDto) {
+        // Get the artist name from the UserDto object
+        String userArtistName = userDto.getArtistName();
+
+        // Get the artist name from the SongDto object
+        String songArtistName = songDto.getArtistName();
+
+        // Check if the artist names match
+        if (userArtistName.equals(songArtistName)) {
+            // If they match, update the artist name for both UserDto and SongDto objects
+            userDto.setArtistName(songArtistName);
+            songDto.setArtistName(songArtistName);
+        }
     }
 
     public void deleteUser(String username) {
