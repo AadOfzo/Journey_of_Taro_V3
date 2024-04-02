@@ -8,9 +8,12 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 public class CustomMultipartFileController {
@@ -45,7 +50,6 @@ public class CustomMultipartFileController {
 
             // Bepaal file type
             String fileType = determineFileType(file.getContentType());
-
 
             if (fileType == null) {
                 throw new IllegalArgumentException("Unsupported file type");
@@ -94,7 +98,19 @@ public class CustomMultipartFileController {
         }
     }
 
-    // Method voor content type:
+//
+//    // Method to determine file type and set URL accordingly
+//    public String determineFileType(String contentType) {
+//        if (contentType != null && contentType.startsWith("image")) {
+//            return environment.getProperty("image.url"); // Retrieve image URL from properties
+//        } else if (contentType != null && contentType.startsWith("audio")) {
+//            return environment.getProperty("song.url"); // Retrieve song URL from properties
+//        } else {
+//            return null;
+//        }
+//    }
+
+//     Method voor content type:
     public String determineFileType(String contentType) {
         if (contentType != null && contentType.startsWith("image")) {
             return "Image";
@@ -105,84 +121,37 @@ public class CustomMultipartFileController {
         }
     }
 
-    // POST Voor Images:
 //    @PostMapping("/images")
 //    public ResponseEntity<ImageDto> addImage(
 //            @RequestParam("file") CustomMultipartFile file,
 //            @RequestParam(value = "imageTitle", required = false) String imageTitle,
 //            @RequestParam(value = "imageAltName", required = false) String imageAltName) {
-//        if (imageTitle == null || imageTitle.isEmpty()) {
-//            imageTitle = file.getOriginalFilename(); // Assign original file name if imageTitle is not provided
+//        // Determine the file type
+//        String fileType = determineFileType(file.getContentType());
+//        if (!"Image".equals(fileType)) {
+//            throw new IllegalArgumentException("File type must be an image");
 //        }
 //
+//        // Set default image title if not provided
+//        if (imageTitle == null || imageTitle.isEmpty()) {
+//            imageTitle = file.getOriginalFilename();
+//        }
+//
+//        // Set default alt name if not provided
 //        if (imageAltName == null || imageAltName.isEmpty()) {
 //            imageAltName = imageTitle;
 //        }
 //
+//        // Prepare input DTO
 //        ImageInputDto inputDto = new ImageInputDto();
 //        inputDto.setImageFile(file);
 //        inputDto.setImageName(imageTitle);
 //        inputDto.setImageAltName(imageAltName);
 //
+//        // Add image
 //        ImageDto dto = imageService.addImage(inputDto);
 //        return ResponseEntity.created(null).body(dto);
 //    }
-//
-//    // POST Voor Audio:
-//    @PostMapping("/songs")
-//    public ResponseEntity<SongDto> addSong(
-//            @RequestParam("file") CustomMultipartFile file,
-//            @RequestParam(value = "songTitle", required = false) String songTitle,
-//            @RequestParam(value = "artist", required = false) User artist) {
-//        try {
-//            if (songTitle == null || songTitle.isEmpty()) {
-//                songTitle = file.getOriginalFilename(); // Assign original file name if songTitle is not provided
-//            }
-//
-//            SongInputDto inputDto = new SongInputDto();
-//            inputDto.setSongFile(file);
-//            inputDto.setSongTitle(songTitle);
-//            inputDto.setArtistName(artist.getArtistName());
-//
-//            SongDto dto = songService.addSong(inputDto);
-//            return ResponseEntity.created(null).body(dto);
-//        } catch (IOException e) {
-//            // Handle IOException
-//            logger.error("Error with processing file", e);
-//            throw new RuntimeException("Error with processing file", e);
-//        }
-//    }
-    @PostMapping("/images")
-    public ResponseEntity<ImageDto> addImage(
-            @RequestParam("file") CustomMultipartFile file,
-            @RequestParam(value = "imageTitle", required = false) String imageTitle,
-            @RequestParam(value = "imageAltName", required = false) String imageAltName) {
-        // Determine the file type
-        String fileType = determineFileType(file.getContentType());
-        if (!"Image".equals(fileType)) {
-            throw new IllegalArgumentException("File type must be an image");
-        }
-
-        // Set default image title if not provided
-        if (imageTitle == null || imageTitle.isEmpty()) {
-            imageTitle = file.getOriginalFilename();
-        }
-
-        // Set default alt name if not provided
-        if (imageAltName == null || imageAltName.isEmpty()) {
-            imageAltName = imageTitle;
-        }
-
-        // Prepare input DTO
-        ImageInputDto inputDto = new ImageInputDto();
-        inputDto.setImageFile(file);
-        inputDto.setImageName(imageTitle);
-        inputDto.setImageAltName(imageAltName);
-
-        // Add image
-        ImageDto dto = imageService.addImage(inputDto);
-        return ResponseEntity.created(null).body(dto);
-    }
 
     // POST method for uploading songs
     @PostMapping("/songs")

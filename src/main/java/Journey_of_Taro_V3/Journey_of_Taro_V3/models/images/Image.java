@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "images")
 public class Image {
-
     @Id
     @GeneratedValue
     private Long id;
@@ -23,13 +22,15 @@ public class Image {
     private String fileName;
     private Long fileSize;
     private LocalDateTime uploadTime;
+    private String imageUrl;
 
     public Image() {
     }
 
-    public Image(String imageName, String imageAltName, CustomMultipartFile imageFile) {
+    public Image(String imageName, String imageAltName, CustomMultipartFile imageFile, String imageUrl) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
+        this.imageUrl = imageUrl;
         try {
             this.imageData = imageFile.getBytes();
             this.fileName = imageFile.getOriginalFilename();
@@ -95,5 +96,13 @@ public class Image {
 
     public void setUploadTime(LocalDateTime uploadTime) {
         this.uploadTime = uploadTime;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
