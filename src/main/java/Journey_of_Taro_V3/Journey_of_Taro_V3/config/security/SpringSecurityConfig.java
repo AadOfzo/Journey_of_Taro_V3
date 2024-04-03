@@ -92,9 +92,8 @@ public class SpringSecurityConfig {
                 // Je mag meerdere paths tegelijk definieren
 //                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/fileUpload", "/songs", "/images").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/authenticated").authenticated()
-                .requestMatchers("/login").permitAll()
                 .requestMatchers("/authenticate").permitAll()
+                .requestMatchers("/authenticated").authenticated()
                 .anyRequest().denyAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
