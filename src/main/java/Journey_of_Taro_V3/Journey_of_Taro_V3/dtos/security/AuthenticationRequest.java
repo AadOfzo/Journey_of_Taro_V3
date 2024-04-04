@@ -5,8 +5,9 @@ public class AuthenticationRequest {
     private String username;
     private String password;
 //      AuthenticationRequest wordt niet gepakt met een lege constructor (uit gecomment 26-10-23)
-//    public AuthenticationRequest() {
-//    }
+    public AuthenticationRequest() {
+    }
+
     public AuthenticationRequest(String username, String password) {
         this.username = username;
         this.password = password;

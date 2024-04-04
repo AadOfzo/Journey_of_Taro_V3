@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -52,6 +53,7 @@ public class UserController {
         }
     }
 
+
     @PostMapping(value = "")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
 
@@ -63,6 +65,16 @@ public class UserController {
 
         return ResponseEntity.created(location).build();
     }
+
+//    @PostMapping
+//    public ResponseEntity<User> saveUser(@RequestBody User user) {
+//        User savedUser = userService.saveUser(user);
+//        String url = ServletUriComponentsBuilder.fromContextPath()
+//                .path("/users/")
+//                .path(Objects.requireNonNull(savedUser.getApikey().toString()));
+//        .toUriString();
+//        return ResponseEntity.created(URI.create(url)).body(savedUser());
+//    }
 
     @GetMapping(value = "/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {

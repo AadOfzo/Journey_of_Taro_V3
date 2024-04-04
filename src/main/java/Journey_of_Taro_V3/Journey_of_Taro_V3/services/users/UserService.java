@@ -75,6 +75,10 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
     public String createUser(UserDto userDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userDto.setApikey(randomString);
@@ -117,6 +121,7 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
         return user.getRoles();
     }
+
 
 //    public List<Role> getRoles(String username) {
 //        if (!userRepository.existsByUsername(username)) throw new UsernameNotFoundException(username);
@@ -184,6 +189,8 @@ public class UserService {
         // Save the updated user
         userRepository.save(user);
     }
+
+
 //    public void grantAdminPrivilege(String username) {
 //        User user = userRepository.findByUsername(username)
 //                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
