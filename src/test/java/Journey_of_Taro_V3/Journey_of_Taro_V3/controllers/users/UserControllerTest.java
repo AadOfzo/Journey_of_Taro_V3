@@ -46,30 +46,24 @@ class UserControllerTest {
 
     @Test
     void testCreateUser() {
-        // Mock data
         UserDto userDto = new UserDto();
         userDto.setUsername("testUser");
         when(userService.createUser(userDto)).thenReturn("testUser");
 
-        // Call controller method
         ResponseEntity<UserDto> responseEntity = userController.createUser(userDto);
 
-        // Verify response
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(URI.create("/users/testUser"), responseEntity.getHeaders().getLocation());
 
-        // Verify service method was called
         verify(userService).createUser(userDto);
     }
 
     @Test
     void testGetUser() {
-        // Mock data
         UserDto userDto = new UserDto();
         userDto.setUsername("testUser");
         when(userService.getUser("testUser")).thenReturn(userDto);
 
-        // Call controller method
         ResponseEntity<UserDto> responseEntity = userController.getUser("testUser");
 
         // Verify response

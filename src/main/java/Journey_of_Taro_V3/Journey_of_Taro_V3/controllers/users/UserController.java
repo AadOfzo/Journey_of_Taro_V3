@@ -4,6 +4,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +26,20 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "")
+//    @GetMapping(value = "")
+//    public ResponseEntity<List<UserDto>> getUsers() {
+//
+//        List<UserDto> userDtos = userService.getUsers();
+//
+//        return ResponseEntity.ok().body(userDtos);
+//    }
+
+    @GetMapping
+    @Transactional
     public ResponseEntity<List<UserDto>> getUsers() {
-
-        List<UserDto> userDtos = userService.getUsers();
-
-        return ResponseEntity.ok().body(userDtos);
+        return ResponseEntity.ok(userService.getUsers());
     }
+
 
     @GetMapping(value = "/{username}")
     public ResponseEntity<UserDto> getUser(@PathVariable("username") String username) {

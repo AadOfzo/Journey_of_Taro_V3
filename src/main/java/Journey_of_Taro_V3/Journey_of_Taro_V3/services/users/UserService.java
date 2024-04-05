@@ -51,6 +51,7 @@ public class UserService {
         }
     }
 
+
     public List<UserDto> getUsers() {
         List<UserDto> collection = new ArrayList<>();
         List<User> list = userRepository.findAll();
