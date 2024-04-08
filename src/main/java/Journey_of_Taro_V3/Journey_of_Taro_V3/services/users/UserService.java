@@ -78,11 +78,9 @@ public class UserService {
         return dto;
     }
 
-    public boolean userExists(String username) {
-        return userRepository.existsByUsername(username);
-    }
 
-    public User saveUser(User user) {
+    public User saveUser(UserDto userDto) {
+        User user = toUser(userDto); // Convert UserDto to User
         return userRepository.save(user);
     }
 
@@ -94,20 +92,20 @@ public class UserService {
     }
 
     // todo Connect User artistName & Song artistName
-    public void updateArtistNameIfMatch(UserDto userDto, SongDto songDto) {
-        // Get the artist name from the UserDto object
-        String userArtistName = userDto.getArtistName();
-
-        // Get the artist name from the SongDto object
-        String songArtistName = songDto.getArtistName();
-
-        // Check if the artist names match
-        if (userArtistName.equals(songArtistName)) {
-            // If they match, update the artist name for both UserDto and SongDto objects
-            userDto.setArtistName(songArtistName);
-            songDto.setArtistName(songArtistName);
-        }
-    }
+//    public void updateArtistNameIfMatch(UserDto userDto, SongDto songDto) {
+//        // Get the artist name from the UserDto object
+//        String userArtistName = userDto.getArtistName();
+//
+//        // Get the artist name from the SongDto object
+//        String songArtistName = songDto.getArtistName();
+//
+//        // Check if the artist names match
+//        if (userArtistName.equals(songArtistName)) {
+//            // If they match, update the artist name for both UserDto and SongDto objects
+//            userDto.setArtistName(songArtistName);
+//            songDto.setArtistName(songArtistName);
+//        }
+//    }
 
     public void deleteUser(String username) {
         userRepository.deleteById(username);
@@ -188,16 +186,6 @@ public class UserService {
         // Save the updated user
         userRepository.save(user);
     }
-
-
-//    public void grantAdminPrivilege(String username) {
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-//        Role adminRole = new Role();
-//        adminRole.setRoleName(Role.ROLE_ADMIN);
-//        user.addRole(adminRole);
-//        userRepository.save(user);
-//    }
 
 
 }

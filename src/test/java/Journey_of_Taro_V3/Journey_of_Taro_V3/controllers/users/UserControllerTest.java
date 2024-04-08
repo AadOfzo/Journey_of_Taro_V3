@@ -9,8 +9,10 @@ import java.util.List;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -21,8 +23,10 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.initMocks(this); // Initialize mocks
         userService = mock(UserService.class);
-        userController = new UserController(userService);
+        HttpServletRequest request = mock(HttpServletRequest.class); // Create a mock HttpServletRequest
+        userController = new UserController(userService, request);
     }
 
     @Test
