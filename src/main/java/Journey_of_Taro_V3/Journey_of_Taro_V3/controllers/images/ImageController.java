@@ -14,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,11 +53,6 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/images/test")
-    public ResponseEntity<String> testImageEndpoint() {
-        return ResponseEntity.ok("Test Image Endpoint successful");
-    }
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addImage(
             @RequestParam("file") CustomMultipartFile file,
@@ -82,6 +78,7 @@ public class ImageController {
         }
     }
 
+
     // Method to store file and return its URL
     private String storeFileAndGetUrl(MultipartFile file) throws java.io.IOException {
         // Implement file storage logic here
@@ -97,4 +94,10 @@ public class ImageController {
         imageService.deleteImage(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/images/test")
+    public ResponseEntity<String> testImageEndpoint() {
+        return ResponseEntity.ok("Test Image Endpoint successful");
+    }
+
 }

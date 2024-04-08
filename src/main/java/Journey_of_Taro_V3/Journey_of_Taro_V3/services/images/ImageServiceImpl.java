@@ -3,27 +3,46 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.images;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private final ImageRepository imageRepository;
-    @Value("${base.url}")
-    private String baseUrl;
+    //    private final FileUploadRepository uploadRepository;
 
-    @Autowired
-    public ImageServiceImpl(ImageRepository imageRepository) {
+    private final ImageRepository imageRepository;
+
+//    public ImageServiceImpl(Path fileStoragePath, String fileStorageLocation, FileUploadRepository uploadRepository, ImageRepository imageRepository) {
+//        this.fileStoragePath = fileStoragePath;
+//        this.fileStorageLocation = fileStorageLocation;
+//        this.uploadRepository = uploadRepository;
+//        this.imageRepository = imageRepository;
+//    }
+
+    public ImageServiceImpl(@Value("uploads") String fileStorageLocation, ImageRepository imageRepository) throws IOException{
+        Path fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.imageRepository = imageRepository;
+
+        Files.createDirectories(fileStoragePath);
     }
 
     @Override
@@ -46,18 +65,20 @@ public class ImageServiceImpl implements ImageService {
     public ImageDto addImage(ImageInputDto inputDto) {
         Image image = transferToImage(inputDto);
 
-        // Set imageUrl based on the file name
-        String imageUrl = baseUrl + "/images/" + inputDto.getImageFile().getOriginalFilename();
+        // Set imageUrl based on the file name and storage location
+        String imageUrl = "/uploads/images/" + inputDto.getImageFile().getOriginalFilename();
         image.setImageUrl(imageUrl);
 
         image = imageRepository.save(image);
         return transferToImageDto(image);
     }
 
+
     @Override
     public ImageDto saveImage(ImageInputDto inputDto) {
         Image image = transferToImage(inputDto);
-        image = imageRepository.save(image); // Save the image and assign the returned value
+
+        image = imageRepository.save(image);
         return transferToImageDto(image);
     }
 
@@ -99,105 +120,37 @@ public class ImageServiceImpl implements ImageService {
         // Set other properties as needed
         return image;
     }
-}
 
-
-//package Journey_of_Taro_V3.Journey_of_Taro_V3.services.images;
+    // todo Image opslag en download: Misschien is de saveImage methode ook te gebruiken
+//    public String storeImageFile(CustomMultipartFile imageFile) throws IOException{
 //
-//import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
-//import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
-//import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-//import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-//import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
+//        String imageName = StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename()));
+//        Path filePath = Paths.get(fileStoragePath + "\\" + imageName);
 //
-//import java.io.IOException;
-//import java.time.LocalDateTime;
-//import java.util.ArrayList;
-//import java.util.List;
+//        Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 //
-//@Service
-//public class ImageServiceImpl implements ImageService {
-//
-//    private final ImageRepository imageRepository;
-//
-//    @Autowired
-//    public ImageServiceImpl(ImageRepository imageRepository) {
-//        this.imageRepository = imageRepository;
+//        imageRepository.save(new Image(imageName));
+//        return imageName;
 //    }
 //
-//    public ImageDto getImageById(Long id) {
+//    public Resource downloadImageFile(String fileName) {
 //
-//        if (imageRepository.findById(id).isPresent()){
-//            Image image = imageRepository.findById(id).get();
-//            ImageDto dto = transferToImageDto(image);
+//        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(fileName);
 //
-//            return transferToImageDto(image);
-//        } else {
-//            throw new RecordNotFoundException("No Images found" + (id));
-//        }
-//    }
+//        Resource resource;
 //
-//    @Override
-//    public List<ImageDto> getAllImages() {
-//        List<Image> images = imageRepository.findAll();
-//        return transferImageListToDtoList(images);
-//    }
-//
-//    private List<ImageDto> transferImageListToDtoList(List<Image> images) {
-//        List<ImageDto> imageDtoList = new ArrayList<>();
-//        for (Image image : images) {
-//            imageDtoList.add(transferToImageDto(image)); // Add the transferred imageDTO to the list
-//        }
-//        return imageDtoList;
-//    }
-//
-//    @Override
-//    public ImageDto addImage(ImageInputDto inputDto) {
-//        Image image = transferToImage(inputDto);
-//        image = imageRepository.save(image); // Save the image and assign the returned value
-//        return transferToImageDto(image);
-//    }
-//
-//    private ImageDto transferToImageDto(Image image) {
-//        ImageDto dto = new ImageDto();
-//        // Set properties of ImageDto from Image entity
-//        dto.setId(image.getId());
-//        dto.setImageName(image.getImageName());
-//        dto.setImageAltName(image.getImageAltName());
-//        // Set other properties as needed
-//        return dto;
-//    }
-//
-//    private Image transferToImage(ImageInputDto dto) {
-//        Image image = new Image();
-//        // Set properties of Image entity from ImageInputDto
-//        image.setFileName(dto.getImageFile().getOriginalFilename());
-//        image.setImageName(dto.getImageName()); // Set imageName from ImageInputDto
-//        image.setImageAltName(dto.getImageAltName()); // Set imageAltName from ImageInputDto
-//        image.setFileSize(dto.getImageFile().getSize()); // Set fileSize from ImageInputDto
-//        image.setUploadTime(LocalDateTime.now()); // Set uploadTime to current time
 //        try {
-//            image.setImageData(dto.getImageFile().getBytes()); // Set imageData from ImageInputDto
-//        } catch (IOException e) {
-//            // Handle IOException appropriately
-//            e.printStackTrace();
+//            resource = new UrlResource(path.toUri());
+//        } catch (MalformedURLException e) {
+//            throw new RuntimeException("Issue in reading the file.");
 //        }
-//        // Set other properties as needed
-//        return image;
-//    }
 //
-//    @Override
-//    public ImageDto saveImage(ImageInputDto inputDto) {
-//        Image image = transferToImage(inputDto);
-//        image = imageRepository.save(image); // Save the image and assign the returned value
-//        return transferToImageDto(image);
+//        if(resource.exists()&& resource.isReadable()) {
+//            return resource;
+//        } else {
+//            throw new RuntimeException("The file doesn't exist or not readable.");
+//        }
 //    }
-//
-//    @Override
-//    public void deleteImage(Long id) {
-//        imageRepository.deleteById(id);
-//    }
-//
-//}
+
+
+}

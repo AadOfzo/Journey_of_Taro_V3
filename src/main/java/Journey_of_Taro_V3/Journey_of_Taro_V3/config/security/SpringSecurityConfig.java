@@ -24,16 +24,12 @@ public class SpringSecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
     private final PasswordEncoder passwordEncoder;
 
-    // TODO: 29/02/2024 Could not autowire UserDetailsService, JwtRequestFilter, PasswordEncoder
+    // Could not autowire UserDetailsService, JwtRequestFilter, PasswordEncoder dit zijn bekende errors en hebben geen gevolgen na reports op stackoverflow.
     public SpringSecurityConfig(UserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
     }
-
-    // PasswordEncoderBean. Deze kun je overal in je applicatie injecteren waar nodig.
-    // Je kunt dit ook in een aparte configuratie klasse zetten.
-
 
     // Authenticatie met customUserDetailsService en passwordEncoder
     @Bean
@@ -57,7 +53,8 @@ public class SpringSecurityConfig {
                 // Wanneer je deze uncomments, staat je hele security open. Je hebt dan alleen nog een jwt nodig.
 //                .requestMatchers("/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                .requestMatchers(HttpMethod.GET,"/users").authenticated()
+//                .requestMatchers(HttpMethod.GET,"/users").authenticated()
+                .requestMatchers(HttpMethod.GET,"/users").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ROLE_ADMIN")
@@ -74,6 +71,8 @@ public class SpringSecurityConfig {
                 // RequestMatchers voor Images
                 .requestMatchers(HttpMethod.POST,"/images").permitAll()
                 .requestMatchers(HttpMethod.GET,"/images/**").permitAll()
+                .requestMatchers(HttpMethod.PUT,"/images/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE,"/images/**").permitAll()
 //                .requestMatchers(HttpMethod.GET, "/images").hasRole("USER")
 //                .requestMatchers(HttpMethod.POST,"/images").hasRole("USER")
 //                .requestMatchers(HttpMethod.GET, "/images").hasRole("ADMIN")

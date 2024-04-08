@@ -4,9 +4,11 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.RoleRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
@@ -26,14 +28,18 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ImageRepository imageRepository;
     private final SongRepository songRepository;
     private final PasswordEncoder passwordEncoder;
 
     // TODO: 29/02/2024 Could not autowire PasswordEncoder code werkt wel. Users kunnen aangemaakt worden.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
-    public UserService(UserRepository userRepository,RoleRepository roleRepository,  SongRepository songRepository, PasswordEncoder passwordEncoder) {
+
+
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, ImageRepository imageRepository, SongRepository songRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.imageRepository = imageRepository;
         this.songRepository = songRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -122,14 +128,6 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
         return user.getRoles();
     }
-
-
-//    public List<Role> getRoles(String username) {
-//        if (!userRepository.existsByUsername(username)) throw new UsernameNotFoundException(username);
-//        User user = userRepository.findById(username).get();
-//        UserDto userDto = fromUser(user);
-//        return userDto.getRoles();
-//    }
 
     public void addRole(String username, String roleName) {
         if (!userRepository.existsByUsername(username)) {

@@ -1,13 +1,17 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
+import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -40,6 +44,21 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsers());
     }
 
+//    @PostMapping("/{id}/images")
+//    public ResponseEntity<ImageDto> addImageToUser(@PathVariable("id") String apikey,
+//                                                             @RequestBody MultipartFile imageFile)
+//            throws IOException {
+//        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/users/")
+//                .path(Objects.requireNonNull(apikey))
+//                .path("*/image")
+//                .toUriString();
+//        String imageName = imageFile.getOriginalFilename();
+//        SongCollection songCollection = userService.addImageToUser(imageName, apikey);
+//
+//        return ResponseEntity.created(URI.create(url)).body(user);
+//
+//    }
 
     @GetMapping(value = "/{username}")
     public ResponseEntity<UserDto> getUser(@PathVariable("username") String username) {
