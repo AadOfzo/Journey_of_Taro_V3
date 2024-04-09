@@ -1,6 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.config.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,8 +21,8 @@ public class MyUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        for (Role role : user.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+        for (Authority authority : user.getAuthorities()) {
+            authorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
         }
 
         return authorities;

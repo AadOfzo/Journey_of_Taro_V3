@@ -44,8 +44,8 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Role> roles = new ArrayList<>();
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    private List<Role> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "artistName", cascade = CascadeType.ALL)
     private List<Song> songs;
@@ -106,16 +106,16 @@ public class User {
         this.artistName = artistName;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public Set<Authority> getAuthorities() {
+        return authorities;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
 
-    public void addRole(Role role) {
-        roles.add(role);
+    public void addAuthorities(Authority authority) {
+        authorities.add(authority);
     }
 
     public List<Song> getSongs() {

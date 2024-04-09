@@ -81,28 +81,31 @@ public class UserController {
         }
     }
 
+// todo kiezen uit createUser en saveUser methode, doen praktisch hetzelfde
 
-    @PostMapping(value = "/users/create")
+    //Oude createUser Method:
+    @PostMapping(value = "")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
 
         String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername, "ROLE_USER");
+        userService.addRole(newUsername,"User");
 
-        URI location = ServletUriComponentsBuilder.fromPath("/users/{username}")
+        URI location = ServletUriComponentsBuilder.fromPath("/users/")
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).build();
     }
 
-    @PostMapping
-    public ResponseEntity<User> saveUser(@RequestBody UserDto userDto) {
-        User savedUser = userService.saveUser(userDto);
-        String url = ServletUriComponentsBuilder.fromContextPath(request)
-                .path("/users/save")
-                .path(Objects.requireNonNull(savedUser.getApikey().toString()))
-                .toUriString();
-        return ResponseEntity.created(URI.create(url)).body(savedUser);
-    }
+    // saveUser Method:
+//    @PostMapping
+//    public ResponseEntity<User> saveUser(@RequestBody UserDto userDto) {
+//        User savedUser = userService.saveUser(userDto);
+//        String url = ServletUriComponentsBuilder.fromContextPath(request)
+//                .path("/users/")
+//                .path(Objects.requireNonNull(savedUser.getId().toString()))
+//                .toUriString();
+//        return ResponseEntity.created(URI.create(url)).body(savedUser);
+//    }
 
     @GetMapping(value = "/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {

@@ -53,22 +53,14 @@ public class SpringSecurityConfig {
                 // Wanneer je deze uncomments, staat je hele security open. Je hebt dan alleen nog een jwt nodig.
 //                .requestMatchers("/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 //                .requestMatchers(HttpMethod.GET,"/users").authenticated()
                 .requestMatchers(HttpMethod.GET,"/users").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ROLE_ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ROLE_ADMIN")
-                // RequestMatchers voor Televisions, deze kunnen later verwijderd worden.
-//                .requestMatchers(HttpMethod.POST, "/cimodules").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/cimodules/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST, "/remotecontrollers").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/remotecontrollers/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST, "/televisions").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/televisions/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST, "/wallbrackets").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/wallbrackets/**").hasRole("ADMIN")
-                // RequestMatchers voor Images
+
+                // RequestMatchers voor FILES
+                .requestMatchers(HttpMethod.POST,"/fileUpload").permitAll()
                 .requestMatchers(HttpMethod.POST,"/images").permitAll()
                 .requestMatchers(HttpMethod.GET,"/images/**").permitAll()
                 .requestMatchers(HttpMethod.PUT,"/images/**").permitAll()
@@ -77,6 +69,10 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.POST,"/images").hasRole("USER")
 //                .requestMatchers(HttpMethod.GET, "/images").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.POST,"/images").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST,"/songs").permitAll()
+                .requestMatchers(HttpMethod.GET,"/songs/**").permitAll()
+                .requestMatchers(HttpMethod.PUT,"/songs/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE,"/songs/**").permitAll()
 //                .requestMatchers(HttpMethod.GET,"/songs").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.POST,"/songs/**").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/songs/**").hasRole("ADMIN")

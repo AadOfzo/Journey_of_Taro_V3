@@ -88,7 +88,7 @@ public class MyUserDetailsServiceTest {
 
         // Assert
         Mockito.verify(userRepository).save(user);
-        Assert.assertTrue(user.getRoles().stream().anyMatch(r -> r.getRoleName().equals(role)));
+        Assert.assertTrue(user.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role)));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class MyUserDetailsServiceTest {
 
         // Assert
         Mockito.verify(userRepository).save(user);
-        Assert.assertTrue(user.getRoles().stream().anyMatch(r -> r.getRoleName().equals(role)));
+        Assert.assertTrue(user.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role)));
     }
     @Test(expected = org.springframework.security.core.userdetails.UsernameNotFoundException.class)
     public void testAddRole_UserNotExists() {

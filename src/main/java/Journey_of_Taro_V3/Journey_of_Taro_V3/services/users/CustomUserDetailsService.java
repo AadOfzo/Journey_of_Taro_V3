@@ -3,7 +3,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.security.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,10 +31,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         String password = userDto.getPassword();
 
-        List<Role> roles = userDto.getRoles();
+        List<String> roles = userDto.getRoles();
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for (Role role: roles) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+        for (String role: roles) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(role));
         }
 
         return new org.springframework.security.core.userdetails.User(username, password, grantedAuthorities);

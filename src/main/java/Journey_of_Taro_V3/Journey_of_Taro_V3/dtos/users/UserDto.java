@@ -1,7 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public class UserDto {
     public String apikey;
     public String email;
     public String artistName;
-    public List<Role> roles;
+    public List<String> roles;
 
     public Long getId() {
         return id;
@@ -50,7 +49,7 @@ public class UserDto {
         return artistName;
     }
 
-    public List<Role> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
 
@@ -74,7 +73,7 @@ public class UserDto {
         this.email = email;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 

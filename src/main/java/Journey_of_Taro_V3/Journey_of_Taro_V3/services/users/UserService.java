@@ -6,11 +6,9 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.Role;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.RoleRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.RandomStringGenerator;
 import jakarta.transaction.Transactional;
@@ -21,13 +19,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final ImageRepository imageRepository;
     private final SongRepository songRepository;
     private final PasswordEncoder passwordEncoder;
@@ -36,9 +34,8 @@ public class UserService {
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
 
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, ImageRepository imageRepository, SongRepository songRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,  ImageRepository imageRepository, SongRepository songRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.imageRepository = imageRepository;
         this.songRepository = songRepository;
         this.passwordEncoder = passwordEncoder;
@@ -118,13 +115,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public List<Role> getRoles(String username) {
+    public Set<Authority> getRoles(String username) {
         if (!userRepository.existsByUsername(username)) {
             throw new UsernameNotFoundException(username);
         }
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        return user.getRoles();
+        return user.getAuthorities();
     }
 
     public void addRole(String username, String roleName) {
@@ -132,9 +129,9 @@ public class UserService {
             throw new UsernameNotFoundException(username);
         }
             User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-            Role role = new Role();
-            role.setRoleName(roleName);
-            user.addRole(role);
+            Authority authority = new Authority();
+            authority.setAuthority(roleName);
+            user.addAuthorities(authority);
             userRepository.save(user);
         }
 
@@ -142,14 +139,20 @@ public class UserService {
 
         var dto = new UserDto();
 
+        dto.id = user.getId();
         dto.username = user.getUsername();
         dto.password = user.getPassword();
         dto.enabled = user.isEnabled();
         dto.apikey = user.getApikey();
         dto.email = user.getEmail();
         dto.artistName = user.getArtistName();
-//        dto.roles = user.getAuthorities();
 
+        ArrayList authorities = new ArrayList<>();
+        for (Authority authority : user.getAuthorities()) {
+            authorities.add(authority.getAuthority());
+
+        }
+        dto.roles = authorities;
         return dto;
     }
 
@@ -172,16 +175,10 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        // Retrieve the admin role from the database or create a new one if it doesn't exist
-        Role adminRole = roleRepository.findByRoleName(Role.ROLE_ADMIN)
-                .orElseGet(() -> {
-                    Role newAdminRole = new Role();
-                    newAdminRole.setRoleName(Role.ROLE_ADMIN);
-                    return roleRepository.save(newAdminRole);
-                });
+        Authority adminAuthority = new Authority(user, "ROLE_ADMIN");
 
         // Add the admin role to the user's roles
-        user.addRole(adminRole);
+        user.addAuthorities(adminAuthority);
 
         // Save the updated user
         userRepository.save(user);
