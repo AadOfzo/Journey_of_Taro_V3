@@ -5,6 +5,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +13,8 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User {
-    // User data
+
+    // User data:
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -29,6 +31,9 @@ public class User {
     private String firstName;
     @Column(name ="lastname")
     private String lastName;
+    @Column(name = "dob")
+    @Temporal(TemporalType.DATE)
+    private Date dateOfBirth;
     @Column
     private String email;
 
@@ -98,6 +103,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getEmail() {

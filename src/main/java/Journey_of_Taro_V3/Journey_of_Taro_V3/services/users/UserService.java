@@ -106,6 +106,7 @@ public class UserService {
         userDto.setApikey(user.getApikey());
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
+        userDto.setDateOfBirth(user.getDateOfBirth());
         userDto.setEmail(user.getEmail());
 
         userDto.setUserImage(user.getUserImage());
@@ -130,6 +131,7 @@ public class UserService {
         dto.apikey = user.getApikey();
         dto.firstName = user.getFirstName();
         dto.lastName = user.getLastName();
+        dto.dateOfBirth = user.getDateOfBirth();
         dto.email = user.getEmail();
         dto.userImage = user.getUserImage();
         dto.artistName = user.getArtistName();
@@ -148,10 +150,11 @@ public class UserService {
         var user = new User();
 
         user.setUsername(userDto.getUsername());
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
         user.setPassword(passwordEncoder.encode(userDto.password));
         user.setApikey(userDto.getApikey());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setDateOfBirth(userDto.getDateOfBirth());
         user.setEmail(userDto.getEmail());
         user.setArtistName(userDto.getArtistName());
 

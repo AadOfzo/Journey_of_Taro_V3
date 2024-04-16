@@ -2,6 +2,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
 
+import java.util.Date;
 import java.util.List;
 
 public class UserDto {
@@ -9,11 +10,11 @@ public class UserDto {
     public Long id;
     public String username;
     public String password;
-
     public String apikey;
 
     public String firstName;
     public String lastName;
+    public Date dateOfBirth;
     public String email;
     public UserImage userImage;
 
@@ -93,11 +94,21 @@ public class UserDto {
         this.lastName = lastName;
     }
 
+
+
     public UserImage getUserImage() {
         return userImage;
     }
 
     public void setUserImage(UserImage userImage) {
         this.userImage = userImage;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }
