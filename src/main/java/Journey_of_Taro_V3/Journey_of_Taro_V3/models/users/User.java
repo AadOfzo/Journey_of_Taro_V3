@@ -25,19 +25,20 @@ public class User {
     private String apikey;
 
     // Personal fields:
-    @Column
+    @Column(name = "firstname")
     private String firstName;
-    @Column
+    @Column(name ="lastname")
     private String lastName;
     @Column
     private String email;
 
     // User files:
+    @JoinColumn(name = "userimage")
     @ManyToOne
     @JsonIgnoreProperties(value = {"contents","contentType"} )
     UserImage userImage;
 
-    @Column()
+    @Column(name = "artistname")
     private String artistName;
     @OneToMany(mappedBy = "artistName", cascade = CascadeType.ALL)
     private List<Song> songs;

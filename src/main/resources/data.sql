@@ -1,10 +1,11 @@
 -- User Authorities
-insert into users(user_id, username, password, enabled, apikey, email)
-VALUES (1001, 'Aadofzo', 'Ofzoiets1986', true, '713468367', 'aadofzo@gmail.com');
---        (1, 'TestAdmin', 'Test_Password', true, 713468368, 'Admin@testmail.com');
+-- insert into users(id, username, password, enabled, apikey, email)
+-- VALUES (1001, 'Aadofzo', 'Ofzoiets1986', true, '713468367', 'aadofzo@gmail.com');
+-- --        (1, 'TestAdmin', 'Test_Password', true, 713468368, 'Admin@testmail.com');
 
--- insert into users(id, username, password, apikey, firstname, lastname, email)
--- VALUES (1001, 'Example User', 'ExamplePassword1', 713468367, 'TestFirstName', 'TestLastName', 'example_user@email.com');
+insert into users(id, username, password, apikey, firstname, lastname, email, artistname)
+VALUES (1001, 'Example User', 'ExamplePassword1', 713468367, 'TestFirstName', 'TestLastName', 'example_user@email.com', 'Test Artist');
+
 -- values (1001, 'Example User', 'example_user@email.com', 713468367),
 --        (1002, 'Example Admin', 'example_admin@email.com', 713468368);
 
