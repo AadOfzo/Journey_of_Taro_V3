@@ -1,4 +1,4 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.services.images;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;

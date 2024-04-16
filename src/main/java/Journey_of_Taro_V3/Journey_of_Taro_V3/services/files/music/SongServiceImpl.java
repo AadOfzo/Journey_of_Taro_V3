@@ -1,4 +1,4 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.services.music;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
@@ -137,7 +137,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public SongDto saveSong(SongInputDto inputDto) {
-        // Fetch the User based on the artistName provided in the inputDto
+
         User user = userRepository.findByArtistName(inputDto.getArtistName())
                 .orElseThrow(() -> new RecordNotFoundException("User not found with artistName: " + inputDto.getArtistName()));
 
@@ -168,17 +168,5 @@ public class SongServiceImpl implements SongService {
         songRepository.deleteById(id);
     }
 
-//    @Override
-//    public SongCollectionDto addSongs(SongCollectionInputDto inputDto, SongDto dto) {
-//        return null;
-//    }
-//
-//    private Song convertToEntity(SongInputDto inputDto) throws IOException {
-//        // Convert the input DTO to a Song entity
-//        Song song = new Song();
-//        song.setSongTitle(inputDto.getSongTitle());
-//
-//        return song;
-//    }
 
 }

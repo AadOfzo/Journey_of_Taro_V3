@@ -1,6 +1,5 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.services.music;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.*;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
@@ -8,8 +7,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongCollectionRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
-import jakarta.validation.constraints.NotNull;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

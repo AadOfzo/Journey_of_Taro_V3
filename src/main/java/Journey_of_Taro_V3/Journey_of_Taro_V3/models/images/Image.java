@@ -27,7 +27,7 @@ public class Image {
     public Image() {
     }
 
-    public Image(String imageName, String imageAltName, CustomMultipartFile imageFile, String imageUrl) {
+    public Image(CustomMultipartFile imageFile, String imageUrl) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
         this.imageUrl = imageUrl;

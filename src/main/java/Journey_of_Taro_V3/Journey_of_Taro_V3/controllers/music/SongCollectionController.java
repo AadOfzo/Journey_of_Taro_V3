@@ -1,29 +1,17 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongCollectionService;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongCollectionService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import io.jsonwebtoken.io.IOException;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 //@RestController
 //@RequestMapping(value = "/songCollections")

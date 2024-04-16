@@ -5,7 +5,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.*;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongCollectionRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongCollectionServiceImpl;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongCollectionServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

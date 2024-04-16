@@ -1,19 +1,14 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import ch.qos.logback.core.net.SyslogOutputStream;
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @RunWith(SpringRunner.class)
 @WebMvcTest(ImageTest.class)
@@ -40,7 +35,7 @@ public class ImageTest {
         System.out.println("Image file created");
 
         // Creating a test image entity
-        Image image = new Image(imageName, imageAltName, imageFile, imageUrl);
+        Image image = new Image(imageFile, imageUrl);
 
         // Printing attributes of the image entity
         System.out.println("Image Name: " + image.getImageName());

@@ -1,4 +1,4 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.services.music;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;

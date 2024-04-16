@@ -2,7 +2,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.images.ImageController;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.JwtUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;

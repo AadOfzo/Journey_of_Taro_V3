@@ -2,9 +2,9 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,30 +12,37 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User {
-
+    // User data
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false, unique = true)
     private String username;
-
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String password;
-
-    @Column(nullable = true)
-    private Boolean enabled = true;
-
     @Column
     private String apikey;
 
+    // Personal fields:
+    @Column
+    private String firstName;
+    @Column
+    private String lastName;
     @Column
     private String email;
 
-    @Column(nullable = true)
-    private String artistName;
+    // User files:
+    @ManyToOne
+    @JsonIgnoreProperties(value = {"contents","contentType"} )
+    UserImage userImage;
 
+    @Column()
+    private String artistName;
+    @OneToMany(mappedBy = "artistName", cascade = CascadeType.ALL)
+    private List<Song> songs;
+
+    // Authority
     @OneToMany(
             targetEntity = Authority.class,
             mappedBy = "user",
@@ -43,12 +50,6 @@ public class User {
             orphanRemoval = true,
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
-
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    private List<Role> roles = new ArrayList<>();
-
-    @OneToMany(mappedBy = "artistName", cascade = CascadeType.ALL)
-    private List<Song> songs;
 
     public Long getId() {
         return id;
@@ -74,14 +75,6 @@ public class User {
         this.password = password;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public String getApikey() {
         return apikey;
     }
@@ -90,12 +83,36 @@ public class User {
         this.apikey = apikey;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setUserImage(UserImage userImage) {
+        this.userImage = userImage;
+    }
+
+    public UserImage getUserImage() {
+        return userImage;
     }
 
     public String getArtistName() {
@@ -125,4 +142,5 @@ public class User {
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
+
 }

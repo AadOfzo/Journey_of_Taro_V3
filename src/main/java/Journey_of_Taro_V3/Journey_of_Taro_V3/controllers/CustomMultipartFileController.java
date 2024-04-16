@@ -6,14 +6,11 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
-import jakarta.servlet.http.HttpServletRequest;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 
 @RestController
 public class CustomMultipartFileController {
@@ -71,7 +67,7 @@ public class CustomMultipartFileController {
                 ImageInputDto inputDto = new ImageInputDto();
                 inputDto.setImageFile(file);
                 inputDto.setImageName(originalFilename); // Assign original file name to imageName
-                inputDto.setImageAltName(originalFilename); // Assign original file name to imageAltName for now
+                inputDto.setImageAltName(originalFilename); // Assign original file name to imageAltName
                 ImageDto dto = imageService.addImage(inputDto);
                 return ResponseEntity.ok().body(dto);
 
@@ -121,37 +117,37 @@ public class CustomMultipartFileController {
         }
     }
 
-//    @PostMapping("/images")
-//    public ResponseEntity<ImageDto> addImage(
-//            @RequestParam("file") CustomMultipartFile file,
-//            @RequestParam(value = "imageTitle", required = false) String imageTitle,
-//            @RequestParam(value = "imageAltName", required = false) String imageAltName) {
-//        // Determine the file type
-//        String fileType = determineFileType(file.getContentType());
-//        if (!"Image".equals(fileType)) {
-//            throw new IllegalArgumentException("File type must be an image");
-//        }
-//
-//        // Set default image title if not provided
-//        if (imageTitle == null || imageTitle.isEmpty()) {
-//            imageTitle = file.getOriginalFilename();
-//        }
-//
-//        // Set default alt name if not provided
-//        if (imageAltName == null || imageAltName.isEmpty()) {
-//            imageAltName = imageTitle;
-//        }
-//
-//        // Prepare input DTO
-//        ImageInputDto inputDto = new ImageInputDto();
-//        inputDto.setImageFile(file);
-//        inputDto.setImageName(imageTitle);
-//        inputDto.setImageAltName(imageAltName);
-//
-//        // Add image
-//        ImageDto dto = imageService.addImage(inputDto);
-//        return ResponseEntity.created(null).body(dto);
-//    }
+    @PostMapping("/images")
+    public ResponseEntity<ImageDto> addImage(
+            @RequestParam("file") CustomMultipartFile file,
+            @RequestParam(value = "imageName", required = false) String imageName,
+            @RequestParam(value = "imageAltName", required = false) String imageAltName) {
+        // Determine the file type
+        String fileType = determineFileType(file.getContentType());
+        if (!"Image".equals(fileType)) {
+            throw new IllegalArgumentException("File type must be an image");
+        }
+
+        // Set default image title if not provided
+        if (imageName == null || imageName.isEmpty()) {
+            imageName = file.getOriginalFilename();
+        }
+
+        // Set default alt name if not provided
+        if (imageAltName == null || imageAltName.isEmpty()) {
+            imageAltName = imageName;
+        }
+
+        // Prepare input DTO
+        ImageInputDto inputDto = new ImageInputDto();
+        inputDto.setImageFile(file);
+        inputDto.setImageName(imageName);
+        inputDto.setImageAltName(imageAltName);
+
+        // Add image
+        ImageDto dto = imageService.addImage(inputDto);
+        return ResponseEntity.created(null).body(dto);
+    }
 
     // POST method for uploading songs
     @PostMapping("/songs")

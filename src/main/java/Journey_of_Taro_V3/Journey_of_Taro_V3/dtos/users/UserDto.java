@@ -1,19 +1,22 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
 
 import java.util.List;
-import java.util.Set;
 
 public class UserDto {
 
     public Long id;
     public String username;
     public String password;
-    public Boolean enabled;
+
     public String apikey;
+
+    public String firstName;
+    public String lastName;
     public String email;
+    public UserImage userImage;
+
     public String artistName;
     public List<String> roles;
 
@@ -33,9 +36,6 @@ public class UserDto {
         return password;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
 
     public String getApikey() {
         return apikey;
@@ -61,10 +61,6 @@ public class UserDto {
         this.password = password;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public void setApikey(String apikey) {
         this.apikey = apikey;
     }
@@ -81,5 +77,27 @@ public class UserDto {
         this.artistName = artistName;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public UserImage getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(UserImage userImage) {
+        this.userImage = userImage;
+    }
 }

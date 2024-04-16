@@ -1,7 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 

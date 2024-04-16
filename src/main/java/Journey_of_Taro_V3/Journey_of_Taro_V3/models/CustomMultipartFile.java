@@ -1,23 +1,24 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
 // code gebruikt van: https://www.baeldung.com/java-convert-byte-array-to-multipartfile
 public class CustomMultipartFile implements MultipartFile {
-    private final byte[] input;
     private final String name;
     private final String originalFilename;
     private final String contentType;
 
+    private final byte[] input;
+
+
     public CustomMultipartFile(String originalFilename, String contentType, byte[] inputArray) {
-        this.input = inputArray.clone();
         this.name = "file"; // Set default name
         this.originalFilename = originalFilename;
         this.contentType = contentType;
+
+        this.input = inputArray.clone();
     }
 
     @Override

@@ -1,17 +1,17 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.RandomStringGenerator;
 import jakarta.transaction.Transactional;
+import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
+    private final ImageServiceImpl imageService;
     private final SongRepository songRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -34,16 +36,14 @@ public class UserService {
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
 
 
-    public UserService(UserRepository userRepository,  ImageRepository imageRepository, SongRepository songRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
+        this.imageService = imageService;
         this.songRepository = songRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Optional<User> getUserByArtistName(String artistName) {
-        return userRepository.findByArtistName(artistName);
-    }
 
     public UserDto getUserByApiKey(String apikey) {
         User user = userRepository.findByApikey(apikey);
@@ -53,7 +53,6 @@ public class UserService {
             throw new UsernameNotFoundException("User not found with apikey: " + apikey);
         }
     }
-
 
     public List<UserDto> getUsers() {
         List<UserDto> collection = new ArrayList<>();
@@ -88,21 +87,78 @@ public class UserService {
         return newUser.getUsername();
     }
 
-    // todo Connect User artistName & Song artistName
-//    public void updateArtistNameIfMatch(UserDto userDto, SongDto songDto) {
-//        // Get the artist name from the UserDto object
-//        String userArtistName = userDto.getArtistName();
-//
-//        // Get the artist name from the SongDto object
-//        String songArtistName = songDto.getArtistName();
-//
-//        // Check if the artist names match
-//        if (userArtistName.equals(songArtistName)) {
-//            // If they match, update the artist name for both UserDto and SongDto objects
-//            userDto.setArtistName(songArtistName);
-//            songDto.setArtistName(songArtistName);
-//        }
-//    }
+    public UserDto getArtistName(String artistName) {
+        // Find the user by artistName
+        User user = userRepository.findByArtistName(artistName)
+                .orElseThrow(() -> new RecordNotFoundException("User not found for artistName: " + artistName));
+
+        // Convert User entity to UserDto (if needed)
+        UserDto userDto = convertUserToDto(user);
+
+        return userDto;
+    }
+// todo user gegevens updaten 12/04/24.
+    public UserDto convertUserToDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(user.getPassword());
+        userDto.setApikey(user.getApikey());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+
+        userDto.setUserImage(user.getUserImage());
+        userDto.setArtistName(user.getArtistName());
+
+        // Bepaal user's roles gebaseerd op authorities
+        List<String> roles = user.getAuthorities().stream()
+                .map(authority -> authority.getAuthority().substring(5)) // verwijder "ROLE_" prefix
+                .collect(Collectors.toList());
+        userDto.setRoles(roles);
+
+        return userDto;
+    }
+
+    public static UserDto fromUser(User user) {
+
+        var dto = new UserDto();
+
+        dto.id = user.getId();
+        dto.username = user.getUsername();
+        dto.password = user.getPassword();
+        dto.apikey = user.getApikey();
+        dto.firstName = user.getFirstName();
+        dto.lastName = user.getLastName();
+        dto.email = user.getEmail();
+        dto.userImage = user.getUserImage();
+        dto.artistName = user.getArtistName();
+
+        ArrayList authorities = new ArrayList<>();
+        for (Authority authority : user.getAuthorities()) {
+            authorities.add(authority.getAuthority());
+
+        }
+        dto.roles = authorities;
+        return dto;
+    }
+
+    public User toUser(UserDto userDto) {
+
+        var user = new User();
+
+        user.setUsername(userDto.getUsername());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setPassword(passwordEncoder.encode(userDto.password));
+        user.setApikey(userDto.getApikey());
+        user.setEmail(userDto.getEmail());
+        user.setArtistName(userDto.getArtistName());
+
+        user.setUserImage(userDto.getUserImage());
+
+        return user;
+    }
 
     public void deleteUser(String username) {
         userRepository.deleteById(username);
@@ -135,41 +191,6 @@ public class UserService {
             userRepository.save(user);
         }
 
-    public static UserDto fromUser(User user) {
-
-        var dto = new UserDto();
-
-        dto.id = user.getId();
-        dto.username = user.getUsername();
-        dto.password = user.getPassword();
-        dto.enabled = user.isEnabled();
-        dto.apikey = user.getApikey();
-        dto.email = user.getEmail();
-        dto.artistName = user.getArtistName();
-
-        ArrayList authorities = new ArrayList<>();
-        for (Authority authority : user.getAuthorities()) {
-            authorities.add(authority.getAuthority());
-
-        }
-        dto.roles = authorities;
-        return dto;
-    }
-
-    public User toUser(UserDto userDto) {
-
-        var user = new User();
-
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.password));
-        user.setEnabled(userDto.getEnabled());
-        user.setApikey(userDto.getApikey());
-        user.setEmail(userDto.getEmail());
-        user.setArtistName(userDto.getArtistName());
-
-        return user;
-    }
-
     @Transactional
     public void grantAdminPrivilege(String username) {
         User user = userRepository.findByUsername(username)
@@ -184,5 +205,31 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public Resource getImageFromUser(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()){
+            throw new RecordNotFoundException("User " + id + " not found. ");
+        }
+        UserImage userImage = optionalUser.get().getUserImage();
+        if (userImage == null){
+            throw new RecordNotFoundException("User " + id + " has no Image");
+        }
+        return imageService.downloadImageFile(userImage.getFileName());
+    }
 
+    @Transactional
+    public User addImageToUser(String apikey, String imageName) {
+        Optional<User> optionalUser = userRepository.findById(apikey);
+        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(imageName);
+        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
+            UserImage userImage = optionalUserImage.get();
+            User user = optionalUser.get();
+            user.setUserImage(userImage);
+            return userRepository.save(user);
+        } else {
+            throw new RecordNotFoundException("User with apikey " + apikey + " not found");
+        }
+
+    }
 }

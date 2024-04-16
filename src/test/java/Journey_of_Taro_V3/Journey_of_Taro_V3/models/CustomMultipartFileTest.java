@@ -1,8 +1,8 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.CustomMultipartFileController;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.images.ImageService;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.music.SongService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
