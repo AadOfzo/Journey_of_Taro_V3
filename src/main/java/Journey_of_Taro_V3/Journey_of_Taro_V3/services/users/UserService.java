@@ -64,7 +64,7 @@ public class UserService {
     }
 
     public UserDto getUser(String username) {
-        UserDto dto = new UserDto();
+        UserDto dto;
         Optional<User> user = userRepository.findById(username);
         if (user.isPresent()) {
             dto = fromUser(user.get());
@@ -97,20 +97,19 @@ public class UserService {
 
         return userDto;
     }
-// todo user gegevens updaten 12/04/24.
     public UserDto convertUserToDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setPassword(user.getPassword());
         userDto.setApikey(user.getApikey());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
+        userDto.setFirstname(user.getFirstName());
+        userDto.setLastname(user.getLastName());
         userDto.setDateOfBirth(user.getDateOfBirth());
         userDto.setEmail(user.getEmail());
-
-        userDto.setUserImage(user.getUserImage());
-        userDto.setArtistName(user.getArtistName());
+        userDto.setCountry(user.getCountry());
+        userDto.setUserimage(user.getUserImage());
+        userDto.setArtistname(user.getArtistName());
 
         // Bepaal user's roles gebaseerd op authorities
         List<String> roles = user.getAuthorities().stream()
@@ -129,12 +128,13 @@ public class UserService {
         dto.username = user.getUsername();
         dto.password = user.getPassword();
         dto.apikey = user.getApikey();
-        dto.firstName = user.getFirstName();
-        dto.lastName = user.getLastName();
+        dto.firstname = user.getFirstName();
+        dto.lastname = user.getLastName();
         dto.dateOfBirth = user.getDateOfBirth();
         dto.email = user.getEmail();
-        dto.userImage = user.getUserImage();
-        dto.artistName = user.getArtistName();
+        dto.country = user.getCountry();
+        dto.userimage = user.getUserImage();
+        dto.artistname = user.getArtistName();
 
         ArrayList authorities = new ArrayList<>();
         for (Authority authority : user.getAuthorities()) {
@@ -152,13 +152,14 @@ public class UserService {
         user.setUsername(userDto.getUsername());
         user.setPassword(passwordEncoder.encode(userDto.password));
         user.setApikey(userDto.getApikey());
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
+        user.setFirstName(userDto.getFirstname());
+        user.setLastName(userDto.getLastname());
+        user.setCountry(userDto.getCountry());
         user.setDateOfBirth(userDto.getDateOfBirth());
         user.setEmail(userDto.getEmail());
-        user.setArtistName(userDto.getArtistName());
+        user.setArtistName(userDto.getArtistname());
 
-        user.setUserImage(userDto.getUserImage());
+        user.setUserImage(userDto.getUserimage());
 
         return user;
     }

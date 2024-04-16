@@ -12,13 +12,14 @@ public class UserDto {
     public String password;
     public String apikey;
 
-    public String firstName;
-    public String lastName;
+    public String firstname;
+    public String lastname;
     public Date dateOfBirth;
+    public String country;
     public String email;
-    public UserImage userImage;
+    public UserImage userimage;
 
-    public String artistName;
+    public String artistname;
     public List<String> roles;
 
     public Long getId() {
@@ -46,8 +47,8 @@ public class UserDto {
         return email;
     }
 
-    public String getArtistName() {
-        return artistName;
+    public String getArtistname() {
+        return artistname;
     }
 
     public List<String> getRoles() {
@@ -74,34 +75,34 @@ public class UserDto {
         this.roles = roles;
     }
 
-    public void setArtistName(String artistName) {
-        this.artistName = artistName;
+    public void setArtistname(String artistname) {
+        this.artistname = artistname;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
 
 
-    public UserImage getUserImage() {
-        return userImage;
+    public UserImage getUserimage() {
+        return userimage;
     }
 
-    public void setUserImage(UserImage userImage) {
-        this.userImage = userImage;
+    public void setUserimage(UserImage userimage) {
+        this.userimage = userimage;
     }
 
     public Date getDateOfBirth() {
@@ -110,5 +111,13 @@ public class UserDto {
 
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

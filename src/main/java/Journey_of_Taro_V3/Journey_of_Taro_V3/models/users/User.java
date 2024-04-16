@@ -35,6 +35,8 @@ public class User {
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
     @Column
+    private String country;
+    @Column
     private String email;
 
     // User files:
@@ -111,6 +113,14 @@ public class User {
 
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getEmail() {
