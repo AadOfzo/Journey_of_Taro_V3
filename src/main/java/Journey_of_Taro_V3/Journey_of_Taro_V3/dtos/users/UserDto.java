@@ -14,7 +14,7 @@ public class UserDto {
 
     public String firstname;
     public String lastname;
-    public Date dateOfBirth;
+    public Date dateofbirth;
     public String country;
     public String email;
     public UserImage userimage;
@@ -105,12 +105,12 @@ public class UserDto {
         this.userimage = userimage;
     }
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
+    public Date getDateofbirth() {
+        return dateofbirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setDateofbirth(Date dateofbirth) {
+        this.dateofbirth = dateofbirth;
     }
 
     public String getCountry() {

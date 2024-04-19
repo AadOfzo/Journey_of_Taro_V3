@@ -56,7 +56,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 //                .requestMatchers(HttpMethod.GET,"/users").authenticated()
                 .requestMatchers(HttpMethod.GET,"/users").permitAll()
-                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
+//                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
 
                 // RequestMatchers voor FILES
@@ -86,7 +86,8 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.DELETE, "/songCollectionTypes/**").hasRole("ADMIN").requestMatchers(HttpMethod.POST,"/songCollectionTypes").permitAll()
                 // Je mag meerdere paths tegelijk definieren
 //                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/fileUpload", "/songs", "/images").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/fileUpload", "/songs", "/images").permitAll()
+//                .requestMatchers("/fileUpload", "/songs", "/images").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticate").permitAll()
                 .requestMatchers("/authenticated").authenticated()
                 .anyRequest().denyAll()

@@ -16,10 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -105,7 +104,7 @@ public class UserService {
         userDto.setApikey(user.getApikey());
         userDto.setFirstname(user.getFirstName());
         userDto.setLastname(user.getLastName());
-        userDto.setDateOfBirth(user.getDateOfBirth());
+        userDto.setDateofbirth(user.getDateOfBirth());
         userDto.setEmail(user.getEmail());
         userDto.setCountry(user.getCountry());
         userDto.setUserimage(user.getUserImage());
@@ -130,7 +129,7 @@ public class UserService {
         dto.apikey = user.getApikey();
         dto.firstname = user.getFirstName();
         dto.lastname = user.getLastName();
-        dto.dateOfBirth = user.getDateOfBirth();
+        dto.dateofbirth = user.getDateOfBirth();
         dto.email = user.getEmail();
         dto.country = user.getCountry();
         dto.userimage = user.getUserImage();
@@ -155,7 +154,7 @@ public class UserService {
         user.setFirstName(userDto.getFirstname());
         user.setLastName(userDto.getLastname());
         user.setCountry(userDto.getCountry());
-        user.setDateOfBirth(userDto.getDateOfBirth());
+        user.setDateOfBirth(userDto.getDateofbirth());
         user.setEmail(userDto.getEmail());
         user.setArtistName(userDto.getArtistname());
 
@@ -208,6 +207,7 @@ public class UserService {
         // Save the updated user
         userRepository.save(user);
     }
+
 
     @Transactional
     public Resource getImageFromUser(Long id) {

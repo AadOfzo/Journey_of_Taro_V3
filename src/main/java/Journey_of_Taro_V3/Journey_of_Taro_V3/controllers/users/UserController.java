@@ -142,6 +142,13 @@ public class UserController {
         }
     }
 
+    // Frontend Component UserList
+    @PutMapping("/{username}/grant-admin")
+    public ResponseEntity<Object> grantAdminPrivilege(@PathVariable("username") String username) {
+        userService.grantAdminPrivilege(username);
+        return ResponseEntity.ok().build();
+    }
+
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
