@@ -2,6 +2,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
@@ -236,4 +237,36 @@ public class UserService {
         }
 
     }
+//// todo: filename uit database returnen, hoeft niet met DTO.
+////    public Image getImageWithData(String fileName) {
+////    }
+//
+//    public Image getImageWithData(String fileName) {
+//        // Assuming you have a method in your UserService to retrieve image data from the database
+//        byte[] imageData = getImageDataFromDatabase(fileName);
+//
+//        // Assuming you have a method in your UserService to retrieve image name from the database
+//        String imageName = getImageNameFromDatabase(fileName);
+//
+//        // Create an Image object with the retrieved data and name
+//        Image image = new Image();
+//        image.setImageData(imageData);
+//        image.setImageName(imageName);
+//
+//        return image;
+//    }
+//
+//    // Assuming these are placeholder methods to retrieve data from your database
+//    private byte[] getImageDataFromDatabase(String fileName) {
+//        // Implement logic to retrieve image data from your database based on fileName
+//        // Replace this with your actual logic
+//        return new byte[]{};
+//    }
+//
+//    private String getImageNameFromDatabase(String fileName) {
+//        // Implement logic to retrieve image name from your database based on fileName
+//        // Replace this with your actual logic
+//        return "example_image.png";
+//    }
+
 }

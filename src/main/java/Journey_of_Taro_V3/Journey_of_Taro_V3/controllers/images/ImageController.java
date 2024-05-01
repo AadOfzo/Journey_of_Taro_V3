@@ -4,16 +4,16 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,10 +28,12 @@ public class ImageController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
 
+    private final UserService userService;
     private final ImageService imageService;
 
     @Autowired
-    public ImageController(ImageService imageService) {
+    public ImageController(UserService userService, ImageService imageService) {
+        this.userService = userService;
         this.imageService = imageService;
     }
 
@@ -77,7 +79,7 @@ public class ImageController {
         }
     }
 
-    // Method to store file and return its URL
+    // Method to store file and return URL
     private String storeFileAndGetUrl(MultipartFile file) throws java.io.IOException {
         // Implement file storage logic here
         // Store the file to a location accessible via URL
@@ -87,15 +89,41 @@ public class ImageController {
         return fileUrl;
     }
 
+    // todo: GET ImageFIle (student diploma)
+    @GetMapping("/{fileName}/image")
+    public ResponseEntity<byte[]> getImageFile(@PathVariable("fileName") String fileName){
+
+        Image image = imageService.getImageWithData(fileName);
+
+        MediaType mediaType;
+
+        try {
+//            mediaType = MediaType.parseMediaType(image.im());
+            mediaType = MediaType.IMAGE_PNG;
+        } catch (InvalidMediaTypeException ignore){
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+
+
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + image.getImageName())
+                .body(image.getImageData());
+    }
+
+    // Delete Mapping
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteImage(@PathVariable Long id) {
         imageService.deleteImage(id);
         return ResponseEntity.noContent().build();
     }
 
+    // Test
     @GetMapping("/images/test")
     public ResponseEntity<String> testImageEndpoint() {
         return ResponseEntity.ok("Test Image Endpoint successful");
     }
 
-}
+    }

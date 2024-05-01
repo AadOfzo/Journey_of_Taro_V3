@@ -5,8 +5,10 @@ public class ImageDto {
         private String imageName;
         private String imageAltName;
         private String imageUrl;
+        private byte[] imageData;
 
-        public ImageDto() {
+
+    public ImageDto() {
         }
 
         public ImageDto(Long id, String imageName, String imageAltName, String imageUrl) {
@@ -48,4 +50,11 @@ public class ImageDto {
         this.imageUrl = imageUrl;
     }
 
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
 }

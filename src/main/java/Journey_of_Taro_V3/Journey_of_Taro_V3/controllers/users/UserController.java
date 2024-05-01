@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +38,7 @@ public class UserController {
         this.request = request;
     }
 
-//    @GetMapping(value = "")
-//    public ResponseEntity<List<UserDto>> getUsers() {
-//
-//        List<UserDto> userDtos = userService.getUsers();
-//
-//        return ResponseEntity.ok().body(userDtos);
-//    }
-
+    // Get Mapping
     @GetMapping
     @Transactional
     public ResponseEntity<List<UserDto>> getUsers() {
@@ -74,26 +69,66 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getRoles(username));
     }
 
-    @GetMapping("/{id}/image")
-    public ResponseEntity<Resource> getUserImage(@PathVariable("id") Long id, HttpServletRequest request){
-        Resource resource = userService.getImageFromUser(id);
+    @GetMapping("/{id}/images")
+    public ResponseEntity<byte[]> getUserImage(@PathVariable("id") Long id) {
 
-        String mimeType;
+        Image image = (Image) userService.getImageFromUser(id);
 
-        try{
-            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException e){
+        MediaType mediaType;
 
-            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        try {
+            mediaType = MediaType.parseMediaType(image.getImageUrl());
+        } catch (InvalidMediaTypeException ignore){
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
         }
 
         return ResponseEntity
                 .ok()
-                .contentType(MediaType.parseMediaType(mimeType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
-                .body(resource);
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename" + image.getImageName())
+                .body(image.getImageData());
     }
 
+// todo: Get UserImage
+
+    //    @GetMapping("/{id}/images")
+//    public ResponseEntity<Resource> getUserImage(@PathVariable("id") Long id, HttpServletRequest request){
+//        Resource resource = userService.getImageFromUser(id);
+//
+//        String mimeType;
+//
+//        try{
+//            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+//        } catch (IOException e){
+//
+//            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+//        }
+//
+//        return ResponseEntity
+//                .ok()
+//                .contentType(MediaType.parseMediaType(mimeType))
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
+//                .body(resource);
+//    }
+
+
+    // PUT mapping
+    @PutMapping(value = "/{username}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
+
+        userService.updateUser(username, dto);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    // Frontend Component UserList
+    @PutMapping("/{username}/grant-admin")
+    public ResponseEntity<Object> grantAdminPrivilege(@PathVariable("username") String username) {
+        userService.grantAdminPrivilege(username);
+        return ResponseEntity.ok().build();
+    }
+
+    // POST Mapping
     @PostMapping(value = "")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
 
@@ -104,30 +139,6 @@ public class UserController {
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).build();
-    }
-
-    @PostMapping("/{id}/images")
-    public ResponseEntity<User> addImageToUser(@PathVariable("id") String apikey,
-                                               @RequestBody CustomMultipartFile imageFile)
-            throws IOException {
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/users/")
-                .path(Objects.requireNonNull(apikey))
-                .path("*/image")
-                .toUriString();
-        String imageName = imageFile.getOriginalFilename();
-        User userDto = userService.addImageToUser(imageName, apikey);
-
-        return ResponseEntity.created(URI.create(url)).body(userDto);
-
-    }
-
-    @PutMapping(value = "/{username}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
-
-        userService.updateUser(username, dto);
-
-        return ResponseEntity.noContent().build();
     }
 
     @PostMapping(value = "/{username}/authorities")
@@ -142,11 +153,21 @@ public class UserController {
         }
     }
 
-    // Frontend Component UserList
-    @PutMapping("/{username}/grant-admin")
-    public ResponseEntity<Object> grantAdminPrivilege(@PathVariable("username") String username) {
-        userService.grantAdminPrivilege(username);
-        return ResponseEntity.ok().build();
+    // todo: POST add image to user
+    @PostMapping("/{id}/images")
+    public ResponseEntity<User> addImageToUser(@PathVariable("id") String apikey,
+                                               @RequestBody CustomMultipartFile imageFile)
+            throws IOException {
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/")
+                .path(Objects.requireNonNull(apikey))
+                .path("*/image")
+                .toUriString();
+        String imageName = imageFile.getOriginalFilename();
+        User userDto = userService.addImageToUser(imageName, apikey);
+
+        return ResponseEntity.created(URI.create(url)).body(userDto);
+
     }
 
 

@@ -117,6 +117,7 @@ public class CustomMultipartFileController {
         }
     }
 
+    // todo images en songs worden niet opgeslagen in de inputDto's en service classes.
     @PostMapping("/images")
     public ResponseEntity<ImageDto> addImage(
             @RequestParam("file") CustomMultipartFile file,

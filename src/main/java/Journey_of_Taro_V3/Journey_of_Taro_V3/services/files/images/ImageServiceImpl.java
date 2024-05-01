@@ -5,27 +5,22 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -98,6 +93,7 @@ public class ImageServiceImpl implements ImageService {
         dto.setImageName(image.getImageName());
         dto.setImageAltName(image.getImageAltName());
         dto.setImageUrl(image.getImageUrl());
+        dto.setImageData(image.getImageData());
         // Set other properties as needed
         return dto;
     }
@@ -119,26 +115,6 @@ public class ImageServiceImpl implements ImageService {
     }
 
     // todo Image opslag en download: Misschien is de saveImage methode ook te gebruiken
-    // Image : public Image(String imageName, String imageAltName, CustomMultipartFile imageFile, String imageUrl)
-    // ImageDto : public ImageDto(Long id, String imageName, String imageAltName, String imageUrl)
-    public Image storeImageFile(CustomMultipartFile imageFile, String imageUrl) throws IOException {
-
-
-        Image imageDto = new Image(imageFile, imageUrl);
-
-        return imageRepository.save(imageDto);
-    }
-
-//    public Image storeFile(String imageName, CustomMultipartFile imageFile) throws IOException{
-//
-//        String fileName = StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename()));
-//        Path filePath = Paths.get(fileStoragePath + "\\" + imageName);
-//
-//        Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-//
-//        imageRepository.save(new UserImage(imageName));
-//        return imageName;
-//    }
 
     public Resource downloadImageFile(String imageName) {
 
@@ -157,6 +133,35 @@ public class ImageServiceImpl implements ImageService {
         } else {
             throw new RuntimeException("The file doesn't exist or not readable.");
         }
+    }
+
+    // todo: filename uit database returnen, hoeft niet met DTO.
+//    public Image getImageWithData(String fileName) {
+//    }
+
+    @Override
+    public Image getImageWithData(String imageName) {
+
+        Image image = imageRepository.findByImageName(imageName);
+
+        if (image == null) {
+            throw new RecordNotFoundException("Image not found with filename: " + imageName);
+        }
+
+        return image;
+    }
+
+    // Assuming these are placeholder methods to retrieve data from your database
+    private byte[] getImageDataFromDatabase(String fileName) {
+        // Implement logic to retrieve image data from your database based on fileName
+        // Replace this with your actual logic
+        return new byte[]{};
+    }
+
+    private String getImageNameFromDatabase(String fileName) {
+        // Implement logic to retrieve image name from your database based on fileName
+        // Replace this with your actual logic
+        return "example_image.png";
     }
 
 

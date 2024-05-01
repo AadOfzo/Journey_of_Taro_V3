@@ -16,7 +16,7 @@ public class Image {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
-
+    @Column (name = "imagename")
     private String imageName;
     private String imageAltName;
     private String fileName;
