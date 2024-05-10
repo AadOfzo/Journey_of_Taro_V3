@@ -1,10 +1,11 @@
+// code gebruikt van: https://www.baeldung.com/java-convert-byte-array-to-multipartfile
+
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
-// code gebruikt van: https://www.baeldung.com/java-convert-byte-array-to-multipartfile
 public class CustomMultipartFile implements MultipartFile {
     private final String name;
     private final String originalFilename;

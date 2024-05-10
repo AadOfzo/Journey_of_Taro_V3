@@ -94,18 +94,6 @@ public class CustomMultipartFileController {
         }
     }
 
-//
-//    // Method to determine file type and set URL accordingly
-//    public String determineFileType(String contentType) {
-//        if (contentType != null && contentType.startsWith("image")) {
-//            return environment.getProperty("image.url"); // Retrieve image URL from properties
-//        } else if (contentType != null && contentType.startsWith("audio")) {
-//            return environment.getProperty("song.url"); // Retrieve song URL from properties
-//        } else {
-//            return null;
-//        }
-//    }
-
 //     Method voor content type:
     public String determineFileType(String contentType) {
         if (contentType != null && contentType.startsWith("image")) {

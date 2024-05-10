@@ -6,8 +6,10 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.List;
 @RequestMapping(value = "/songs")
 public class SongController {
     private final SongService songService;
+
+    public Environment environment;
 
     @Autowired
     public SongController(SongService songService, UserService userService) {
@@ -39,14 +43,23 @@ public class SongController {
         } catch (RecordNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
+    }    // Method to store file and return URL
+    private String storeFileAndGetUrl(MultipartFile file) throws java.io.IOException {
+
+        String fileName = file.getOriginalFilename();
+        String fileUrl = environment.getProperty("base.url") + "/files/" + fileName;
+
+        return fileUrl;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SongDto> addSong(
-            @RequestParam("artistName") String artistName,
             @RequestParam("file") MultipartFile file,
-            @RequestPart("songTitle") String songTitle) {
+            @RequestParam("artistName") String artistName,
+            @RequestParam("songTitle") String songTitle,
+            HttpServletRequest request) {
         try {
+            String songUrl = storeFileAndGetUrl(file);
             // Create a SongInputDto object with the provided data
             SongInputDto inputDto = new SongInputDto();
             inputDto.setSongFile(file);

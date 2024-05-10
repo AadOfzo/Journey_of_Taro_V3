@@ -57,7 +57,7 @@ public class ImageController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addImage(
             @RequestParam("file") CustomMultipartFile file,
-            @RequestParam("imageTitle") String imageName,
+            @RequestParam("imageName") String imageName,
             @RequestParam("imageAltName") String imageAltName,
             HttpServletRequest request) {
         try {
@@ -70,6 +70,7 @@ public class ImageController {
             inputDto.setImageAltName(imageAltName);
             inputDto.setImageUrl(imageUrl); // Set the imageUrl
 
+
             // Add image
             ImageDto dto = imageService.addImage(inputDto);
             return ResponseEntity.created(new URI(dto.getImageUrl())).body(dto.getImageUrl());
@@ -81,30 +82,27 @@ public class ImageController {
 
     // Method to store file and return URL
     private String storeFileAndGetUrl(MultipartFile file) throws java.io.IOException {
-        // Implement file storage logic here
-        // Store the file to a location accessible via URL
+
         String fileName = file.getOriginalFilename();
         String fileUrl = environment.getProperty("base.url") + "/files/" + fileName;
-        // Save the file and return its URL
+
         return fileUrl;
     }
 
-    // todo: GET ImageFIle (student diploma)
-    @GetMapping("/{fileName}/image")
-    public ResponseEntity<byte[]> getImageFile(@PathVariable("fileName") String fileName){
+    // todo: GET ImageFIle (geeft bytedata door, maar kan niet lezen)
+    @GetMapping("/image/{imageName}")
+    public ResponseEntity<byte[]> getImageFile(@PathVariable("imageName") String imageName){
 
-        Image image = imageService.getImageWithData(fileName);
+        Image image = imageService.getImageWithData(imageName);
 
         MediaType mediaType;
 
         try {
 //            mediaType = MediaType.parseMediaType(image.im());
-            mediaType = MediaType.IMAGE_PNG;
+            mediaType = MediaType.IMAGE_JPEG;
         } catch (InvalidMediaTypeException ignore){
             mediaType = MediaType.APPLICATION_OCTET_STREAM;
         }
-
-
 
         return ResponseEntity
                 .ok()

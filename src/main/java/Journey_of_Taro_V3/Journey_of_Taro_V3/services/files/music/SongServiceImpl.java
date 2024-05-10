@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
+//import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.ArtistNameNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -58,6 +59,36 @@ public class SongServiceImpl implements SongService {
         List<Song> songs = songRepository.findAll();
         return transferSongListToDtoList(songs);
     }
+
+//    @Override
+//    public SongDto addSong(SongInputDto inputDto) {
+//        // Fetch the logged-in user
+//        User user = userRepository.getLoggedInUser(); // You need to implement a method to fetch the logged-in user
+//
+//        // Check if the logged-in user has an artistName
+//        if (user.getArtistName() != null && !user.getArtistName().isEmpty()) {
+//            // The user has an artistName, proceed with adding the song
+//            logger.info("User found with artistName: {}", user.getArtistName());
+//
+//            // Transfer inputDto to Song entity
+//            Song song = transferToSong(inputDto);
+//
+//            // Set the fetched User as the owner of the Song
+//            song.setArtistName(user);
+//
+//            // Save the Song entity and assign the returned value
+//            song = songRepository.save(song);
+//
+//            // Transfer the saved Song entity to SongDto and return
+//            return transferToSongDto(song);
+//        } else {
+//            // The user does not have an artistName, provide a function to add it
+//            // You can return a custom response or create a DTO with additional information
+//            // For demonstration purposes, let's throw an exception with a message suggesting to add an artistName
+//            logger.error("User does not have an artistName");
+//            throw new ArtistNameNotFoundException("Please add an artist name before uploading a song");
+//        }
+//    }
 
     @Override
     public SongDto addSong(SongInputDto inputDto) {

@@ -18,15 +18,15 @@ public class Song {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private byte[] songData; // store byte[] data
+    private byte[] songData;
 
     @Transient
-    private CustomMultipartFile songFile; // transient, not persisted in the database
+    private CustomMultipartFile songFile;
 
     private String songTitle;
 
     @ManyToOne
-    @JoinColumn(name = "artist_username", referencedColumnName = "username")
+//    @JoinColumn(name = "artist_username", referencedColumnName = "username")
     private User artistName;
 
     private String fileName;

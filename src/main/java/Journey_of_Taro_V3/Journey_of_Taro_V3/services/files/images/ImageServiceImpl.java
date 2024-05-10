@@ -3,14 +3,13 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -29,8 +28,8 @@ public class ImageServiceImpl implements ImageService {
     private final String fileStorageLocation;
     private final ImageRepository imageRepository;
 
-
-    public ImageServiceImpl(@Value("${my.upload.location}") String fileStorageLocation, ImageRepository imageRepository) throws IOException{
+    @Autowired
+    public ImageServiceImpl(@Value("uploads/images") String fileStorageLocation, ImageRepository imageRepository) throws IOException{
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.imageRepository = imageRepository;
@@ -136,33 +135,17 @@ public class ImageServiceImpl implements ImageService {
     }
 
     // todo: filename uit database returnen, hoeft niet met DTO.
-//    public Image getImageWithData(String fileName) {
-//    }
-
-    @Override
     public Image getImageWithData(String imageName) {
+        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(imageName);
 
-        Image image = imageRepository.findByImageName(imageName);
-
-        if (image == null) {
-            throw new RecordNotFoundException("Image not found with filename: " + imageName);
+        try {
+            byte[] imageData = Files.readAllBytes(path);
+            Image image = new Image();
+            image.setImageData(imageData);
+            return image;
+        } catch (IOException e) {
+            throw new RuntimeException("Issue reading the file", e);
         }
-
-        return image;
     }
-
-    // Assuming these are placeholder methods to retrieve data from your database
-    private byte[] getImageDataFromDatabase(String fileName) {
-        // Implement logic to retrieve image data from your database based on fileName
-        // Replace this with your actual logic
-        return new byte[]{};
-    }
-
-    private String getImageNameFromDatabase(String fileName) {
-        // Implement logic to retrieve image name from your database based on fileName
-        // Replace this with your actual logic
-        return "example_image.png";
-    }
-
 
 }
