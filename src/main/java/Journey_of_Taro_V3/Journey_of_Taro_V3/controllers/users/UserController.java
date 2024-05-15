@@ -2,6 +2,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -9,7 +10,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
@@ -89,29 +89,6 @@ public class UserController {
                 .body(image.getImageData());
     }
 
-// todo: Get UserImage
-
-    //    @GetMapping("/{id}/images")
-//    public ResponseEntity<Resource> getUserImage(@PathVariable("id") Long id, HttpServletRequest request){
-//        Resource resource = userService.getImageFromUser(id);
-//
-//        String mimeType;
-//
-//        try{
-//            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-//        } catch (IOException e){
-//
-//            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-//        }
-//
-//        return ResponseEntity
-//                .ok()
-//                .contentType(MediaType.parseMediaType(mimeType))
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
-//                .body(resource);
-//    }
-
-
     // PUT mapping
     @PutMapping(value = "/{username}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
@@ -126,6 +103,17 @@ public class UserController {
     public ResponseEntity<Object> grantAdminPrivilege(@PathVariable("username") String username) {
         userService.grantAdminPrivilege(username);
         return ResponseEntity.ok().build();
+    }
+
+    // PUT mapping to update artistName for a user
+    @PutMapping("/{id}/artistName")
+    public ResponseEntity<Object> updateArtistName(@PathVariable("id") Long userId, @RequestParam("artistName") String artistName) {
+        try {
+            userService.updateArtistName(userId, artistName);
+            return ResponseEntity.noContent().build();
+        } catch (RecordNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // POST Mapping

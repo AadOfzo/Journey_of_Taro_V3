@@ -237,6 +237,18 @@ public class UserService {
         }
 
     }
+
+    public void updateArtistName(Long userId, String artistName) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setArtistName(artistName);
+            userRepository.save(user);
+        } else {
+            throw new RecordNotFoundException("User not found with id: " + userId);
+        }
+    }
+
 //// todo: filename uit database returnen, hoeft niet met DTO.
 ////    public Image getImageWithData(String fileName) {
 ////    }

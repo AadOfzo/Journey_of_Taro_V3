@@ -124,23 +124,13 @@ public class SongServiceImpl implements SongService {
         dto.setId(song.getId());
         dto.setSongTitle(song.getSongTitle());
 
-//        // Check if the artistName is not null before accessing its username
-//        if (song.getArtistName() != null) {
-//            dto.setArtistName(song.getArtistName().getUsername());
-//        }
+        // Check if the artistName is not null before accessing its username
+        if (song.getArtistName() != null) {
+            dto.setArtistName(song.getArtistName().getUsername());
+        }
 
         return dto;
     }
-
-
-//    SongDto transferToSongDto(Song song) {
-//        SongDto dto = new SongDto();
-//
-//        dto.setId(song.getId());
-//        dto.setSongTitle(song.getSongTitle());
-//
-//        return dto;
-//    }
 
     public List<SongDto> transferSongListToDtoList(List<Song> songs) {
         List<SongDto> songDtoList = new ArrayList<>();

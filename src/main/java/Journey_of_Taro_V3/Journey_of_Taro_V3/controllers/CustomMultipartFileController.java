@@ -6,19 +6,23 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 
 
 @RestController
@@ -27,11 +31,14 @@ public class CustomMultipartFileController {
     private static final Logger logger = LoggerFactory.getLogger(CustomMultipartFileController.class);
     private final ImageService imageService;
     private final SongService songService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CustomMultipartFileController(ImageService imageService, SongService songService) {
+    public CustomMultipartFileController(ImageService imageService, SongService songService,
+                                         UserRepository userRepository) {
         this.imageService = imageService;
         this.songService = songService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping(value = "/fileUpload",
@@ -94,7 +101,7 @@ public class CustomMultipartFileController {
         }
     }
 
-//     Method voor content type:
+    //     Method voor content type:
     public String determineFileType(String contentType) {
         if (contentType != null && contentType.startsWith("image")) {
             return "Image";
@@ -111,31 +118,43 @@ public class CustomMultipartFileController {
             @RequestParam("file") CustomMultipartFile file,
             @RequestParam(value = "imageName", required = false) String imageName,
             @RequestParam(value = "imageAltName", required = false) String imageAltName) {
-        // Determine the file type
-        String fileType = determineFileType(file.getContentType());
-        if (!"Image".equals(fileType)) {
-            throw new IllegalArgumentException("File type must be an image");
+        try {
+            // Determine the file type
+            String fileType = determineFileType(file.getContentType());
+            if (!"Image".equals(fileType)) {
+                throw new IllegalArgumentException("File type must be an image");
+            }
+
+            // Set default image title if not provided
+            if (imageName == null || imageName.isEmpty()) {
+                imageName = file.getOriginalFilename();
+            }
+
+            // Set default alt name if not provided
+            if (imageAltName == null || imageAltName.isEmpty()) {
+                imageAltName = imageName;
+            }
+
+            // Prepare input DTO
+            ImageInputDto inputDto = new ImageInputDto();
+            inputDto.setImageFile(file);
+            inputDto.setImageName(imageName);
+            inputDto.setImageAltName(imageAltName);
+
+            // Add image
+            ImageDto dto = imageService.addImage(inputDto);
+
+            // Optionally, you can return a URI for the created resource
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(dto.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(dto);
+        } catch (Exception e) {
+            // Handle any exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        // Set default image title if not provided
-        if (imageName == null || imageName.isEmpty()) {
-            imageName = file.getOriginalFilename();
-        }
-
-        // Set default alt name if not provided
-        if (imageAltName == null || imageAltName.isEmpty()) {
-            imageAltName = imageName;
-        }
-
-        // Prepare input DTO
-        ImageInputDto inputDto = new ImageInputDto();
-        inputDto.setImageFile(file);
-        inputDto.setImageName(imageName);
-        inputDto.setImageAltName(imageAltName);
-
-        // Add image
-        ImageDto dto = imageService.addImage(inputDto);
-        return ResponseEntity.created(null).body(dto);
     }
 
     // POST method for uploading songs
@@ -164,13 +183,19 @@ public class CustomMultipartFileController {
 
             // Add song
             SongDto dto = songService.addSong(inputDto);
-            return ResponseEntity.created(null).body(dto);
+
+            // Optionally, you can return a URI for the created resource
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(dto.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(dto);
         } catch (IOException e) {
             // Handle IOException
             logger.error("Error with processing song file", e);
             throw new RuntimeException("Error with processing song file", e);
         }
-
     }
 }
 
