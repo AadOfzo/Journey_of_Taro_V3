@@ -36,11 +36,11 @@ class CustomMultipartFileControllerTest {
     private ImageService imageService = mock(ImageService.class);
     @MockBean
     private ImageRepository imageRepository;
-    private SongService songService = mock(SongService.class);
+    private final SongService songService = mock(SongService.class);
     @MockBean
     private SongRepository songRepository;
 
-    private CustomMultipartFileController multipartFileController = new CustomMultipartFileController(imageService, songService);
+    private final CustomMultipartFileController multipartFileController = new CustomMultipartFileController(imageService, songService);
 
     @Test
     public void testFileUploadController() throws Exception {

@@ -44,7 +44,7 @@ public class CustomMultipartFileController {
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> fileUploadController(MultipartFile file) {
+    public ResponseEntity<?> fileUploadController(MultipartFile file, String artistName, String songTitle) {
         try {
             // Check if the file is empty
             if (file.isEmpty()) {
@@ -53,6 +53,8 @@ public class CustomMultipartFileController {
 
             // Bepaal file type
             String fileType = determineFileType(file.getContentType());
+
+            // Bepaal artistname:
 
             if (fileType == null) {
                 throw new IllegalArgumentException("Unsupported file type");
@@ -84,7 +86,9 @@ public class CustomMultipartFileController {
                 CustomMultipartFile customFile = new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()); // SongCreateService CustomMultipartFile
                 SongInputDto inputDto = new SongInputDto();
                 inputDto.setSongFile(customFile);
-                inputDto.setSongTitle(originalFilename);
+                inputDto.setSongTitle(songTitle == null ? originalFilename : songTitle);
+                inputDto.setArtistName(artistName);
+
                 SongDto dto = songService.addSong(inputDto);
                 return ResponseEntity.ok().body(dto);  // Return the DTO
             } else {
