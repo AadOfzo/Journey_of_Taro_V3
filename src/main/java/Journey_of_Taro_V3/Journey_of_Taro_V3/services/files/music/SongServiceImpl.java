@@ -12,10 +12,14 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +28,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class SongServiceImpl implements SongService {
-
+    private final Path fileStoragePath;
+    private final String fileStorageLocation;
     private static final Logger logger = LoggerFactory.getLogger(SongServiceImpl.class);
 
     private final UserRepository userRepository;
@@ -32,27 +37,39 @@ public class SongServiceImpl implements SongService {
 
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository, UserRepository userRepository) {
+    public SongServiceImpl(@Value("uploads/songs") String fileStorageLocation, SongRepository songRepository, UserRepository userRepository) throws IOException {
+        fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
+        this.fileStorageLocation = fileStorageLocation;
         this.songRepository = songRepository;
         this.userRepository = userRepository;
+
+        Files.createDirectories(fileStoragePath);
     }
 
     @Override
     public SongDto getSong(Long id) {
-        // Retrieve the song entity from the repository
         Song song = songRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Song not found"));
 
-        // Convert the song entity to a DTO
         return transferToSongDto(song);
     }
 
     @Override
     public SongDto getSongById(Long id) {
-        return songRepository.findById(id)
-                .map(this::transferToSongDto)
-                .orElseThrow(() -> new RecordNotFoundException("No Song found with ID:" + id));
+        if (songRepository.findById(id).isPresent()) {
+            Song song = songRepository.findById(id).get();
+            return transferToSongDto(song);
+        } else {
+            throw new RecordNotFoundException("No Songs found with id: " + id);
+        }
     }
+    // 
+//    @Override
+//    public SongDto getSongById(Long id) {
+//        return songRepository.findById(id)
+//                .map(this::transferToSongDto)
+//                .orElseThrow(() -> new RecordNotFoundException("No Song found with ID:" + id));
+//    }
 
     @Override
     public List<SongDto> getAllSongs() {
@@ -60,35 +77,6 @@ public class SongServiceImpl implements SongService {
         return transferSongListToDtoList(songs);
     }
 
-//    @Override
-//    public SongDto addSong(SongInputDto inputDto) {
-//        // Fetch the logged-in user
-//        User user = userRepository.getLoggedInUser(); // You need to implement a method to fetch the logged-in user
-//
-//        // Check if the logged-in user has an artistName
-//        if (user.getArtistName() != null && !user.getArtistName().isEmpty()) {
-//            // The user has an artistName, proceed with adding the song
-//            logger.info("User found with artistName: {}", user.getArtistName());
-//
-//            // Transfer inputDto to Song entity
-//            Song song = transferToSong(inputDto);
-//
-//            // Set the fetched User as the owner of the Song
-//            song.setArtistName(user);
-//
-//            // Save the Song entity and assign the returned value
-//            song = songRepository.save(song);
-//
-//            // Transfer the saved Song entity to SongDto and return
-//            return transferToSongDto(song);
-//        } else {
-//            // The user does not have an artistName, provide a function to add it
-//            // You can return a custom response or create a DTO with additional information
-//            // For demonstration purposes, let's throw an exception with a message suggesting to add an artistName
-//            logger.error("User does not have an artistName");
-//            throw new ArtistNameNotFoundException("Please add an artist name before uploading a song");
-//        }
-//    }
 
     @Override
     public SongDto addSong(SongInputDto inputDto) {
@@ -118,20 +106,6 @@ public class SongServiceImpl implements SongService {
         }
     }
 
-    private SongDto transferToSongDto(Song song) {
-        SongDto dto = new SongDto();
-
-        dto.setId(song.getId());
-        dto.setSongTitle(song.getSongTitle());
-
-        // Check if the artistName is not null before accessing its username
-        if (song.getArtistName() != null) {
-            dto.setArtistName(song.getArtistName().getUsername());
-        }
-
-        return dto;
-    }
-
     public List<SongDto> transferSongListToDtoList(List<Song> songs) {
         List<SongDto> songDtoList = new ArrayList<>();
         for (Song song : songs) {
@@ -142,7 +116,6 @@ public class SongServiceImpl implements SongService {
 
     private Song transferToSong(SongInputDto dto) {
         Song song = new Song();
-        // Song properties van Song en SongInputDto
         song.setFileName(dto.getSongFile().getOriginalFilename());
         song.setSongTitle(dto.getSongTitle());
         song.setFileSize(dto.getSongFile().getSize());
@@ -150,10 +123,25 @@ public class SongServiceImpl implements SongService {
         try {
             song.setSongData(dto.getSongFile().getBytes());
         } catch (IOException e) {
-            // Handle IOException
-            e.printStackTrace();
+            throw new RuntimeException("Error creating song entity", e);
         }
         return song;
+    }
+
+    private SongDto transferToSongDto(Song song) {
+        SongDto dto = new SongDto();
+
+        dto.setId(song.getId());
+        dto.setSongTitle(song.getSongTitle());
+        dto.setSongUrl(song.getSongUrl());
+        dto.setSongData(song.getSongData());
+
+        // Check if the artistName is not null before accessing its username
+        if (song.getArtistName() != null) {
+            dto.setArtistName(song.getArtistName().getUsername());
+        }
+
+        return dto;
     }
 
     @Override

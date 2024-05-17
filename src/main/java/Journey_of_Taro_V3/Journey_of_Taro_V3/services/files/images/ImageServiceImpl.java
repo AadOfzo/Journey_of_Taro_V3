@@ -73,11 +73,6 @@ public class ImageServiceImpl implements ImageService {
         return transferToImageDto(image);
     }
 
-    @Override
-    public void deleteImage(Long id) {
-        imageRepository.deleteById(id);
-    }
-
     private List<ImageDto> transferImageListToDtoList(List<Image> images) {
         List<ImageDto> imageDtoList = new ArrayList<>();
         for (Image image : images) {
@@ -107,13 +102,12 @@ public class ImageServiceImpl implements ImageService {
         try {
             image.setImageData(dto.getImageFile().getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error creating image entity", e);
         }
 
         return image;
     }
 
-    // todo Image opslag en download: Misschien is de saveImage methode ook te gebruiken
 
     public Resource downloadImageFile(String imageName) {
 
@@ -146,6 +140,11 @@ public class ImageServiceImpl implements ImageService {
         } catch (IOException e) {
             throw new RuntimeException("Issue reading the file", e);
         }
+    }
+
+    @Override
+    public void deleteImage(Long id) {
+        imageRepository.deleteById(id);
     }
 
 }

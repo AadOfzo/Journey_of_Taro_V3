@@ -1,9 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 
 import java.time.LocalDateTime;
 
@@ -17,12 +15,12 @@ public class SongDto {
     private Long fileSize;
     private LocalDateTime uploadTime;
     private SongCollection songCollection;
-    private String audioUrl;
+    private String songUrl;
 
     public SongDto() {
     }
 
-    public SongDto(Long id, byte[] songData, CustomMultipartFile songFile, String songTitle, String artistName, String fileName, Long fileSize, LocalDateTime uploadTime, SongCollection songCollection, String audioUrl) {
+    public SongDto(Long id, byte[] songData, CustomMultipartFile songFile, String songTitle, String artistName, String fileName, Long fileSize, LocalDateTime uploadTime, SongCollection songCollection, String songUrl) {
         this.id = id;
         this.songData = songData;
         this.songFile = songFile;
@@ -32,7 +30,7 @@ public class SongDto {
         this.fileSize = fileSize;
         this.uploadTime = uploadTime;
         this.songCollection = songCollection;
-        this.audioUrl = audioUrl;
+        this.songUrl = songUrl;
     }
 
     public Long getId() {
@@ -107,11 +105,11 @@ public class SongDto {
         this.songCollection = songCollection;
     }
 
-    public String getAudioUrl() {
-        return audioUrl;
+    public String getSongUrl() {
+        return songUrl;
     }
 
-    public void setAudioUrl(String audioUrl) {
-        this.audioUrl = audioUrl;
+    public void setSongUrl(String songUrl) {
+        this.songUrl = songUrl;
     }
 }

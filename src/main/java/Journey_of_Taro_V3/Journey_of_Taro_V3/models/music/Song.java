@@ -28,7 +28,7 @@ public class Song {
     @ManyToOne
 //    @JoinColumn(name = "artist_username", referencedColumnName = "username")
     private User artistName;
-
+    private String songUrl;
     private String fileName;
     private Long fileSize;
     private LocalDateTime uploadTime;
@@ -43,7 +43,7 @@ public class Song {
     public Song() {
     }
 
-    public Song(String songTitle, CustomMultipartFile songFile, User artistName, SongCollectionType collectionType) {
+    public Song(String songTitle, CustomMultipartFile songFile, User artistName, String songUrl, SongCollectionType collectionType) {
         if (songTitle == null || songTitle.trim().isEmpty()) {
             throw new BadRequestException("Song title cannot be null or empty");
         }
@@ -55,6 +55,7 @@ public class Song {
         this.songTitle = songTitle;
         this.songFile = songFile;
         this.artistName = artistName;
+        this.songUrl = songUrl;
 
         // Convert CustomMultipartFile to byte[]
         try {
@@ -66,41 +67,6 @@ public class Song {
             throw new RuntimeException("Failed to read song file data", e);
         }
     }
-
-//    public Song(String songTitle, CustomMultipartFile songFile, User artistName, SongCollectionType collectionType) {
-//        if (songTitle == null || songTitle.trim().isEmpty()) {
-//            throw new BadRequestException("Song title cannot be null or empty");
-//        }
-//
-//        if (songFile == null || songFile.isEmpty()) {
-//            throw new BadRequestException("Please choose an mp3 Audio file");
-//        }
-//
-////        if (collectionType == null) {
-////            throw new BadRequestException("Please provide a collection type");
-////        }
-////
-////        if (artistName == null || artistName.getUsername() == null || artistName.getUsername().trim().isEmpty()) {
-////            throw new BadRequestException("Please provide an artist name");
-////        }
-//
-//        this.songTitle = songTitle;
-//        this.artistName = artistName; // Assign the User object
-////        this.songCollectionType = collectionType;
-//
-//        // Convert CustomMultipartFile to byte[]
-//        try {
-//            this.songData = songFile.getBytes();
-//            this.fileName = songFile.getOriginalFilename();
-//            this.fileSize = songFile.getSize();
-//            this.uploadTime = LocalDateTime.now();
-//        } catch (IOException e) {
-//            throw new RuntimeException("Failed to SongReadController song file data", e);
-//        }
-//
-//        //
-//        this.songFile = songFile;
-//    }
 
     public Long getId() {
         return id;
@@ -148,6 +114,14 @@ public class Song {
 
     public void setArtistName(User artistName) {
         this.artistName = artistName;
+    }
+
+    public String getSongUrl() {
+        return songUrl;
+    }
+
+    public void setSongUrl(String songUrl) {
+        this.songUrl = songUrl;
     }
 
     public String getFileName() {

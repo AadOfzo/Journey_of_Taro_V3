@@ -37,8 +37,7 @@ public class Image {
             this.fileSize = imageFile.getSize();
             this.uploadTime = LocalDateTime.now();
         } catch (IOException e) {
-            e.printStackTrace();
-            // Handle exception appropriately
+            throw new RuntimeException("Failed to read image file data", e);
         }
     }
 

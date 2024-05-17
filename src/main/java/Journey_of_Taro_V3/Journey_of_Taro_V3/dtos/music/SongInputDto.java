@@ -9,16 +9,18 @@ public class SongInputDto {
     private MultipartFile songFile;
     private String songTitle;
     private String artistName;
+    private String songUrl;
 
     // Constructor
     public SongInputDto() {
 
     }
 
-    public SongInputDto(MultipartFile songFile, String songTitle, String artistName) {
+    public SongInputDto(MultipartFile songFile, String songTitle, String artistName, String songUrl) {
         this.songFile = songFile;
         this.songTitle = songTitle;
         this.artistName = artistName;
+        this.songUrl = songUrl;
     }
 
     // Getters and setters
@@ -46,4 +48,11 @@ public class SongInputDto {
         this.artistName = artistName;
     }
 
+    public String getSongUrl() {
+        return songUrl;
+    }
+
+    public void setSongUrl(String songUrl) {
+        this.songUrl = songUrl;
+    }
 }

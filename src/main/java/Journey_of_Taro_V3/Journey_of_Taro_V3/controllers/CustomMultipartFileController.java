@@ -44,7 +44,7 @@ public class CustomMultipartFileController {
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> fileUploadController(MultipartFile file, String artistName, String songTitle) {
+    public ResponseEntity<?> fileUploadController(MultipartFile file, String artistName, String songTitle, String userName) {
         try {
             // Check if the file is empty
             if (file.isEmpty()) {
@@ -87,7 +87,7 @@ public class CustomMultipartFileController {
                 SongInputDto inputDto = new SongInputDto();
                 inputDto.setSongFile(customFile);
                 inputDto.setSongTitle(songTitle == null ? originalFilename : songTitle);
-                inputDto.setArtistName(artistName);
+                inputDto.setArtistName(artistName == null ? userName : artistName);
 
                 SongDto dto = songService.addSong(inputDto);
                 return ResponseEntity.ok().body(dto);  // Return the DTO
