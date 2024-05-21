@@ -88,7 +88,6 @@ public class ImageServiceImpl implements ImageService {
         dto.setImageAltName(image.getImageAltName());
         dto.setImageUrl(image.getImageUrl());
         dto.setImageData(image.getImageData());
-        // Set other properties as needed
         return dto;
     }
 

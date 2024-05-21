@@ -1,7 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import org.springframework.web.multipart.MultipartFile;
 
 public class SongInputDto {
@@ -16,12 +15,12 @@ public class SongInputDto {
 
     }
 
-    public SongInputDto(MultipartFile songFile, String songTitle, String artistName, String songUrl) {
-        this.songFile = songFile;
-        this.songTitle = songTitle;
-        this.artistName = artistName;
-        this.songUrl = songUrl;
-    }
+//    public SongInputDto(MultipartFile songFile, String songTitle, String artistName, String songUrl) {
+//        this.songFile = songFile;
+//        this.songTitle = songTitle;
+//        this.artistName = artistName;
+//        this.songUrl = songUrl;
+//    }
 
     // Getters and setters
     public MultipartFile getSongFile() {

@@ -4,6 +4,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import jakarta.persistence.*;
+import org.springframework.util.MimeType;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class Song {
     private String fileName;
     private Long fileSize;
     private LocalDateTime uploadTime;
+    private MimeType mimeType;
 
     @ManyToOne
     @JoinColumn(name = "collection_id")
@@ -43,7 +45,7 @@ public class Song {
     public Song() {
     }
 
-    public Song(String songTitle, CustomMultipartFile songFile, User artistName, String songUrl, SongCollectionType collectionType) {
+    public Song(String songTitle, CustomMultipartFile songFile, User artistName, String songUrl, SongCollectionType collectionType, MimeType mimeType) {
         if (songTitle == null || songTitle.trim().isEmpty()) {
             throw new BadRequestException("Song title cannot be null or empty");
         }
@@ -56,6 +58,7 @@ public class Song {
         this.songFile = songFile;
         this.artistName = artistName;
         this.songUrl = songUrl;
+        this.mimeType = mimeType;
 
         // Convert CustomMultipartFile to byte[]
         try {
@@ -90,6 +93,17 @@ public class Song {
 
     public void setSongFile(CustomMultipartFile songFile) {
         this.songFile = songFile;
+
+        if (songFile != null) {
+            try {
+                this.songData = songFile.getBytes();
+                this.fileName = songFile.getOriginalFilename();
+                this.fileSize = songFile.getSize();
+                this.uploadTime = LocalDateTime.now();
+            } catch (IOException e ) {
+                throw new RuntimeException("Failed to read song file data", e);
+            }
+        }
     }
 
     public String getSongTitle() {
@@ -156,6 +170,14 @@ public class Song {
         return songCollection;
     }
 
+    public String getMimeType() {
+        return "audio/mpeg";
+    }
+
+    public void setMimeType(MimeType mimeType) {
+        this.mimeType = mimeType;
+    }
+
     // Song to String
     @Override
     public String toString() {
@@ -167,4 +189,5 @@ public class Song {
 //        }
         return string;
     }
+
 }

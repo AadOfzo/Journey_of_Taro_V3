@@ -4,6 +4,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,5 +26,5 @@ public interface SongService {
 
     void deleteSong(Long id);
 
-
+    Song getSongWithData(String songTitle);
 }

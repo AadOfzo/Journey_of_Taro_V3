@@ -13,10 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,13 +66,6 @@ public class SongServiceImpl implements SongService {
             throw new RecordNotFoundException("No Songs found with id: " + id);
         }
     }
-    // 
-//    @Override
-//    public SongDto getSongById(Long id) {
-//        return songRepository.findById(id)
-//                .map(this::transferToSongDto)
-//                .orElseThrow(() -> new RecordNotFoundException("No Song found with ID:" + id));
-//    }
 
     @Override
     public List<SongDto> getAllSongs() {
@@ -105,6 +101,20 @@ public class SongServiceImpl implements SongService {
             throw new RecordNotFoundException("User not found with artistName: " + artistName);
         }
     }
+    @Override
+    public SongDto saveSong(SongInputDto inputDto) {
+
+        User user = userRepository.findByArtistName(inputDto.getArtistName())
+                .orElseThrow(() -> new RecordNotFoundException("User not found with artistName: " + inputDto.getArtistName()));
+
+        Song song = transferToSong(inputDto);
+
+        song.setArtistName(user);
+
+        song = songRepository.save(song);
+
+        return transferToSongDto(song);
+    }
 
     public List<SongDto> transferSongListToDtoList(List<Song> songs) {
         List<SongDto> songDtoList = new ArrayList<>();
@@ -112,20 +122,6 @@ public class SongServiceImpl implements SongService {
             songDtoList.add(transferToSongDto(song));
         }
         return songDtoList;
-    }
-
-    private Song transferToSong(SongInputDto dto) {
-        Song song = new Song();
-        song.setFileName(dto.getSongFile().getOriginalFilename());
-        song.setSongTitle(dto.getSongTitle());
-        song.setFileSize(dto.getSongFile().getSize());
-        song.setUploadTime(LocalDateTime.now());
-        try {
-            song.setSongData(dto.getSongFile().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("Error creating song entity", e);
-        }
-        return song;
     }
 
     private SongDto transferToSongDto(Song song) {
@@ -144,19 +140,37 @@ public class SongServiceImpl implements SongService {
         return dto;
     }
 
-    @Override
-    public SongDto saveSong(SongInputDto inputDto) {
+    private Song transferToSong(SongInputDto dto) {
+        Song song = new Song();
+        song.setFileName(dto.getSongFile().getOriginalFilename());
+        song.setSongTitle(dto.getSongTitle());
+        song.setFileSize(dto.getSongFile().getSize());
+        song.setUploadTime(LocalDateTime.now());
+        try {
+            song.setSongData(dto.getSongFile().getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating song entity", e);
+        }
+        return song;
+    }
 
-        User user = userRepository.findByArtistName(inputDto.getArtistName())
-                .orElseThrow(() -> new RecordNotFoundException("User not found with artistName: " + inputDto.getArtistName()));
+    public Resource downloadSongFile(String songTitle) {
 
-        Song song = transferToSong(inputDto);
+        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(songTitle);
 
-        song.setArtistName(user);
+        Resource resource;
 
-        song = songRepository.save(song);
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Issue reading Songfile. ");
+        }
 
-        return transferToSongDto(song);
+        if (resource.exists()&& resource.isReadable()) {
+            return resource;
+        } else {
+            throw new RuntimeException("The songfile doesn't exist or isn't readable");
+        }
     }
 
     @Override
@@ -175,6 +189,20 @@ public class SongServiceImpl implements SongService {
     @Override
     public void deleteSong(Long id) {
         songRepository.deleteById(id);
+    }
+
+    @Override
+    public Song getSongWithData(String songTitle) {
+        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(songTitle);
+
+        try {
+            byte[] songData = Files.readAllBytes(path);
+            Song song = new Song();
+            song.setSongData(songData);
+            return song;
+        } catch (IOException e) {
+            throw new RuntimeException("Issue reading Song file: ", e);
+        }
     }
 
 

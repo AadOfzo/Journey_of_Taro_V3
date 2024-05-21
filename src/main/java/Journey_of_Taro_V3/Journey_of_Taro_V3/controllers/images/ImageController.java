@@ -70,9 +70,10 @@ public class ImageController {
             inputDto.setImageAltName(imageAltName);
             inputDto.setImageUrl(imageUrl); // Set the imageUrl
 
-
             // Add image
             ImageDto dto = imageService.addImage(inputDto);
+
+            System.out.println("Added " + imageName + " to the database.");
             return ResponseEntity.created(new URI(dto.getImageUrl())).body(dto.getImageUrl());
         } catch (IOException | URISyntaxException | java.io.IOException e) {
             // Handle exception

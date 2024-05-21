@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
@@ -222,6 +223,20 @@ public class UserService {
         }
         return imageService.downloadImageFile(userImage.getFileName());
     }
+
+    @Transactional
+    public Resource getSongFromUser(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()){
+            throw new RecordNotFoundException("User " + id + " not found. ");
+        }
+        Song song = (Song) optionalUser.get().getSongs();
+        if (song == null){
+            throw new RecordNotFoundException("User " + id + " has no Image");
+        }
+        return imageService.downloadImageFile(song.getFileName());
+    }
+
 
     @Transactional
     public User addImageToUser(String apikey, String imageName) {
