@@ -45,24 +45,32 @@ public class SongController {
         }
     }
 
+    // Get Songfile with URL
     @GetMapping("/song/{songTitle}")
-    public ResponseEntity<byte[]> getSongFile(@PathVariable("songTitle") String songTitle) {
-        Song song = songService.getSongWithData(songTitle);
-
-        MediaType mediaType;
-
-        try {
-            mediaType = MediaType.parseMediaType(song.getMimeType());
-        } catch (InvalidMediaTypeException ignore) {
-            mediaType = MediaType.APPLICATION_OCTET_STREAM;
-        }
-
-        return ResponseEntity
-                .ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=\"" + song.getSongTitle() + "\"")
-                .body(song.getSongData());
+    public ResponseEntity<String> getSongUrl(@PathVariable("songTitle") String songTitle) {
+        String songUrl = songService.getSongUrlByTitle(songTitle); // Fetch songUrl from the service
+        return ResponseEntity.ok().body(songUrl);
     }
+
+    // Get Songfile with bytes
+//    @GetMapping("/song/{songTitle}")
+//    public ResponseEntity<byte[]> getSongFile(@PathVariable("songTitle") String songTitle) {
+//        Song song = songService.getSongWithData(songTitle);
+//
+//        MediaType mediaType;
+//
+//        try {
+//            mediaType = MediaType.parseMediaType(song.getMimeType());
+//        } catch (InvalidMediaTypeException ignore) {
+//            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+//        }
+//
+//        return ResponseEntity
+//                .ok()
+//                .contentType(mediaType)
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=\"" + song.getSongTitle() + "\"")
+//                .body(song.getSongData());
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateSong(@PathVariable Long id, @Valid @RequestBody SongInputDto newSong) {

@@ -2,7 +2,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -11,6 +10,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.RandomStringGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
@@ -18,8 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,17 +29,19 @@ public class UserService {
     private final ImageRepository imageRepository;
     private final ImageServiceImpl imageService;
     private final SongRepository songRepository;
+    private final SongServiceImpl songService;
     private final PasswordEncoder passwordEncoder;
 
     // TODO: 29/02/2024 Could not autowire PasswordEncoder code werkt wel. Users kunnen aangemaakt worden.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
 
 
-    public UserService(UserRepository userRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
         this.imageService = imageService;
         this.songRepository = songRepository;
+        this.songService = songService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -234,7 +234,7 @@ public class UserService {
         if (song == null){
             throw new RecordNotFoundException("User " + id + " has no Image");
         }
-        return imageService.downloadImageFile(song.getFileName());
+        return songService.downloadSongFile(song.getFileName());
     }
 
 

@@ -27,4 +27,6 @@ public interface SongService {
     void deleteSong(Long id);
 
     Song getSongWithData(String songTitle);
+
+    String getSongUrlByTitle(String songTitle);
 }

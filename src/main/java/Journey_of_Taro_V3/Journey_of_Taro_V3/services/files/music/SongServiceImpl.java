@@ -205,5 +205,10 @@ public class SongServiceImpl implements SongService {
         }
     }
 
+    @Override
+    public String getSongUrlByTitle(String songTitle) {
+        return null;
+    }
+
 
 }
