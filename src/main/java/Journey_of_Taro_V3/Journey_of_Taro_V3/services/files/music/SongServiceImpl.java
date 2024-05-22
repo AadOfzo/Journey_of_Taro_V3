@@ -5,7 +5,9 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 //import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.ArtistNameNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
@@ -17,15 +19,19 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -114,6 +120,16 @@ public class SongServiceImpl implements SongService {
         song = songRepository.save(song);
 
         return transferToSongDto(song);
+    }
+
+    public String storeSongFile(MultipartFile file) throws IOException {
+        String songTitle = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        Path filePath = Paths.get(String.valueOf(fileStoragePath), songTitle);
+
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        songRepository.save(new UserSong(songTitle));
+        return songTitle;
     }
 
     public List<SongDto> transferSongListToDtoList(List<Song> songs) {

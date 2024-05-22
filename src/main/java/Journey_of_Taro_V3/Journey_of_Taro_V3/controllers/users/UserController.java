@@ -5,7 +5,10 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -29,14 +32,19 @@ import java.util.Objects;
 public class UserController {
 
     private final UserService userService;
+    private final ImageServiceImpl imageService;
 
+    private final SongServiceImpl songService;
     @Autowired
     private final HttpServletRequest request;
 
-    public UserController(UserService userService, HttpServletRequest request) {
+    public UserController(UserService userService, ImageServiceImpl imageService, SongServiceImpl songService, HttpServletRequest request) {
         this.userService = userService;
+        this.imageService = imageService;
+        this.songService = songService;
         this.request = request;
     }
+
 
     // Get Mapping
     @GetMapping
@@ -87,6 +95,26 @@ public class UserController {
                 .contentType(mediaType)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename" + image.getImageName())
                 .body(image.getImageData());
+    }
+
+    @GetMapping("/{id}/songs")
+    public ResponseEntity<byte[]> getUserSong(@PathVariable("id") String userName) {
+
+        Song song = (Song) userService.getSongFromUser(userName);
+
+        MediaType mediaType;
+
+        try {
+            mediaType = MediaType.parseMediaType(song.getSongUrl());
+        } catch (InvalidMediaTypeException ignore){
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename" + song.getSongTitle())
+                .body(song.getSongData());
     }
 
     // PUT mapping
@@ -158,6 +186,21 @@ public class UserController {
 
     }
 
+    @PostMapping("/{id}/song")
+    public ResponseEntity<User> addSongToUser(@PathVariable("id") String apikey,
+                                               @RequestBody CustomMultipartFile songFile)
+            throws IOException {
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/")
+                .path(Objects.requireNonNull(apikey))
+                .path("*/song")
+                .toUriString();
+        String songTitle = songService.storeSongFile(songFile);
+        User userDto = userService.addImageToUser(songTitle, apikey);
+
+        return ResponseEntity.created(URI.create(url)).body(userDto);
+
+    }
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {

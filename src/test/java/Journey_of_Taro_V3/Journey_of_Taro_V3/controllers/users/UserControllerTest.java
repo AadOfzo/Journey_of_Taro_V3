@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 class UserControllerTest {
 
     private UserService userService;
+    private ImageServiceImpl imageService;
+    private SongServiceImpl songService;
     private UserController userController;
 
     @BeforeEach
@@ -26,7 +30,7 @@ class UserControllerTest {
         MockitoAnnotations.initMocks(this); // Initialize mocks
         userService = mock(UserService.class);
         HttpServletRequest request = mock(HttpServletRequest.class); // Create a mock HttpServletRequest
-        userController = new UserController(userService, request);
+        userController = new UserController(userService, imageService, songService, request);
     }
 
     @Test

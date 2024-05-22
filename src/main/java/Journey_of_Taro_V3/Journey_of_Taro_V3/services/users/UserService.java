@@ -5,7 +5,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
@@ -110,6 +110,7 @@ public class UserService {
         userDto.setEmail(user.getEmail());
         userDto.setCountry(user.getCountry());
         userDto.setUserimage(user.getUserImage());
+        userDto.setUserSong(user.getUserSong());
         userDto.setArtistname(user.getArtistName());
 
         // Bepaal user's roles gebaseerd op authorities
@@ -135,6 +136,7 @@ public class UserService {
         dto.email = user.getEmail();
         dto.country = user.getCountry();
         dto.userimage = user.getUserImage();
+        dto.userSong = user.getUserSong();
         dto.artistname = user.getArtistName();
 
         ArrayList authorities = new ArrayList<>();
@@ -161,6 +163,7 @@ public class UserService {
         user.setArtistName(userDto.getArtistname());
 
         user.setUserImage(userDto.getUserimage());
+        user.setUserSong(userDto.getUserSong());
 
         return user;
     }
@@ -210,7 +213,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-
     @Transactional
     public Resource getImageFromUser(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -223,20 +225,6 @@ public class UserService {
         }
         return imageService.downloadImageFile(userImage.getFileName());
     }
-
-    @Transactional
-    public Resource getSongFromUser(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()){
-            throw new RecordNotFoundException("User " + id + " not found. ");
-        }
-        Song song = (Song) optionalUser.get().getSongs();
-        if (song == null){
-            throw new RecordNotFoundException("User " + id + " has no Image");
-        }
-        return songService.downloadSongFile(song.getFileName());
-    }
-
 
     @Transactional
     public User addImageToUser(String apikey, String imageName) {
@@ -264,36 +252,18 @@ public class UserService {
         }
     }
 
-//// todo: filename uit database returnen, hoeft niet met DTO.
-////    public Image getImageWithData(String fileName) {
-////    }
-//
-//    public Image getImageWithData(String fileName) {
-//        // Assuming you have a method in your UserService to retrieve image data from the database
-//        byte[] imageData = getImageDataFromDatabase(fileName);
-//
-//        // Assuming you have a method in your UserService to retrieve image name from the database
-//        String imageName = getImageNameFromDatabase(fileName);
-//
-//        // Create an Image object with the retrieved data and name
-//        Image image = new Image();
-//        image.setImageData(imageData);
-//        image.setImageName(imageName);
-//
-//        return image;
-//    }
-//
-//    // Assuming these are placeholder methods to retrieve data from your database
-//    private byte[] getImageDataFromDatabase(String fileName) {
-//        // Implement logic to retrieve image data from your database based on fileName
-//        // Replace this with your actual logic
-//        return new byte[]{};
-//    }
-//
-//    private String getImageNameFromDatabase(String fileName) {
-//        // Implement logic to retrieve image name from your database based on fileName
-//        // Replace this with your actual logic
-//        return "example_image.png";
-//    }
+    @Transactional
+    public Resource getSongFromUser(String userName) {
+        Optional<User> optionalUser = userRepository.findByUsername(userName);
+        if (optionalUser.isEmpty()){
+            throw new RecordNotFoundException("User " + userName + " not found. ");
+        }
+        Song song = (Song) optionalUser.get().getSongs();
+        if (song == null){
+            throw new RecordNotFoundException("User " + userName + " has no Image");
+        }
+        return songService.downloadSongFile(song.getFileName());
+    }
+
 
 }

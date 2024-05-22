@@ -1,4 +1,4 @@
-package Journey_of_Taro_V3.Journey_of_Taro_V3.models.users;
+package Journey_of_Taro_V3.Journey_of_Taro_V3.models.images;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

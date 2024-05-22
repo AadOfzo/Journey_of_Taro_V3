@@ -1,6 +1,8 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.users;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -44,6 +46,11 @@ public class User {
     @ManyToOne
     @JsonIgnoreProperties(value = {"contents","contentType"} )
     UserImage userImage;
+
+    @JoinColumn(name = "usersong")
+    @ManyToOne
+    @JsonIgnoreProperties(value = {"contents","contentType"})
+    UserSong userSong;
 
     @Column(name = "artistname")
     private String artistName;
@@ -137,6 +144,14 @@ public class User {
 
     public UserImage getUserImage() {
         return userImage;
+    }
+
+    public UserSong getUserSong() {
+        return userSong;
+    }
+
+    public void setUserSong(UserSong userSong) {
+        this.userSong = userSong;
     }
 
     public String getArtistName() {

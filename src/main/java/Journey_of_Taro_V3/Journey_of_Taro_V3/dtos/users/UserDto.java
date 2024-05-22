@@ -1,6 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.UserImage;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,7 @@ public class UserDto {
     public String country;
     public String email;
     public UserImage userimage;
+    public UserSong userSong;
 
     public String artistname;
     public List<String> roles;
@@ -95,14 +97,20 @@ public class UserDto {
         this.lastname = lastname;
     }
 
-
-
     public UserImage getUserimage() {
         return userimage;
     }
 
     public void setUserimage(UserImage userimage) {
         this.userimage = userimage;
+    }
+
+    public UserSong getUserSong() {
+        return userSong;
+    }
+
+    public void setUserSong(UserSong userSong) {
+        this.userSong = userSong;
     }
 
     public Date getDateofbirth() {
