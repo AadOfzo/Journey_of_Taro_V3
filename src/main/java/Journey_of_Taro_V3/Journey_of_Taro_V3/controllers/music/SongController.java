@@ -14,7 +14,12 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -114,8 +119,27 @@ public class SongController {
 
     // Method to store file and return URL
     private String storeFileAndGetUrl(MultipartFile file) throws IOException {
-        String fileName = file.getOriginalFilename();
+        // Directory where you want to store the uploaded files
+        String uploadDir = "/uploads/songs";
+
+        // Create the upload directory if it doesn't exist
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Generate a unique file name
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
+        // Path to save the file
+        Path filePath = uploadPath.resolve(fileName);
+
+        // Copy the file to the upload directory
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Construct the URL to access the file
         String fileUrl = environment.getProperty("base.url") + "/files/" + fileName;
+
         return fileUrl;
     }
 }

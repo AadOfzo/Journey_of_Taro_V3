@@ -81,13 +81,13 @@ public class SongServiceImpl implements SongService {
 
 
     @Override
-    public SongDto addSong(SongInputDto inputDto) {
+    public SongDto addSong(SongInputDto inputDto) throws IOException {
         // Fetch the User based on the artistName provided in the inputDto
         String artistName = inputDto.getArtistName();
         logger.info("Searching for user with artistName: {}", artistName);
 
         Optional<User> optionalUser = userRepository.findByArtistName(artistName);
-        if(optionalUser.isPresent()) {
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             logger.info("User found with artistName: {}", artistName);
 
@@ -96,6 +96,10 @@ public class SongServiceImpl implements SongService {
 
             // Set the fetched User as the owner of the Song
             song.setArtistName(user);
+
+            // Set the song URL based on the fileStorageLocation and song title
+            String songUrl = fileStorageLocation + "/" + song.getFileName();
+            song.setSongUrl(songUrl);
 
             // Save the Song entity and assign the returned value
             song = songRepository.save(song);
@@ -107,6 +111,7 @@ public class SongServiceImpl implements SongService {
             throw new RecordNotFoundException("User not found with artistName: " + artistName);
         }
     }
+
     @Override
     public SongDto saveSong(SongInputDto inputDto) {
 
@@ -197,6 +202,10 @@ public class SongServiceImpl implements SongService {
         // Update song attributes based on the input DTO
         song.setSongTitle(inputDto.getSongTitle());
 
+        // Set the song URL based on the fileStorageLocation and song title
+        String songUrl = fileStorageLocation + "/" + song.getFileName();
+        song.setSongUrl(songUrl);
+
         Song updatedSong = songRepository.save(song);
 
         return transferToSongDto(updatedSong);
@@ -223,8 +232,15 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public String getSongUrlByTitle(String songTitle) {
-        return null;
+        Optional<Song> optionalSong = songRepository.findBySongTitle(songTitle);
+        if (optionalSong.isPresent()) {
+            Song song = optionalSong.get();
+            return song.getSongUrl();
+        } else {
+            throw new RecordNotFoundException("No song found with title: " + songTitle);
+        }
     }
+
 
 
 }

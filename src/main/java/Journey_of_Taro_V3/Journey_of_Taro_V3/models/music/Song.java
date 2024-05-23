@@ -17,10 +17,6 @@ public class Song {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] songData;
-
     @Transient
     private CustomMultipartFile songFile;
 
@@ -41,6 +37,10 @@ public class Song {
 
     @Enumerated(EnumType.STRING)
     private SongCollectionType songCollectionType;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] songData;
 
     public Song() {
     }
