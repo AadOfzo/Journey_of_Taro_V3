@@ -2,7 +2,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongCollectionService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import io.jsonwebtoken.io.IOException;
@@ -13,19 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
-//@RestController
-//@RequestMapping(value = "/songCollections")
+@RestController
+@RequestMapping(value = "/songCollections")
 public class SongCollectionController {
 
     private final SongService songService;
     private final SongCollectionService songCollectionService;
 
-    private final ImageService imageService;
-
-    public SongCollectionController(SongService songService, SongCollectionService songCollectionService, ImageService imageService) {
+    public SongCollectionController(SongService songService, SongCollectionService songCollectionService) {
         this.songService = songService;
         this.songCollectionService = songCollectionService;
-        this.imageService = null;
     }
 
     @GetMapping("")
@@ -40,26 +36,27 @@ public class SongCollectionController {
         return ResponseEntity.ok().body(songCollection);
     }
 
-
-    // Method to add Image to SongCollection
-
-
     @PostMapping("")
     public ResponseEntity<Object> createSongCollection(
-            @RequestParam("songIds") List<Long> songIds) {
+            @RequestParam("songIds") List<Long> songIds,
+            @RequestParam("title") String title) {
 
         try {
             SongCollectionInputDto songCollectionInputDto = new SongCollectionInputDto(songIds);
+            songCollectionInputDto.setSongCollectionTitle(title);
             SongCollectionDto songCollectionDto = songCollectionService.createSongCollection(songCollectionInputDto);
 
-            // Return response with created song collection DTO
             return ResponseEntity.created(URI.create("/songCollections/" + songCollectionDto.getId())).build();
         } catch (IOException e) {
-            // Handle file processing exception
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process song files");
         }
     }
 
+    @PostMapping("/{id}/songs")
+    public ResponseEntity<Void> addSongsToCollection(@PathVariable Long id, @RequestBody List<Long> songIds) {
+        songCollectionService.addSongsToCollection(id, songIds);
+        return ResponseEntity.noContent().build();
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSongCollection(@PathVariable Long id) {
