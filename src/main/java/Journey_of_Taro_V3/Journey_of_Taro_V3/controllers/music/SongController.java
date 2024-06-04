@@ -1,7 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
@@ -23,7 +22,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/songs")
+@RequestMapping(value = "songs")
 public class SongController {
 
     private final SongService songService;
@@ -53,7 +52,7 @@ public class SongController {
     // Get Songfile with URL
     @GetMapping("/song/{songTitle}")
     public ResponseEntity<String> getSongUrl(@PathVariable("songTitle") String songTitle) {
-        String songUrl = songService.getSongUrlByTitle(songTitle); // Fetch songUrl from the service
+        String songUrl = songService.getSongUrlByTitle(songTitle);
         return ResponseEntity.ok().body(songUrl);
     }
 
@@ -120,7 +119,7 @@ public class SongController {
     // Method to store file and return URL
     private String storeFileAndGetUrl(MultipartFile file) throws IOException {
         // Directory where you want to store the uploaded files
-        String uploadDir = "/uploads/songs";
+        String uploadDir = "/songs";
 
         // Create the upload directory if it doesn't exist
         Path uploadPath = Paths.get(uploadDir);

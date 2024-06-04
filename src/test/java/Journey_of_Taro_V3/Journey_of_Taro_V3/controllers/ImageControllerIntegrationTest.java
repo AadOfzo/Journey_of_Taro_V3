@@ -49,7 +49,7 @@ public class ImageControllerIntegrationTest {
 
         Mockito.when(imageService.getAllImages()).thenReturn(mockImageList);
 
-        mockMvc.perform(get("/images"))
+        mockMvc.perform(get("/uploads/images"))
                 .andExpect(status().isOk())
                 .andExpect((ResultMatcher) content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect((ResultMatcher) jsonPath("$", hasSize(2)))

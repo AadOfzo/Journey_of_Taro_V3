@@ -23,7 +23,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/images")
+@RequestMapping(value = "images")
 public class ImageController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
@@ -90,7 +90,6 @@ public class ImageController {
         return fileUrl;
     }
 
-    // todo: GET ImageFIle (geeft bytedata door, maar kan niet lezen)
     @GetMapping("/image/{imageName}")
     public ResponseEntity<byte[]> getImageFile(@PathVariable("imageName") String imageName){
 

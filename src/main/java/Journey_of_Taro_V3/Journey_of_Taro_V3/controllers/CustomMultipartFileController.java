@@ -76,7 +76,7 @@ public class CustomMultipartFileController {
                 ImageInputDto inputDto = new ImageInputDto();
                 inputDto.setImageFile(file);
                 inputDto.setImageName(originalFilename); // Assign original file name to imageName
-                inputDto.setImageAltName(originalFilename); // Assign original file name to imageAltName
+                inputDto.setImageAltName(originalFilename);
                 ImageDto dto = imageService.addImage(inputDto);
                 return ResponseEntity.ok().body(dto);
 

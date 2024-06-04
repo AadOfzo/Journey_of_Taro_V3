@@ -44,9 +44,9 @@ public class SongServiceImpl implements SongService {
     private final UserRepository userRepository;
     private final SongRepository songRepository;
 
-
+    // @Value(${my.upload.location}/songs krijgt een 403 error.
     @Autowired
-    public SongServiceImpl(@Value("uploads/songs") String fileStorageLocation, SongRepository songRepository, UserRepository userRepository) throws IOException {
+    public SongServiceImpl(@Value("songs") String fileStorageLocation, SongRepository songRepository, UserRepository userRepository) throws IOException {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.songRepository = songRepository;
