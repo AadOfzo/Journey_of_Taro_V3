@@ -5,13 +5,12 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URI;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 public class CustomMultipartFileController {
@@ -31,14 +33,14 @@ public class CustomMultipartFileController {
     private static final Logger logger = LoggerFactory.getLogger(CustomMultipartFileController.class);
     private final ImageService imageService;
     private final SongService songService;
-    private final UserRepository userRepository;
+
+    private final Environment environment;
 
     @Autowired
-    public CustomMultipartFileController(ImageService imageService, SongService songService,
-                                         UserRepository userRepository) {
+    public CustomMultipartFileController(ImageService imageService, SongService songService, Environment environment) {
         this.imageService = imageService;
         this.songService = songService;
-        this.userRepository = userRepository;
+        this.environment = environment;
     }
 
     @PostMapping(value = "/fileUpload",
@@ -46,67 +48,58 @@ public class CustomMultipartFileController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> fileUploadController(MultipartFile file, String artistName, String songTitle, String userName) {
         try {
-            // Check if the file is empty
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("File is empty");
             }
 
-            // Bepaal file type
             String fileType = determineFileType(file.getContentType());
-
-            // Bepaal artistname:
 
             if (fileType == null) {
                 throw new IllegalArgumentException("Unsupported file type");
             }
 
-            // Get the original file name
             String originalFilename = file.getOriginalFilename();
 
-            // Log file information
             logger.info("Received file: {}", originalFilename);
             logger.info("File size: {} bytes", file.getSize());
             logger.info("File type: {}", fileType);
 
-
-            // SongCreateService object based on file type
             if ("Image".equalsIgnoreCase(fileType)) {
+                String imageUrl = storeFileAndGetUrl(file, "uploads/images");
 
-                // Process image file:
                 ImageInputDto inputDto = new ImageInputDto();
                 inputDto.setImageFile(file);
-                inputDto.setImageName(originalFilename); // Assign original file name to imageName
+                inputDto.setImageName(originalFilename);
                 inputDto.setImageAltName(originalFilename);
+
                 ImageDto dto = imageService.addImage(inputDto);
                 return ResponseEntity.ok().body(dto);
 
             } else if ("Audio".equalsIgnoreCase(fileType)) {
+                String songUrl = storeFileAndGetUrl(file, "uploads/songs");
 
                 // Process audio file:
-                CustomMultipartFile customFile = new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()); // SongCreateService CustomMultipartFile
                 SongInputDto inputDto = new SongInputDto();
-                inputDto.setSongFile(customFile);
+                inputDto.setSongFile(new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()));
                 inputDto.setSongTitle(songTitle == null ? originalFilename : songTitle);
-                inputDto.setArtistName(artistName == null ? userName : artistName);
+                inputDto.setArtistName(artistName);
+                inputDto.setFileName(originalFilename);
+                inputDto.setFileSize(file.getSize());
+                inputDto.setUploadTime(LocalDateTime.now());
+                inputDto.setSongUrl(songUrl);
 
                 SongDto dto = songService.addSong(inputDto);
-                return ResponseEntity.ok().body(dto);  // Return the DTO
+                return ResponseEntity.ok().body(dto);
             } else {
                 throw new IllegalArgumentException("Unsupported file type");
             }
-        } catch (IllegalArgumentException e) {
-
+        } catch (IllegalArgumentException | IOException e) {
             logger.error("Error occurred while processing file upload", e);
-            throw new RuntimeException("Error occurred while processing file upload", e);
-        } catch (IOException e) {
-
-            logger.error("Error occurred while processing file", e);
-            throw new RuntimeException("Error occurred while processing file", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    //     Method voor content type:
-    public String determineFileType(String contentType) {
+    private String determineFileType(String contentType) {
         if (contentType != null && contentType.startsWith("image")) {
             return "Image";
         } else if (contentType != null && contentType.startsWith("audio")) {
@@ -116,90 +109,21 @@ public class CustomMultipartFileController {
         }
     }
 
-    // todo images en songs worden niet opgeslagen in de inputDto's en service classes.
-    @PostMapping("/images")
-    public ResponseEntity<ImageDto> addImage(
-            @RequestParam("file") CustomMultipartFile file,
-            @RequestParam(value = "imageName", required = false) String imageName,
-            @RequestParam(value = "imageAltName", required = false) String imageAltName) {
-        try {
-            // Determine the file type
-            String fileType = determineFileType(file.getContentType());
-            if (!"Image".equals(fileType)) {
-                throw new IllegalArgumentException("File type must be an image");
-            }
-
-            // Set default image title if not provided
-            if (imageName == null || imageName.isEmpty()) {
-                imageName = file.getOriginalFilename();
-            }
-
-            // Set default alt name if not provided
-            if (imageAltName == null || imageAltName.isEmpty()) {
-                imageAltName = imageName;
-            }
-
-            // Prepare input DTO
-            ImageInputDto inputDto = new ImageInputDto();
-            inputDto.setImageFile(file);
-            inputDto.setImageName(imageName);
-            inputDto.setImageAltName(imageAltName);
-
-            // Add image
-            ImageDto dto = imageService.addImage(inputDto);
-
-            // Optionally, you can return a URI for the created resource
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(dto.getId())
-                    .toUri();
-
-            return ResponseEntity.created(location).body(dto);
-        } catch (Exception e) {
-            // Handle any exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    private String storeFileAndGetUrl(MultipartFile file, String uploadDir) throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
-    }
 
-    // POST method for uploading songs
-    @PostMapping("/songs")
-    public ResponseEntity<SongDto> addSong(
-            @RequestParam("file") CustomMultipartFile file,
-            @RequestParam(value = "songTitle", required = false) String songTitle,
-            @RequestParam(value = "artist", required = false) User artist) {
-        try {
-            // Determine the file type
-            String fileType = determineFileType(file.getContentType());
-            if (!"Audio".equals(fileType)) {
-                throw new IllegalArgumentException("File type must be an audio file");
-            }
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
-            // Set default song title if not provided
-            if (songTitle == null || songTitle.isEmpty()) {
-                songTitle = file.getOriginalFilename();
-            }
+        Path filePath = uploadPath.resolve(fileName);
 
-            // Prepare input DTO
-            SongInputDto inputDto = new SongInputDto();
-            inputDto.setSongFile(file);
-            inputDto.setSongTitle(songTitle);
-            inputDto.setArtistName(artist.getArtistName());
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Add song
-            SongDto dto = songService.addSong(inputDto);
+        String baseUrl = environment.getProperty("base.url", "http://localhost:8080");
+        String fileUrl = baseUrl + "/files/" + fileName;
 
-            // Optionally, you can return a URI for the created resource
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(dto.getId())
-                    .toUri();
-
-            return ResponseEntity.created(location).body(dto);
-        } catch (IOException e) {
-            // Handle IOException
-            logger.error("Error with processing song file", e);
-            throw new RuntimeException("Error with processing song file", e);
-        }
+        return fileUrl;
     }
 }
-

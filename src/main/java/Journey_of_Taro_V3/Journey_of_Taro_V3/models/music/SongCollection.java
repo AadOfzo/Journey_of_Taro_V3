@@ -1,8 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -20,14 +18,18 @@ public class SongCollection {
     @OneToMany(mappedBy = "songCollection")
     private List<Song> songs;
 
+    @OneToMany(mappedBy = "songCollection")
+    private List<Image> images;
+
     public SongCollection() {
         songs = new ArrayList<>();
+        images = new ArrayList<>();
     }
-
     public void addSong(Song song) {
         songs.add(song);
         song.setSongCollection(this);
     }
+
 
     public List<Song> getSongs() {
         return songs;
@@ -42,11 +44,6 @@ public class SongCollection {
     }
 
 
-    //    @ManyToMany
-//    @JoinTable(
-//            name = "song_collection_songs",
-//            joinColumns = @JoinColumn(name = "song_collection_id"),
-//            inverseJoinColumns = @JoinColumn(name = "song_id"));
 
 //    @ManyToOne
 //    @JoinColumn(name = "song_collection_songs", referencedColumnName = "song_id")
@@ -74,6 +71,14 @@ public class SongCollection {
     }
 
 
+    public void addSongsToCollection(List<Song> songsToAdd) {
+        songs.addAll(songsToAdd);
+    }
+
+    public void setCollectionImage(Image imageToAdd) {
+        images.add(imageToAdd);
+    }
+
 
     @Override
     public String toString() {
@@ -88,9 +93,5 @@ public class SongCollection {
     }
 
 
-    public void addSongsToCollection(List<Song> songsToAdd) {
-
-        songs.addAll(songsToAdd);
-    }
 }
 

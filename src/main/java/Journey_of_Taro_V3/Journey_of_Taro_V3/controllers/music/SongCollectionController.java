@@ -4,13 +4,13 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongCollectionService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
-import io.jsonwebtoken.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/songCollections")
@@ -37,19 +37,10 @@ public class SongCollectionController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> createSongCollection(
-            @RequestParam("songIds") List<Long> songIds,
-            @RequestParam("title") String title) {
-
-        try {
-            SongCollectionInputDto songCollectionInputDto = new SongCollectionInputDto(songIds);
-            songCollectionInputDto.setSongCollectionTitle(title);
-            SongCollectionDto songCollectionDto = songCollectionService.createSongCollection(songCollectionInputDto);
-
-            return ResponseEntity.created(URI.create("/songCollections/" + songCollectionDto.getId())).build();
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process song files");
-        }
+    public ResponseEntity<SongCollectionDto> createSongCollection(@RequestBody SongCollectionInputDto songCollectionInputDto) {
+        SongCollectionDto songCollectionDto = songCollectionService.createSongCollection(songCollectionInputDto);
+        URI location = URI.create("/songCollections/" + songCollectionDto.getId());
+        return ResponseEntity.created(location).body(songCollectionDto);
     }
 
     @PostMapping("/{id}/songs")

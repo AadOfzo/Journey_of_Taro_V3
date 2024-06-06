@@ -5,7 +5,6 @@ import java.util.List;
 public class SongCollectionInputDto {
 
     private List<Long> songIds;
-
     private String songCollectionTitle;
 
     public SongCollectionInputDto() {

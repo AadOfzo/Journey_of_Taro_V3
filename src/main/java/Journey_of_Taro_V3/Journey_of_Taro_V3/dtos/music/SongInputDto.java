@@ -1,28 +1,20 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-public class SongInputDto {
+import java.time.LocalDateTime;
 
+public class SongInputDto {
     private MultipartFile songFile;
     private String songTitle;
     private String artistName;
+    private String fileName;
+    private Long fileSize;
+    private LocalDateTime uploadTime;
     private String songUrl;
 
-    // Constructor
-    public SongInputDto() {
+    // Getters and Setters
 
-    }
-
-//    public SongInputDto(MultipartFile songFile, String songTitle, String artistName, String songUrl) {
-//        this.songFile = songFile;
-//        this.songTitle = songTitle;
-//        this.artistName = artistName;
-//        this.songUrl = songUrl;
-//    }
-
-    // Getters and setters
     public MultipartFile getSongFile() {
         return songFile;
     }
@@ -45,6 +37,30 @@ public class SongInputDto {
 
     public void setArtistName(String artistName) {
         this.artistName = artistName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public LocalDateTime getUploadTime() {
+        return uploadTime;
+    }
+
+    public void setUploadTime(LocalDateTime uploadTime) {
+        this.uploadTime = uploadTime;
     }
 
     public String getSongUrl() {

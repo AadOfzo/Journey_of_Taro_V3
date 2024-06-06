@@ -1,16 +1,12 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-@Service
+
 public interface SongCollectionService {
 
     void addSongsToCollection(Long collectionId, List<Long> songIds);
@@ -23,8 +19,8 @@ public interface SongCollectionService {
     void deleteSongCollection(Long id);
     SongCollectionDto updateSongCollection(Long id, SongCollectionInputDto dto);
 
-
     void addImageToSongCollection(Long collectionId, Image image);
 
-
+    // This method should be declared in the interface
+    SongCollectionDto saveSongCollection(SongCollectionInputDto dto);
 }

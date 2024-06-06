@@ -86,6 +86,16 @@ public class SongCollectionServiceImpl implements SongCollectionService {
     }
 
     @Override
+    public SongCollectionDto saveSongCollection(SongCollectionInputDto dto) {
+        SongCollection songCollection = new SongCollection();
+        songCollection.setSongCollectionTitle(dto.getSongCollectionTitle());
+        List<Song> songs = songRepository.findAllById(dto.getSongIds());
+        songCollection.setSongs(songs);
+        SongCollection saved = collectionRepository.save(songCollection);
+        return convertToDto(saved);
+    }
+
+    @Override
     public void deleteSongCollection(Long id) {
         collectionRepository.deleteById(id);
     }
@@ -102,10 +112,12 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         return convertToDto(collection);
     }
 
-
     @Override
-    public void addImageToSongCollection(Long collectionId, Image id) {
-        // Logic to add image to song collection
+    public void addImageToSongCollection(Long collectionId, Image image) {
+        SongCollection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
+        collection.setCollectionImage(image);
+        collectionRepository.save(collection);
     }
 
 //    @Override
@@ -121,6 +133,14 @@ public class SongCollectionServiceImpl implements SongCollectionService {
 //        collection.getSongs().removeAll(songsToRemove);
 //    }
 
+    private SongCollection convertToEntity(SongCollectionInputDto dto) {
+        SongCollection collection = new SongCollection();
+
+        collection.setSongCollectionTitle(dto.getSongCollectionTitle());
+        collection.setSongs(convertIdListToSongList(dto.getSongIds()));
+        return collection;
+    }
+
     private SongCollectionDto convertToDto(SongCollection collection) {
         SongCollectionDto dto = new SongCollectionDto(collection.getId(), convertSongListToIdList(collection.getSongs()));
 
@@ -128,6 +148,16 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         return dto;
     }
 
+    private List<Song> convertIdListToSongList(List<Long> longs) {
+        List<Song> songs = new ArrayList<>();
+        for (Long longId : longs) {
+            Song song = songRepository.findById(longId).orElse(null);
+            if (song != null) {
+                songs.add(song);
+            }
+        }
+        return songs;
+    }
 
     private List<SongIdDto> convertSongListToIdList(List<Song> songs) {
         List<SongIdDto> idDtos = new ArrayList<>();
@@ -141,25 +171,17 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         }
         return idDtos;
     }
-
-    private List<Song> convertIdListToSongList(List<Long> longs) {
-        List<Song> songs = new ArrayList<>();
-        for (Long longId : longs) {
-            Song song = songRepository.findById(longId).orElse(null);
-
-            if (song != null) {
-                songs.add(song);
-            }
-        }
-        return songs;
-    }
-
-    private SongCollection convertToEntity(SongCollectionInputDto dto) {
-        SongCollection collection = new SongCollection();
-
-        collection.setSongCollectionTitle(dto.getSongCollectionTitle());
-        collection.setSongs(convertIdListToSongList(dto.getSongIds()));
-        return collection;
-    }
+//
+//    private List<Song> convertIdListToSongList(List<Long> longs) {
+//        List<Song> songs = new ArrayList<>();
+//        for (Long longId : longs) {
+//            Song song = songRepository.findById(longId).orElse(null);
+//
+//            if (song != null) {
+//                songs.add(song);
+//            }
+//        }
+//        return songs;
+//    }
 
 }

@@ -1,6 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.images;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import jakarta.persistence.*;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "images")
 public class Image {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -23,6 +25,10 @@ public class Image {
     private Long fileSize;
     private LocalDateTime uploadTime;
     private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "collection_id")
+    private SongCollection songCollection;
 
     public Image() {
     }
@@ -103,5 +109,13 @@ public class Image {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public SongCollection getSongCollection() {
+        return songCollection;
+    }
+
+    public void setSongCollection(SongCollection songCollection) {
+        this.songCollection = songCollection;
     }
 }
