@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Resource: https://docs.spring.io/spring-data/relational/reference/object-mapping.html
-
 @Service
 @Transactional
 public class SongCollectionServiceImpl implements SongCollectionService {
@@ -35,19 +33,28 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         this.imageService = imageService;
     }
 
-
     @Override
     public void addSongsToCollection(Long collectionId, List<Long> songIds) {
         SongCollection collection = collectionRepository.findById(collectionId)
                 .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
         List<Song> songsToAdd = songRepository.findAllById(songIds);
-        collection.addSongsToCollection(songsToAdd);
+        for (Song song : songsToAdd) {
+            song.setSongCollection(collection); // Set the songCollection on the Song
+        }
+        collection.getSongs().addAll(songsToAdd);
         collectionRepository.save(collection);
     }
 
     @Override
     public void removeSongsFromCollection(Long collectionId, List<Long> songIds) {
-
+        SongCollection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
+        List<Song> songsToRemove = songRepository.findAllById(songIds);
+        collection.getSongs().removeAll(songsToRemove);
+        for (Song song : songsToRemove) {
+            song.setSongCollection(null); // Unset the songCollection on the Song
+        }
+        collectionRepository.save(collection);
     }
 
     @Override
@@ -66,23 +73,18 @@ public class SongCollectionServiceImpl implements SongCollectionService {
 
     @Override
     public List<SongDto> getSongsByCollection(Long collectionId) {
-        // Retrieve the song collection by its ID
         SongCollection collection = collectionRepository.findById(collectionId)
                 .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
-
-        // Retrieve the songs from the collection
         List<Song> songs = collection.getSongs();
-
-        // Convert songs to DTOs and return
         return songService.transferSongListToDtoList(songs);
     }
 
     @Override
     public SongCollectionDto createSongCollection(SongCollectionInputDto songCollectionInputDto) {
-        SongCollection songCollection = convertToEntity(songCollectionInputDto);
-        SongCollection saved = collectionRepository.save(songCollection); // persisted entity
-        SongCollectionDto songCollectionDto = convertToDto(saved);
-        return songCollectionDto;
+        SongCollection songCollection = new SongCollection();
+        songCollection.setSongCollectionTitle(songCollectionInputDto.getSongCollectionTitle());
+        SongCollection saved = collectionRepository.save(songCollection);
+        return convertToDto(saved);
     }
 
     @Override
@@ -90,6 +92,9 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         SongCollection songCollection = new SongCollection();
         songCollection.setSongCollectionTitle(dto.getSongCollectionTitle());
         List<Song> songs = songRepository.findAllById(dto.getSongIds());
+        for (Song song : songs) {
+            song.setSongCollection(songCollection); // Set the songCollection on the Song
+        }
         songCollection.setSongs(songs);
         SongCollection saved = collectionRepository.save(songCollection);
         return convertToDto(saved);
@@ -100,14 +105,11 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         collectionRepository.deleteById(id);
     }
 
-
-    // todo Update updaten! Haal hem alleen op en saved daarna gelijk weer zonder iets te doen.
-
     @Override
     public SongCollectionDto updateSongCollection(Long id, SongCollectionInputDto dto) {
         SongCollection collection = collectionRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + id));
-
+        collection.setSongCollectionTitle(dto.getSongCollectionTitle());
         collectionRepository.save(collection);
         return convertToDto(collection);
     }
@@ -120,30 +122,18 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         collectionRepository.save(collection);
     }
 
-//    @Override
-//    public void removeSongsFromCollection(Long collectionId, List<Long> songIds) {
-//        // Retrieve the song collection by its ID
-//        SongCollection collection = collectionRepository.findById(collectionId)
-//                .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
-//
-//        // Retrieve the songs by their IDs
-//        List<Song> songsToRemove = songRepository.findAllById(songIds);
-//
-//        // Remove the songs from the collection
-//        collection.getSongs().removeAll(songsToRemove);
-//    }
-
     private SongCollection convertToEntity(SongCollectionInputDto dto) {
         SongCollection collection = new SongCollection();
-
         collection.setSongCollectionTitle(dto.getSongCollectionTitle());
         collection.setSongs(convertIdListToSongList(dto.getSongIds()));
         return collection;
     }
 
     private SongCollectionDto convertToDto(SongCollection collection) {
-        SongCollectionDto dto = new SongCollectionDto(collection.getId(), convertSongListToIdList(collection.getSongs()));
-
+        List<SongIdDto> songIdDtos = collection.getSongs().stream()
+                .map(song -> new SongIdDto(song.getId(), song.getSongTitle()))
+                .collect(Collectors.toList());
+        SongCollectionDto dto = new SongCollectionDto(collection.getId(), songIdDtos);
         dto.setSongCollectionTitle(collection.getSongCollectionTitle());
         return dto;
     }
@@ -158,30 +148,4 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         }
         return songs;
     }
-
-    private List<SongIdDto> convertSongListToIdList(List<Song> songs) {
-        List<SongIdDto> idDtos = new ArrayList<>();
-        for (Song song : songs) {
-            SongIdDto idDto = new SongIdDto();
-
-            idDto.setId(song.getId());
-            idDto.setSongTitle(song.getSongTitle());
-
-            idDtos.add(idDto);
-        }
-        return idDtos;
-    }
-//
-//    private List<Song> convertIdListToSongList(List<Long> longs) {
-//        List<Song> songs = new ArrayList<>();
-//        for (Long longId : longs) {
-//            Song song = songRepository.findById(longId).orElse(null);
-//
-//            if (song != null) {
-//                songs.add(song);
-//            }
-//        }
-//        return songs;
-//    }
-
 }

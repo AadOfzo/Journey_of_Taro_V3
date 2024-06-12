@@ -91,7 +91,6 @@ public class SongServiceImpl implements SongService {
             User user = optionalUser.get();
             logger.info("User found with artistName: {}", artistName);
 
-            // Transfer inputDto to Song entity
             Song song = transferToSong(inputDto);
 
             // Set the fetched User as the owner of the Song
@@ -101,10 +100,8 @@ public class SongServiceImpl implements SongService {
             String songUrl = fileStorageLocation + "/" + song.getFileName();
             song.setSongUrl(songUrl);
 
-            // Save the Song entity and assign the returned value
             song = songRepository.save(song);
 
-            // Transfer the saved Song entity to SongDto and return
             return transferToSongDto(song);
         } else {
             logger.error("User not found with artistName: {}", artistName);

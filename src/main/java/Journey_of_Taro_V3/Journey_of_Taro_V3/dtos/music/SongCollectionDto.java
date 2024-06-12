@@ -6,21 +6,19 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
 
 import java.util.List;
 
-//Todo ArrayList importeren met List van SongId's in In service SongCollection naar SongCollectionDto omzetten.
-
 public class SongCollectionDto {
 
     private Long id;
     private List<SongIdDto> songIds;
-
     private String songCollectionTitle;
 
-
+    // Constructor
     public SongCollectionDto(Long id, List<SongIdDto> songIds) {
         this.id = id;
         this.songIds = songIds;
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
