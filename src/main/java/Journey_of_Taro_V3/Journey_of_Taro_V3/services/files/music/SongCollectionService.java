@@ -23,4 +23,6 @@ public interface SongCollectionService {
 
     // This method should be declared in the interface
     SongCollectionDto saveSongCollection(SongCollectionInputDto dto);
+    SongCollectionDto createFolderAndCopyFiles(Long collectionId);
+
 }

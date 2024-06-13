@@ -1,24 +1,23 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollectionType;
-
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import java.util.List;
 
 public class SongCollectionDto {
-
     private Long id;
     private List<SongIdDto> songIds;
     private String songCollectionTitle;
+    private ImageDto image;
+    private String songCollectionUrl;  // Add this field
 
-    // Constructor
-    public SongCollectionDto(Long id, List<SongIdDto> songIds) {
+    public SongCollectionDto(Long id, List<SongIdDto> songIds, String songCollectionTitle, ImageDto image, String songCollectionUrl) {
         this.id = id;
         this.songIds = songIds;
+        this.songCollectionTitle = songCollectionTitle;
+        this.image = image;
+        this.songCollectionUrl = songCollectionUrl;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -41,5 +40,21 @@ public class SongCollectionDto {
 
     public void setSongCollectionTitle(String songCollectionTitle) {
         this.songCollectionTitle = songCollectionTitle;
+    }
+
+    public ImageDto getImage() {
+        return image;
+    }
+
+    public void setImage(ImageDto image) {
+        this.image = image;
+    }
+
+    public String getSongCollectionUrl() {
+        return songCollectionUrl;
+    }
+
+    public void setSongCollectionUrl(String songCollectionUrl) {
+        this.songCollectionUrl = songCollectionUrl;
     }
 }

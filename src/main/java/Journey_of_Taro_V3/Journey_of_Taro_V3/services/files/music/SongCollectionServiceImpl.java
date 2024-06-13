@@ -1,5 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.*;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -122,30 +125,72 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         collectionRepository.save(collection);
     }
 
-    private SongCollection convertToEntity(SongCollectionInputDto dto) {
-        SongCollection collection = new SongCollection();
-        collection.setSongCollectionTitle(dto.getSongCollectionTitle());
-        collection.setSongs(convertIdListToSongList(dto.getSongIds()));
-        return collection;
+    @Override
+    public SongCollectionDto createFolderAndCopyFiles(Long collectionId) {
+        SongCollection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
+
+        String collectionTitle = collection.getSongCollectionTitle();
+        Path collectionPath = Paths.get("uploads/music/song_collections/" + collectionTitle);
+
+        try {
+            // Create directory if not exists
+            Files.createDirectories(collectionPath);
+
+            // Copy songs to the new directory
+            for (Song song : collection.getSongs()) {
+                Path sourcePath = Paths.get("uploads/music/songs/" + song.getFileName());
+                Path targetPath = collectionPath.resolve(song.getFileName());
+                Files.copy(sourcePath, targetPath);
+            }
+
+            // Copy image to the new directory if exists
+            Image image = collection.getCollectionImage();
+            if (image != null) {
+                Path imagePath = Paths.get("uploads/images/" + image.getImageName());
+                Path targetImagePath = collectionPath.resolve(image.getImageName());
+                Files.copy(imagePath, targetImagePath);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create folder and copy files", e);
+        }
+
+        // Set collection URL
+        String collectionUrl = "/uploads/music/song_collections/" + collectionTitle;
+        collection.setSongCollectionUrl(collectionUrl);
+        collectionRepository.save(collection);
+
+        return convertToDto(collection);
     }
 
     private SongCollectionDto convertToDto(SongCollection collection) {
         List<SongIdDto> songIdDtos = collection.getSongs().stream()
                 .map(song -> new SongIdDto(song.getId(), song.getSongTitle()))
                 .collect(Collectors.toList());
-        SongCollectionDto dto = new SongCollectionDto(collection.getId(), songIdDtos);
-        dto.setSongCollectionTitle(collection.getSongCollectionTitle());
-        return dto;
-    }
 
-    private List<Song> convertIdListToSongList(List<Long> longs) {
-        List<Song> songs = new ArrayList<>();
-        for (Long longId : longs) {
-            Song song = songRepository.findById(longId).orElse(null);
-            if (song != null) {
-                songs.add(song);
-            }
+        // Map Image to ImageDto
+        ImageDto imageDto = null;
+        Image image = collection.getCollectionImage();
+        if (image != null) {
+            imageDto = new ImageDto(
+                    image.getId(),
+                    image.getImageName(),
+                    image.getImageAltName(),
+                    image.getImageUrl()
+            );
         }
-        return songs;
+
+        // Set songCollectionUrl
+        String songCollectionUrl = collection.getSongCollectionUrl();
+
+        // Create and return the DTO with all parameters
+        return new SongCollectionDto(
+                collection.getId(),
+                songIdDtos,
+                collection.getSongCollectionTitle(),
+                imageDto,
+                songCollectionUrl
+        );
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/songCollections")
@@ -53,5 +52,12 @@ public class SongCollectionController {
     public ResponseEntity<Object> deleteSongCollection(@PathVariable Long id) {
         songCollectionService.deleteSongCollection(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/createFolderAndCopyFiles")
+    public ResponseEntity<SongCollectionDto> createFolderAndCopyFiles(@PathVariable Long id) {
+        SongCollectionDto songCollectionDto = songCollectionService.createFolderAndCopyFiles(id);
+        URI location = URI.create(songCollectionDto.getSongCollectionUrl());
+        return ResponseEntity.created(location).body(songCollectionDto);
     }
 }

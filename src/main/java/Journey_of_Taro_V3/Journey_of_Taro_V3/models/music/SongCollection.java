@@ -15,51 +15,17 @@ public class SongCollection {
 
     private String songCollectionTitle;
 
-    @OneToMany(mappedBy = "songCollection")
+    @OneToMany(mappedBy = "songCollection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Song> songs;
 
-    @OneToMany(mappedBy = "songCollection")
-    private List<Image> images;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id")
+    private Image collectionImage;
+
+    private String songCollectionUrl;
 
     public SongCollection() {
         songs = new ArrayList<>();
-        images = new ArrayList<>();
-    }
-    public void addSong(Song song) {
-        songs.add(song);
-        song.setSongCollection(this);
-    }
-
-
-    public List<Song> getSongs() {
-        return songs;
-    }
-
-    public String getSongCollectionTitle() {
-        return songCollectionTitle;
-    }
-
-    public void setSongCollectionTitle(String songCollectionTitle) {
-        this.songCollectionTitle = songCollectionTitle;
-    }
-
-
-
-//    @ManyToOne
-//    @JoinColumn(name = "song_collection_songs", referencedColumnName = "song_id")
-//    private List<Long> songIds;
-
-//    public SongCollection() {
-//
-//    }
-//
-//    public SongCollection(List<Long> songIds) {
-//        this.songIds = songIds;
-//    }
-//
-
-    public void setSongs(List<Song> songs) {
-        this.songs = songs;
     }
 
     public Long getId() {
@@ -70,28 +36,36 @@ public class SongCollection {
         this.id = id;
     }
 
-
-    public void addSongsToCollection(List<Song> songsToAdd) {
-        songs.addAll(songsToAdd);
+    public String getSongCollectionTitle() {
+        return songCollectionTitle;
     }
 
-    public void setCollectionImage(Image imageToAdd) {
-        images.add(imageToAdd);
+    public void setSongCollectionTitle(String songCollectionTitle) {
+        this.songCollectionTitle = songCollectionTitle;
     }
 
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Song Collection: ").append(id).append("\n")
-                .append("Number of songs: ").append(songs.size()).append("\n")
-                .append("Songs:\n");
-        for (Song songId : songs) {
-            stringBuilder.append(songId).append("\n");
-        }
-        return stringBuilder.toString();
+    public List<Song> getSongs() {
+        return songs;
     }
 
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
+    }
 
+    public Image getCollectionImage() {
+        return collectionImage;
+    }
+
+    public String getSongCollectionUrl() {
+        return songCollectionUrl;
+    }
+
+    public void setSongCollectionUrl(String songCollectionUrl) {
+        this.songCollectionUrl = songCollectionUrl;
+    }
+
+    public void setCollectionImage(Image collectionImage) {
+        this.collectionImage = collectionImage;
+    }
 }
-
+    
