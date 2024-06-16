@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -76,7 +77,7 @@ public class SongServiceImpl implements SongService {
     @Override
     public List<SongDto> getAllSongs() {
         List<Song> songs = songRepository.findAll();
-        return transferSongListToDtoList(songs);
+        return songs.stream().map(this::transferToSongDto).collect(Collectors.toList());
     }
 
 

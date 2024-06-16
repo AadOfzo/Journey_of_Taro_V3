@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class SongDto {
     private Long id;
     private byte[] songData;
-    private CustomMultipartFile songFile;
+//    private CustomMultipartFile songFile;
     private String songTitle;
     private String artistName;
     private String fileName;
@@ -22,8 +22,8 @@ public class SongDto {
 
     public SongDto(Long id, byte[] songData, CustomMultipartFile songFile, String songTitle, String artistName, String fileName, Long fileSize, LocalDateTime uploadTime, SongCollection songCollection, String songUrl) {
         this.id = id;
-        this.songData = songData;
-        this.songFile = songFile;
+//        this.songData = songData;
+//        this.songFile = songFile;
         this.songTitle = songTitle;
         this.artistName = artistName;
         this.fileName = fileName;
@@ -48,14 +48,14 @@ public class SongDto {
     public void setSongData(byte[] songData) {
         this.songData = songData;
     }
-
-    public CustomMultipartFile getSongFile() {
-        return songFile;
-    }
-
-    public void setSongFile(CustomMultipartFile songFile) {
-        this.songFile = songFile;
-    }
+//
+//    public CustomMultipartFile getSongFile() {
+//        return songFile;
+//    }
+//
+//    public void setSongFile(CustomMultipartFile songFile) {
+//        this.songFile = songFile;
+//    }
 
     public String getSongTitle() {
         return songTitle;
