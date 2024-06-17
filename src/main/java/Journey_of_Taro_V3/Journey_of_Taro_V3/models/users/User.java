@@ -6,6 +6,8 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -65,6 +67,30 @@ public class User {
             orphanRemoval = true,
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
+
+    @Size(max = 255)
+    @Column(name = "artist_name")
+    private String artistName1;
+
+    @NotNull
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getArtistName1() {
+        return artistName1;
+    }
+
+    public void setArtistName1(String artistName1) {
+        this.artistName1 = artistName1;
+    }
 
     public Long getId() {
         return id;
