@@ -1,50 +1,86 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.images.ImageController;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-@RunWith(SpringRunner.class)
-@WebMvcTest(ImageTest.class)
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
+@WebMvcTest(ImageController.class)
+@AutoConfigureMockMvc
 public class ImageTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void testEndpoint() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:3000/images"))
-                .andExpect(status().isOk());
+    @MockBean
+    private ImageService imageService; // Assuming ImageService is used in ImageController
+
+    @BeforeEach
+    void setUp() {
+        // Initialize any necessary mocks or configurations
     }
 
     @Test
-    public void testImageAttributes() {
-        // Creating a test image file
+    void testImageEndpoint() throws Exception {
+        // Mocking CustomMultipartFile for image file
         byte[] imageData = new byte[1024]; // Dummy image data
-        String imageName = "Test Image";
-        String imageAltName = "Alternate Test Image";
-        String imageUrl = "localhost:8080/images/TestImage";
         CustomMultipartFile imageFile = new CustomMultipartFile("test_image.jpg", "image/jpeg", imageData);
 
-        System.out.println("Image file created");
+        // Mocking behavior of ImageService to return a DTO
+        ImageDto mockImageDto = new ImageDto();
+        mockImageDto.setImageName("Test Image");
+        mockImageDto.setImageAltName("Alternate Test Image");
+        mockImageDto.setImageUrl("http://localhost:8080/images/TestImage");
 
-        // Creating a test image entity
-        Image image = new Image(imageFile, imageUrl);
 
-        // Printing attributes of the image entity
-        System.out.println("Image Name: " + image.getImageName());
-        System.out.println("Alternate Image Name: " + image.getImageAltName());
-        System.out.println("Image URL: " + image.getImageUrl());
-        System.out.println("File Name: " + image.getFileName());
-        System.out.println("File Size: " + image.getFileSize());
-        System.out.println("Upload Time: " + image.getUploadTime());
+        when(imageService.addImage(any(ImageInputDto.class))).thenReturn(mockImageDto);
+
+        // Testing POST endpoint for adding image
+        mockMvc.perform(multipart("/images")
+                        .file("file", imageFile.getBytes())
+                        .param("imageName", "Test Image")
+                        .param("imageAltName", "Alternate Test Image"))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost:8080/images/TestImage"))
+                .andExpect(content().string("http://localhost:8080/images/TestImage"));
+
+        // Testing GET endpoint for retrieving all images
+        mockMvc.perform(MockMvcRequestBuilders.get("/images"))
+                .andExpect(status().isOk());
+
+        // Testing GET endpoint for retrieving image by ID
+        mockMvc.perform(MockMvcRequestBuilders.get("/images/{id}", 1L))
+                .andExpect(status().isOk());
+
+        // Testing DELETE endpoint for deleting image by ID
+        mockMvc.perform(MockMvcRequestBuilders.delete("/images/{id}", 1L))
+                .andExpect(status().isNoContent());
     }
-
-
 }
