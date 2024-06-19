@@ -19,10 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
-
     public final UserDetailsService customUserDetailsService;
-    private final JwtRequestFilter jwtRequestFilter;
-    private final PasswordEncoder passwordEncoder;
+    public final JwtRequestFilter jwtRequestFilter;
+    public final PasswordEncoder passwordEncoder;
 
     // Could not autowire UserDetailsService, JwtRequestFilter, PasswordEncoder dit zijn bekende errors en hebben geen gevolgen na reports op stackoverflow.
     public SpringSecurityConfig(UserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder) {
@@ -53,7 +52,7 @@ public class SpringSecurityConfig {
                 // Wanneer je deze uncomments, staat je hele security open. Je hebt dan alleen nog een jwt nodig.
 //                .requestMatchers("/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+//                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 //                .requestMatchers(HttpMethod.GET,"/users").authenticated()
                 .requestMatchers(HttpMethod.GET, "/users").permitAll()
 //                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
@@ -94,7 +93,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.DELETE, "/songCollectionTypes/**").hasRole("ADMIN").requestMatchers(HttpMethod.POST,"/songCollectionTypes").permitAll()
                 // Je mag meerdere paths tegelijk definieren
 //                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/fileUpload", "/songs", "/images", "/uploads/**", "/songCollections").permitAll()
+                .requestMatchers("/fileUpload", "/songs", "/images", "/uploads/**", "/songCollections").hasAnyRole("ADMIN", "USER")
 //                .requestMatchers("/fileUpload", "/songs", "/images").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticate").permitAll()
                 .requestMatchers("/authenticated").authenticated()
