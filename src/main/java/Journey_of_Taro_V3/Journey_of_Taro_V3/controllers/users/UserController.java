@@ -157,6 +157,7 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
+
     @PostMapping(value = "/{username}/authorities")
     public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
         try {
