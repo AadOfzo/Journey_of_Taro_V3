@@ -5,7 +5,7 @@ insert into users(id, username, password, apikey, firstname, lastname, dob, coun
 VALUES (1001, 'Example_Admin_2', 'ExamplePassword1', 713468367, 'Test_FirstName_1', 'Test_LastName_1', '18-03-2023', 'the Netherlands','admin@testemail.com', 'Test_Artist_Name_1'),
        (1002, 'Example_Admin_1', '$2a$10$wtKjdXOpg9dP..1xbxk2ouv6rWOW.kGaX1vhKxgAy.G6aGL./AGVW', '7lcjpziAtuwtTyjaIUeq', 'Test_FirstName_1', 'Test_LastName_1', '18-03-2023', 'the Netherlands','admin@testemail.com', 'Test_Artist_Name_1');
 --        (1003, 'Example_User_1', 'ExamplePassword1', 713468369, 'Test_FirstName_1', 'Test_LastName_1', '19-04-2024', 'the Netherlands','user@testemail.com', 'Test_Artist_Name_1')
-
+-- HOI
 -- User Authorities
 insert into authorities(user_id, authority)
 VALUES (1001, 'ADMIN'),
