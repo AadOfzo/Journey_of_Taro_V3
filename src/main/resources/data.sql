@@ -9,7 +9,7 @@ VALUES (1001, 'Example_Admin_1', '$2a$10$wtKjdXOpg9dP..1xbxk2ouv6rWOW.kGaX1vhKxg
 -- User Authorities
 insert into authorities(user_id, authority)
 VALUES (1001, 'ADMIN'),
-       (1002, 'ADMIN');
+       (1002, 'USER');
 --        (1003, 'USER');
 
 -- File URL's Template nu in application.properties:
