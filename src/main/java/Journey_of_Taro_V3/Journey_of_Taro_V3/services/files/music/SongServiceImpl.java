@@ -153,7 +153,7 @@ public class SongServiceImpl implements SongService {
 
         // Check if the artistName is not null before accessing its username
         if (song.getArtistName() != null) {
-            dto.setArtistName(song.getArtistName().getUsername());
+            dto.setArtistName(song.getArtistName().getArtistName());
         }
 
         return dto;

@@ -52,7 +52,9 @@ public class User {
     @JsonIgnoreProperties(value = {"contents","contentType"})
     UserSong userSong;
 
-    @Column(name = "artistname")
+    @Column(name = "artistname",
+            unique = true
+    )
     private String artistName;
     @OneToMany(mappedBy = "artistName", cascade = CascadeType.ALL)
     private List<Song> songs;
