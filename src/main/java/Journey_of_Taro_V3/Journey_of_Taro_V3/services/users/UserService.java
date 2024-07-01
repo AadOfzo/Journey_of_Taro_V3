@@ -187,21 +187,27 @@ public class UserService {
         return dto;
     }
 
-    private static User toUser(UserDto userDto) {
+    public User toUser(UserDto userDTO) {
         User user = new User();
-        user.setId(userDto.getId());
-        user.setUsername(userDto.getUsername());
-        user.setApikey(userDto.getApikey());
-        user.setFirstName(userDto.getFirstname());
-        user.setLastName(userDto.getLastname());
-        user.setDateOfBirth(userDto.getDateofbirth());
-        user.setEmail(userDto.getEmail());
-        user.setCountry(userDto.getCountry());
-        user.setUserImage(userDto.getUserimage());
-        user.setUserSong(userDto.getUserSong());
-        user.setArtistName(userDto.getArtistname());
-        user.setRoles(new HashSet<>(userDto.getRoles()));
+        user.setUsername(userDTO.getUsername());
+        user.setPassword(userDTO.getPassword());
+        user.setFirstName(userDTO.getFirstname());
+        user.setLastName(userDTO.getLastname());
+        user.setDateOfBirth(userDTO.getDateofbirth());
+        user.setCountry(userDTO.getCountry());
+        user.setEmail(userDTO.getEmail());
+        user.setArtistName(userDTO.getArtistname());
+
+        // Initialize roles and authorities if they are not provided
+        if (user.getRoles() == null) {
+            user.setRoles(new HashSet<>());
+        }
+        if (user.getAuthorities() == null) {
+            user.setAuthorities(new HashSet<>());
+        }
+
         return user;
     }
+
 
 }
