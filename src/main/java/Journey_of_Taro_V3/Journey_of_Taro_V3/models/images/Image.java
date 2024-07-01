@@ -14,7 +14,6 @@ public class Image {
     @Id
     @GeneratedValue
     private Long id;
-
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
@@ -34,8 +33,6 @@ public class Image {
     }
 
     public Image(CustomMultipartFile imageFile, String imageUrl) {
-        this.imageName = imageName;
-        this.imageAltName = imageAltName;
         this.imageUrl = imageUrl;
         try {
             this.imageData = imageFile.getBytes();

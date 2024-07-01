@@ -1,11 +1,10 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -15,7 +14,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User {
-
     // User data:
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,23 +39,21 @@ public class User {
     @Column
     private String email;
 
-    // User files:
-    @JoinColumn(name = "userimage")
-    @ManyToOne
-    @JsonIgnoreProperties(value = {"contents","contentType"} )
-    UserImage userImage;
-
-    @JoinColumn(name = "usersong")
-    @ManyToOne
-    @JsonIgnoreProperties(value = {"contents","contentType"})
-    UserSong userSong;
-
     @Column(name = "artistname",
             unique = true
     )
     private String artistName;
     @OneToMany(mappedBy = "artistName", cascade = CascadeType.ALL)
     private List<Song> songs;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserImage userImage;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserSong userSong;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
 
     // Authority
     @OneToMany(
@@ -140,40 +136,12 @@ public class User {
         this.email = email;
     }
 
-    public void setUserImage(UserImage userImage) {
-        this.userImage = userImage;
-    }
-
-    public UserImage getUserImage() {
-        return userImage;
-    }
-
-    public UserSong getUserSong() {
-        return userSong;
-    }
-
-    public void setUserSong(UserSong userSong) {
-        this.userSong = userSong;
-    }
-
     public String getArtistName() {
         return artistName;
     }
 
     public void setArtistName(String artistName) {
         this.artistName = artistName;
-    }
-
-    public Set<Authority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
-    }
-
-    public void addAuthorities(Authority authority) {
-        authorities.add(authority);
     }
 
     public List<Song> getSongs() {
@@ -184,4 +152,43 @@ public class User {
         this.songs = songs;
     }
 
+    public UserImage getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(UserImage userImage) {
+        this.userImage = userImage;
+    }
+
+    public UserSong getUserSong() {
+        return userSong;
+    }
+
+    public void setUserSong(UserSong userSong) {
+        this.userSong = userSong;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void addRole(String roleName) {
+        this.roles.add(roleName);
+    }
+
+    public void addAuthorities(Authority authority) {
+        this.authorities.add(authority);
+    }
 }

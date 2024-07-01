@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +54,7 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         List<Song> songsToRemove = songRepository.findAllById(songIds);
         collection.getSongs().removeAll(songsToRemove);
         for (Song song : songsToRemove) {
-            song.setSongCollection(null); // Unset the songCollection on the Song
+            song.setSongCollection(null);
         }
         collectionRepository.save(collection);
     }
@@ -134,34 +133,22 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         Path collectionPath = Paths.get("uploads/music/song_collections/" + collectionTitle);
 
         try {
-            // Create directory if not exists
             Files.createDirectories(collectionPath);
 
-            // Copy songs to the new directory
             for (Song song : collection.getSongs()) {
                 Path sourcePath = Paths.get("uploads/music/songs/" + song.getFileName());
                 Path targetPath = collectionPath.resolve(song.getFileName());
-                Files.copy(sourcePath, targetPath);
+                Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
             }
 
-            // Copy image to the new directory if exists
-            Image image = collection.getCollectionImage();
-            if (image != null) {
-                Path imagePath = Paths.get("uploads/images/" + image.getImageName());
-                Path targetImagePath = collectionPath.resolve(image.getImageName());
-                Files.copy(imagePath, targetImagePath);
-            }
+            String songCollectionUrl = collectionPath.toString();
+            collection.setSongCollectionUrl(songCollectionUrl);
 
+            collectionRepository.save(collection);
+            return convertToDto(collection);
         } catch (IOException e) {
             throw new RuntimeException("Failed to create folder and copy files", e);
         }
-
-        // Set collection URL
-        String collectionUrl = "/uploads/music/song_collections/" + collectionTitle;
-        collection.setSongCollectionUrl(collectionUrl);
-        collectionRepository.save(collection);
-
-        return convertToDto(collection);
     }
 
     private SongCollectionDto convertToDto(SongCollection collection) {

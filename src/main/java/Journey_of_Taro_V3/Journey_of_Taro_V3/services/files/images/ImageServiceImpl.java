@@ -10,16 +10,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -29,9 +31,9 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
 
     @Autowired
-    public ImageServiceImpl(@Value("uploads/images") String fileStorageLocation, ImageRepository imageRepository) throws IOException{
-        fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
+    public ImageServiceImpl(@Value("${file.storage.location:uploads/images}") String fileStorageLocation, ImageRepository imageRepository) throws IOException {
         this.fileStorageLocation = fileStorageLocation;
+        this.fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.imageRepository = imageRepository;
 
         Files.createDirectories(fileStoragePath);
@@ -39,8 +41,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ImageDto getImageById(Long id) {
-        if (imageRepository.findById(id).isPresent()) {
-            Image image = imageRepository.findById(id).get();
+        Optional<Image> optionalImage = imageRepository.findById(id);
+        if (optionalImage.isPresent()) {
+            Image image = optionalImage.get();
             return transferToImageDto(image);
         } else {
             throw new RecordNotFoundException("No Images found with id: " + id);
@@ -65,10 +68,34 @@ public class ImageServiceImpl implements ImageService {
         return transferToImageDto(image);
     }
 
+    public String storeImageFile(MultipartFile file) throws IOException {
+        String fileName = Paths.get(file.getOriginalFilename()).getFileName().toString();
+        Path targetLocation = this.fileStoragePath.resolve(fileName);
+
+        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+        return targetLocation.toString();
+    }
+
+
+    public Resource loadAsResource(String filename) {
+        try {
+            Path filePath = this.fileStoragePath.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("The file doesn't exist or not readable.");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Issue in reading the file.", e);
+        }
+    }
+
     @Override
     public ImageDto saveImage(ImageInputDto inputDto) {
         Image image = transferToImage(inputDto);
-
         image = imageRepository.save(image);
         return transferToImageDto(image);
     }
@@ -103,41 +130,30 @@ public class ImageServiceImpl implements ImageService {
         } catch (IOException e) {
             throw new RuntimeException("Error creating image entity", e);
         }
-
         return image;
     }
 
-
-    public Resource downloadImageFile(String imageName) {
-
-        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(imageName);
-
-        Resource resource;
-
-        try {
-            resource = new UrlResource(path.toUri());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Issue in reading the file.");
-        }
-
-        if(resource.exists()&& resource.isReadable()) {
-            return resource;
+    @Override
+    public Image getImageWithData(String imageName) {
+        Optional<Image> optionalImage = imageRepository.findByFileName(imageName);
+        if (optionalImage.isPresent()) {
+            return optionalImage.get();
         } else {
-            throw new RuntimeException("The file doesn't exist or not readable.");
+            throw new RecordNotFoundException("Image not found with name: " + imageName);
         }
     }
 
-    // todo: filename uit database returnen, hoeft niet met DTO.
-    public Image getImageWithData(String imageName) {
-        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(imageName);
-
+    public Resource downloadImageFile(String imageName) {
+        Path path = fileStoragePath.resolve(imageName);
         try {
-            byte[] imageData = Files.readAllBytes(path);
-            Image image = new Image();
-            image.setImageData(imageData);
-            return image;
-        } catch (IOException e) {
-            throw new RuntimeException("Issue reading the file", e);
+            Resource resource = new UrlResource(path.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("The file doesn't exist or not readable.");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Issue in reading the file.", e);
         }
     }
 
@@ -145,5 +161,4 @@ public class ImageServiceImpl implements ImageService {
     public void deleteImage(Long id) {
         imageRepository.deleteById(id);
     }
-
 }

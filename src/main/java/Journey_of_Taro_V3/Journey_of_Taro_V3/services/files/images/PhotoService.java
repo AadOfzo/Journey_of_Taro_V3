@@ -1,7 +1,7 @@
 //package Journey_of_Taro_V3.Journey_of_Taro_V3.services.images;
 //
 //import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
-//import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
+//import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImageRepository;
 //import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.FileUploadRepository;
 //import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.core.io.Resource;
@@ -40,7 +40,7 @@
 ////
 ////        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 ////
-////        repo.save(new UserImage(fileName));
+////        repo.save(new UserImageRepository(fileName));
 ////        return fileName;
 ////    }
 //

@@ -2,202 +2,96 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.UserImageRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.UserSongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.RandomStringGenerator;
-import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ImageRepository imageRepository;
+    private final UserImageRepository userImageRepository;
     private final ImageServiceImpl imageService;
-    private final SongRepository songRepository;
+    private final UserSongRepository userSongRepository;
     private final SongServiceImpl songService;
-    private final PasswordEncoder passwordEncoder;
 
-    // TODO: 29/02/2024 Could not autowire PasswordEncoder code werkt wel. Users kunnen aangemaakt worden.
-    // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
-
-
-    public UserService(UserRepository userRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserImageRepository userImageRepository, ImageServiceImpl imageService, UserSongRepository userSongRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.imageRepository = imageRepository;
+        this.userImageRepository = userImageRepository;
         this.imageService = imageService;
-        this.songRepository = songRepository;
+        this.userSongRepository = userSongRepository;
         this.songService = songService;
-        this.passwordEncoder = passwordEncoder;
     }
-
 
     public UserDto getUserByApiKey(String apikey) {
         User user = userRepository.findByApikey(apikey);
-        if (user != null) {
-            return fromUser(user);
-        } else {
-            throw new UsernameNotFoundException("User not found with apikey: " + apikey);
-        }
+        return user != null ? fromUser(user) : null;
     }
 
     public List<UserDto> getUsers() {
-        List<UserDto> collection = new ArrayList<>();
-        List<User> list = userRepository.findAll();
-        for (User user : list) {
-            collection.add(fromUser(user));
-        }
-        return collection;
+        return userRepository.findAll().stream().map(UserService::fromUser).collect(Collectors.toList());
     }
 
     public UserDto getUser(String username) {
-        UserDto dto;
-        Optional<User> user = userRepository.findById(username);
-        if (user.isPresent()) {
-            dto = fromUser(user.get());
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-        return dto;
+        return userRepository.findById(username).map(UserService::fromUser).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-
     public User saveUser(UserDto userDto) {
-        User user = toUser(userDto); // Convert UserDto to User
-        return userRepository.save(user);
+        return userRepository.save(toUser(userDto));
     }
 
     public String createUser(UserDto userDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userDto.setApikey(randomString);
-        User newUser = userRepository.save(toUser(userDto));
-        return newUser.getUsername();
+        return userRepository.save(toUser(userDto)).getUsername();
     }
 
     public UserDto getArtistName(String artistName) {
-        // Find the user by artistName
-        User user = userRepository.findByArtistName(artistName)
-                .orElseThrow(() -> new RecordNotFoundException("User not found for artistName: " + artistName));
-
-        // Convert User entity to UserDto (if needed)
-        UserDto userDto = convertUserToDto(user);
-
-        return userDto;
-    }
-    public UserDto convertUserToDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
-        userDto.setPassword(user.getPassword());
-        userDto.setApikey(user.getApikey());
-        userDto.setFirstname(user.getFirstName());
-        userDto.setLastname(user.getLastName());
-        userDto.setDateofbirth(user.getDateOfBirth());
-        userDto.setEmail(user.getEmail());
-        userDto.setCountry(user.getCountry());
-        userDto.setUserimage(user.getUserImage());
-        userDto.setUserSong(user.getUserSong());
-        userDto.setArtistname(user.getArtistName());
-
-        // Bepaal user's roles gebaseerd op authorities
-        List<String> roles = user.getAuthorities().stream()
-                .map(authority -> authority.getAuthority().substring(5)) // verwijder "ROLE_" prefix
-                .collect(Collectors.toList());
-        userDto.setRoles(roles);
-
-        return userDto;
+        User user = userRepository.findByArtistName(artistName).orElseThrow(() -> new RecordNotFoundException("User not found for artistName: " + artistName));
+        return fromUser(user);
     }
 
-    public static UserDto fromUser(User user) {
-
-        var dto = new UserDto();
-
-        dto.id = user.getId();
-        dto.username = user.getUsername();
-        dto.password = user.getPassword();
-        dto.apikey = user.getApikey();
-        dto.firstname = user.getFirstName();
-        dto.lastname = user.getLastName();
-        dto.dateofbirth = user.getDateOfBirth();
-        dto.email = user.getEmail();
-        dto.country = user.getCountry();
-        dto.userimage = user.getUserImage();
-        dto.userSong = user.getUserSong();
-        dto.artistname = user.getArtistName();
-
-        ArrayList authorities = new ArrayList<>();
-        for (Authority authority : user.getAuthorities()) {
-            authorities.add(authority.getAuthority());
-
-        }
-        dto.roles = authorities;
-        return dto;
-    }
-
-    public User toUser(UserDto userDto) {
-
-        var user = new User();
-
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.password));
-        user.setApikey(userDto.getApikey());
-        user.setFirstName(userDto.getFirstname());
-        user.setLastName(userDto.getLastname());
-        user.setCountry(userDto.getCountry());
-        user.setDateOfBirth(userDto.getDateofbirth());
-        user.setEmail(userDto.getEmail());
-        user.setArtistName(userDto.getArtistname());
-
-        user.setUserImage(userDto.getUserimage());
-        user.setUserSong(userDto.getUserSong());
-
-        return user;
+    public void updateUser(String username, UserDto dto) {
+        User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        user.setFirstName(dto.getFirstname());
+        user.setLastName(dto.getLastname());
+        user.setDateOfBirth(dto.getDateofbirth());
+        user.setEmail(dto.getEmail());
+        user.setCountry(dto.getCountry());
+        userRepository.save(user);
     }
 
     public void deleteUser(String username) {
         userRepository.deleteById(username);
     }
 
-    public void updateUser(String username, UserDto newUser) {
-        if (!userRepository.existsByUsername(username)) throw new RecordNotFoundException();
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
-        user.setPassword(passwordEncoder.encode(newUser.getPassword())); // Encode the password before setting
-        userRepository.save(user);
-    }
-
-    public Set<Authority> getRoles(String username) {
-        if (!userRepository.existsByUsername(username)) {
-            throw new UsernameNotFoundException(username);
-        }
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        return user.getAuthorities();
+    public List<String> getRoles(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        return new ArrayList<>(user.getRoles());
     }
 
     public void addRole(String username, String roleName) {
-        if (!userRepository.existsByUsername(username)) {
-            throw new UsernameNotFoundException(username);
-        }
-            User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-            Authority authority = new Authority();
-            authority.setAuthority(roleName);
-            user.addAuthorities(authority);
-            userRepository.save(user);
-        }
+        User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        user.addRole(roleName);
+        userRepository.save(user);
+    }
 
     @Transactional
     public void grantAdminPrivilege(String username) {
@@ -206,64 +100,108 @@ public class UserService {
 
         Authority adminAuthority = new Authority(user, "ROLE_ADMIN");
 
-        // Add the admin role to the user's roles
         user.addAuthorities(adminAuthority);
 
-        // Save the updated user
         userRepository.save(user);
     }
 
-    @Transactional
-    public Resource getImageFromUser(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
+    public void updateArtistName(Long userId, String artistName) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException(userId.toString()));
+        user.setArtistName(artistName);
+        userRepository.save(user);
+    }
+
+    // User Files: Images en Songs.
+    public User addImageToUser(MultipartFile imageFile, String apikey) {
+        User user = userRepository.findByApikey(apikey);
+        if (user == null) {
+            throw new RecordNotFoundException("User not found for apikey: " + apikey);
+        }
+
+        try {
+            String imagePath = imageService.storeImageFile(imageFile);
+            UserImage userImage = new UserImage(imageFile.getOriginalFilename(), imagePath);
+            userImageRepository.save(userImage);
+            user.setUserImage(userImage);
+            return userRepository.save(user);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store image file", e);
+        }
+    }
+
+    public User addSongToUser(MultipartFile songFile, String apikey) {
+        User user = userRepository.findByApikey(apikey);
+        try {
+            UserSong userSong = new UserSong(songFile.getOriginalFilename(), songService.storeSongFile(songFile));
+            userSongRepository.save(userSong);
+            user.setUserSong(userSong);
+            return userRepository.save(user);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store song file", e);
+        }
+    }
+
+    public Resource getImageFromUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()){
-            throw new RecordNotFoundException("User " + id + " not found. ");
+            throw new RecordNotFoundException("User with user-id: " + userId + "not found.");
         }
         UserImage userImage = optionalUser.get().getUserImage();
         if (userImage == null){
-            throw new RecordNotFoundException("User " + id + " has no Image");
+            throw new RecordNotFoundException("User " + userId + "has no image.");
         }
-        return imageService.downloadImageFile(userImage.getFileName());
+        return imageService.downloadImageFile(userImage.getImagePath());
     }
 
-    @Transactional
-    public User addImageToUser(String apikey, String imageName) {
-        Optional<User> optionalUser = userRepository.findById(apikey);
-        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(imageName);
-        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
-            UserImage userImage = optionalUserImage.get();
-            User user = optionalUser.get();
-            user.setUserImage(userImage);
-            return userRepository.save(user);
-        } else {
-            throw new RecordNotFoundException("User with apikey " + apikey + " not found");
-        }
-
-    }
-
-    public void updateArtistName(Long userId, String artistName) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setArtistName(artistName);
-            userRepository.save(user);
-        } else {
-            throw new RecordNotFoundException("User not found with id: " + userId);
-        }
-    }
+//    public Resource getImageFromUser(Long userId) {
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RecordNotFoundException("User not found"));
+//        return imageService.loadAsResource(user.getUserImage().getImageName());
+//    }
 
     @Transactional
     public Resource getSongFromUser(String userName) {
-        Optional<User> optionalUser = userRepository.findByUsername(userName);
-        if (optionalUser.isEmpty()){
-            throw new RecordNotFoundException("User " + userName + " not found. ");
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new RecordNotFoundException("User " + userName + " not found."));
+
+        UserSong userSong = user.getUserSong();
+        if (userSong == null) {
+            throw new RecordNotFoundException("User " + userName + " has no Song");
         }
-        Song song = (Song) optionalUser.get().getSongs();
-        if (song == null){
-            throw new RecordNotFoundException("User " + userName + " has no Image");
-        }
-        return songService.downloadSongFile(song.getFileName());
+        return songService.downloadSongFile(userSong.getSongTitle());
     }
 
+    public static UserDto fromUser(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setApikey(user.getApikey());
+        dto.setFirstname(user.getFirstName());
+        dto.setLastname(user.getLastName());
+        dto.setDateofbirth(user.getDateOfBirth());
+        dto.setEmail(user.getEmail());
+        dto.setCountry(user.getCountry());
+        dto.setUserimage(user.getUserImage());
+        dto.setUserSong(user.getUserSong());
+        dto.setArtistname(user.getArtistName());
+        dto.setRoles(new ArrayList<>(user.getRoles()));
+        return dto;
+    }
+
+    private static User toUser(UserDto userDto) {
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setUsername(userDto.getUsername());
+        user.setApikey(userDto.getApikey());
+        user.setFirstName(userDto.getFirstname());
+        user.setLastName(userDto.getLastname());
+        user.setDateOfBirth(userDto.getDateofbirth());
+        user.setEmail(userDto.getEmail());
+        user.setCountry(userDto.getCountry());
+        user.setUserImage(userDto.getUserimage());
+        user.setUserSong(userDto.getUserSong());
+        user.setArtistName(userDto.getArtistname());
+        user.setRoles(new HashSet<>(userDto.getRoles()));
+        return user;
+    }
 
 }
