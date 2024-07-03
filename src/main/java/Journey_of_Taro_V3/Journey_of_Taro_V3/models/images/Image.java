@@ -14,7 +14,6 @@ public class Image {
     @Id
     @GeneratedValue
     private Long id;
-
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
@@ -33,7 +32,7 @@ public class Image {
     public Image() {
     }
 
-    public Image(CustomMultipartFile imageFile, String imageUrl) {
+    public Image(CustomMultipartFile imageFile, String imageUrl, String imageName, String imageAltName) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
         this.imageUrl = imageUrl;
@@ -46,6 +45,7 @@ public class Image {
             throw new RuntimeException("Failed to read image file data", e);
         }
     }
+
 
     public Long getId() {
         return id;

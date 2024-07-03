@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ImageInputDto {
+
     private MultipartFile imageFile;
     private String imageName;
     private String imageAltName;
