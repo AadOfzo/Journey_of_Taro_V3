@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
@@ -172,11 +173,56 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
-    public void updateUser(String username, UserDto newUser) {
-        if (!userRepository.existsByUsername(username)) throw new RecordNotFoundException();
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
-        user.setPassword(passwordEncoder.encode(newUser.getPassword())); // Encode the password before setting
-        userRepository.save(user);
+//    public void updateUser(String username, UserDto newUser) {
+//        if (!userRepository.existsByUsername(username)) throw new RecordNotFoundException();
+//        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
+//        user.setPassword(passwordEncoder.encode(newUser.getPassword())); // Encode the password before setting
+//        userRepository.save(user);
+//    }
+
+    public User updateUser(String username, UserDto newUser) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
+
+        if (newUser.getPassword() != null && !newUser.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        }
+        if (newUser.getUsername() != null && !newUser.getUsername().isEmpty()) {
+            user.setUsername(newUser.getUsername());
+        }
+        if (newUser.getFirstname() != null && !newUser.getFirstname().isEmpty()) {
+            user.setFirstName(newUser.getFirstname());
+        }
+        if (newUser.getLastname() != null && !newUser.getLastname().isEmpty()) {
+            user.setLastName(newUser.getLastname());
+        }
+        if (newUser.getDateofbirth() != null) {
+            user.setDateOfBirth(newUser.getDateofbirth());
+        }
+        if (newUser.getCountry() != null && !newUser.getCountry().isEmpty()) {
+            user.setCountry(newUser.getCountry());
+        }
+        if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
+            user.setEmail(newUser.getEmail());
+        }
+        if (newUser.getUserimage() != null) {
+            user.setUserImage(newUser.getUserimage());
+        }
+        if (newUser.getUserSong() != null) {
+            user.setUserSong(newUser.getUserSong());
+        }
+        if (newUser.getArtistname() != null && !newUser.getArtistname().isEmpty()) {
+            user.setArtistName(newUser.getArtistname());
+        }
+        if (newUser.getRoles() != null && !newUser.getRoles().isEmpty()) {
+            Set<Authority> authorities = new HashSet<>();
+            for (String role : newUser.getRoles()) {
+                authorities.add(new Authority(user, role));
+            }
+            user.setAuthorities(authorities);
+        }
+
+        return userRepository.save(user);
     }
 
     public Set<Authority> getRoles(String username) {
@@ -226,8 +272,19 @@ public class UserService {
         return imageService.downloadImageFile(userImage.getFileName());
     }
 
+    public void updateArtistName(Long userId, String artistName) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setArtistName(artistName);
+            userRepository.save(user);
+        } else {
+            throw new RecordNotFoundException("User not found with id: " + userId);
+        }
+    }
+
     @Transactional
-    public User addImageToUser(String apikey, String imageName) {
+    public User assignImageToUser(String apikey, String imageName) {
         Optional<User> optionalUser = userRepository.findById(apikey);
         Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(imageName);
         if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
@@ -241,16 +298,11 @@ public class UserService {
 
     }
 
-    public void updateArtistName(Long userId, String artistName) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setArtistName(artistName);
-            userRepository.save(user);
-        } else {
-            throw new RecordNotFoundException("User not found with id: " + userId);
-        }
-    }
+//    @Transactional
+//    public User assignSongToUser(String apikey, String songTitle) {
+//        Optional<User> optionalUser = userRepository.findById(apikey);
+//        Optional<UserSong> optionalUserSong = songRepository.findBySongTitle(songTitle);
+//    }
 
     @Transactional
     public Resource getSongFromUser(String userName) {

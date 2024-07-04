@@ -119,10 +119,8 @@ public class UserController {
 
     // PUT mapping
     @PutMapping(value = "/{username}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
-
+    public ResponseEntity<Void> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
         userService.updateUser(username, dto);
-
         return ResponseEntity.noContent().build();
     }
 
@@ -180,27 +178,27 @@ public class UserController {
                 .path("*/image")
                 .toUriString();
         String imageName = imageFile.getOriginalFilename();
-        User userDto = userService.addImageToUser(imageName, apikey);
+        User userDto = userService.assignImageToUser(imageName, apikey);
 
         return ResponseEntity.created(URI.create(url)).body(userDto);
 
     }
 
-    @PostMapping("/{id}/song")
-    public ResponseEntity<User> addSongToUser(@PathVariable("id") String apikey,
-                                               @RequestBody CustomMultipartFile songFile)
-            throws IOException {
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/users/")
-                .path(Objects.requireNonNull(apikey))
-                .path("*/song")
-                .toUriString();
-        String songTitle = songService.storeSongFile(songFile);
-        User userDto = userService.addImageToUser(songTitle, apikey);
-
-        return ResponseEntity.created(URI.create(url)).body(userDto);
-
-    }
+//    @PostMapping("/{id}/song")
+//    public ResponseEntity<User> addSongToUser(@PathVariable("id") String apikey,
+//                                               @RequestBody CustomMultipartFile songFile)
+//            throws IOException {
+//        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/users/")
+//                .path(Objects.requireNonNull(apikey))
+//                .path("*/song")
+//                .toUriString();
+//        String songTitle = songService.storeSongFile(songFile);
+//        User userDto = userService.addSongToUser(songTitle, apikey);
+//
+//        return ResponseEntity.created(URI.create(url)).body(userDto);
+//
+//    }
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {

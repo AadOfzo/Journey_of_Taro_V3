@@ -1,8 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.config.security;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.filter.JwtRequestFilter;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.CustomUserDetailsService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,16 +23,16 @@ public class SpringSecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
     private final PasswordEncoder passwordEncoder;
 
-    // Could not autowire UserDetailsService, JwtRequestFilter, PasswordEncoder dit zijn bekende errors en hebben geen gevolgen na reports op stackoverflow.
+    // Constructor injection for UserDetailsService, JwtRequestFilter, and PasswordEncoder
     public SpringSecurityConfig(UserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Authenticatie met customUserDetailsService en passwordEncoder
+    // Configure AuthenticationManager with customUserDetailsService and passwordEncoder
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder encoder, UserDetailsService udService) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder)
@@ -41,70 +40,53 @@ public class SpringSecurityConfig {
                 .build();
     }
 
-    // Authorisatie met jwt
+    // Configure SecurityFilterChain with authorization rules and JWT filter
     @Bean
     protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
-
         http
-                .csrf().disable()
-                .httpBasic().disable()
-                .cors().and()
-                .authorizeHttpRequests()
-                // Wanneer je deze uncomments, staat je hele security open. Je hebt dan alleen nog een jwt nodig.
-//                .requestMatchers("/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
-//                .requestMatchers(HttpMethod.GET,"/users").authenticated()
-                .requestMatchers(HttpMethod.GET, "/users").permitAll()
-//                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .cors(cors -> cors.and())
+                .authorizeHttpRequests(authorize -> authorize
+                        // Allow public access to specific endpoints
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
 
-                // RequestMatchers voor FILES
-                .requestMatchers(HttpMethod.POST, "/fileUpload").permitAll()
-                .requestMatchers(HttpMethod.POST, "/images").permitAll()
-                .requestMatchers(HttpMethod.GET, "/images").permitAll()
-                .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/images/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/images/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "uploads/images").permitAll()
-                .requestMatchers(HttpMethod.GET, "uploads/images/**").permitAll()
-//                .requestMatchers(HttpMethod.GET, "/images").hasRole("USER")
-//                .requestMatchers(HttpMethod.POST,"/images").hasRole("USER")
-//                .requestMatchers(HttpMethod.GET, "/images").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST,"/images").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/songs").permitAll()
-                .requestMatchers(HttpMethod.GET, "/songs/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "uploads/songs/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/songs/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/songs/**").permitAll()
-//                .requestMatchers(HttpMethod.GET,"/songs").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST,"/songs/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/songs/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "uploads/songs/songCollections").permitAll()
-                .requestMatchers(HttpMethod.GET, "uploads/songs/songCollections").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "uploads/songs/songCollections").permitAll()
-                .requestMatchers(HttpMethod.POST, "/songCollections/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/songCollections/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/songCollections/**").permitAll()
-//                .requestMatchers(HttpMethod.GET,"/songCollections").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST,"/songCollections/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/songCollections/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST,"/songCollectionTypes").permitAll()
-//                .requestMatchers(HttpMethod.GET,"/songCollectionTypes").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST,"/songCollectionTypes/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/songCollectionTypes/**").hasRole("ADMIN").requestMatchers(HttpMethod.POST,"/songCollectionTypes").permitAll()
-                // Je mag meerdere paths tegelijk definieren
-//                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/fileUpload", "/songs", "/images", "/uploads/**", "/songCollections").permitAll()
-//                .requestMatchers("/fileUpload", "/songs", "/images").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/authenticate").permitAll()
-                .requestMatchers("/authenticated").authenticated()
-                .anyRequest().denyAll()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                        // Allow public access to file and image endpoints
+                        .requestMatchers(HttpMethod.POST, "/fileUpload").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/images").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/images").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "uploads/images").permitAll()
+                        .requestMatchers(HttpMethod.GET, "uploads/images/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/songs").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/songs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "uploads/songs/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/songs/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/songs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "uploads/songs/songCollections").permitAll()
+                        .requestMatchers(HttpMethod.GET, "uploads/songs/songCollections").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "uploads/songs/songCollections").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/songCollections/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/songCollections/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/songCollections/**").permitAll()
+
+                        // Allow public access to authentication endpoints
+                        .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/authenticated").authenticated()
+
+                        // Restrict access to all other endpoints
+                        .anyRequest().denyAll()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // Add JWT filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
-
-
 }
