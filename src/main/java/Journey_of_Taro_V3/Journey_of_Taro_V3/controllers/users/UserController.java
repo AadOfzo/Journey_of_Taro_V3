@@ -86,7 +86,7 @@ public class UserController {
 
         try {
             mediaType = MediaType.parseMediaType(image.getImageUrl());
-        } catch (InvalidMediaTypeException ignore){
+        } catch (InvalidMediaTypeException ignore) {
             mediaType = MediaType.APPLICATION_OCTET_STREAM;
         }
 
@@ -106,7 +106,7 @@ public class UserController {
 
         try {
             mediaType = MediaType.parseMediaType(song.getSongUrl());
-        } catch (InvalidMediaTypeException ignore){
+        } catch (InvalidMediaTypeException ignore) {
             mediaType = MediaType.APPLICATION_OCTET_STREAM;
         }
 
@@ -147,7 +147,7 @@ public class UserController {
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
 
         String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername,"User");
+        userService.addRole(newUsername, "User");
 
         URI location = ServletUriComponentsBuilder.fromPath("/users/")
                 .buildAndExpand(newUsername).toUri();
@@ -161,27 +161,25 @@ public class UserController {
             String authorityName = (String) fields.get("authority");
             userService.addRole(username, authorityName);
             return ResponseEntity.noContent().build();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new BadRequestException();
         }
     }
 
     // todo: POST add image to user
     @PostMapping("/{id}/images")
-    public ResponseEntity<User> addImageToUser(@PathVariable("id") String apikey,
+    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
                                                @RequestBody CustomMultipartFile imageFile)
             throws IOException {
         String url = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/")
-                .path(Objects.requireNonNull(apikey))
-                .path("*/image")
+                .path(Objects.requireNonNull(userId.toString()))
+                .path("/images")
                 .toUriString();
-        String imageName = imageFile.getOriginalFilename();
-        User userDto = userService.assignImageToUser(imageName, apikey);
+        String imageName = imageService.storeFile(imageFile);
+        User user = userService.assignImageToUser(userId, imageName);
 
-        return ResponseEntity.created(URI.create(url)).body(userDto);
-
+        return ResponseEntity.created(URI.create(url)).body(user);
     }
 
 //    @PostMapping("/{id}/song")

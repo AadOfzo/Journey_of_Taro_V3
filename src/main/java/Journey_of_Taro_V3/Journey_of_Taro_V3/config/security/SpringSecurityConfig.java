@@ -23,14 +23,13 @@ public class SpringSecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
     private final PasswordEncoder passwordEncoder;
 
-    // Constructor injection for UserDetailsService, JwtRequestFilter, and PasswordEncoder
     public SpringSecurityConfig(UserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Configure AuthenticationManager with customUserDetailsService and passwordEncoder
+    // Config AuthenticationManager met customUserDetailsService en passwordEncoder
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
@@ -40,7 +39,7 @@ public class SpringSecurityConfig {
                 .build();
     }
 
-    // Configure SecurityFilterChain with authorization rules and JWT filter
+    // Config SecurityFilterChain met authorization en JWT filter
     @Bean
     protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
         http
@@ -52,7 +51,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").permitAll()
 
                         // Allow public access to file and image endpoints
                         .requestMatchers(HttpMethod.POST, "/fileUpload").permitAll()

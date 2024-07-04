@@ -3,7 +3,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
@@ -76,12 +75,6 @@ public class UserService {
         return dto;
     }
 
-
-    public User saveUser(UserDto userDto) {
-        User user = toUser(userDto); // Convert UserDto to User
-        return userRepository.save(user);
-    }
-
     public String createUser(UserDto userDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userDto.setApikey(randomString);
@@ -99,9 +92,10 @@ public class UserService {
 
         return userDto;
     }
+
     public UserDto convertUserToDto(User user) {
         UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
+        userDto.setUserId(user.getUserId());
         userDto.setUsername(user.getUsername());
         userDto.setPassword(user.getPassword());
         userDto.setApikey(user.getApikey());
@@ -127,7 +121,7 @@ public class UserService {
 
         var dto = new UserDto();
 
-        dto.id = user.getId();
+        dto.userId = user.getUserId();
         dto.username = user.getUsername();
         dto.password = user.getPassword();
         dto.apikey = user.getApikey();
@@ -172,13 +166,6 @@ public class UserService {
     public void deleteUser(String username) {
         userRepository.deleteById(username);
     }
-
-//    public void updateUser(String username, UserDto newUser) {
-//        if (!userRepository.existsByUsername(username)) throw new RecordNotFoundException();
-//        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
-//        user.setPassword(passwordEncoder.encode(newUser.getPassword())); // Encode the password before setting
-//        userRepository.save(user);
-//    }
 
     public User updateUser(String username, UserDto newUser) {
         User user = userRepository.findByUsername(username)
@@ -261,7 +248,7 @@ public class UserService {
 
     @Transactional
     public Resource getImageFromUser(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
+        Optional<User> optionalUser = userRepository.findByUserId(id);
         if (optionalUser.isEmpty()){
             throw new RecordNotFoundException("User " + id + " not found. ");
         }
@@ -273,7 +260,7 @@ public class UserService {
     }
 
     public void updateArtistName(Long userId, String artistName) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setArtistName(artistName);
@@ -284,8 +271,8 @@ public class UserService {
     }
 
     @Transactional
-    public User assignImageToUser(String apikey, String imageName) {
-        Optional<User> optionalUser = userRepository.findById(apikey);
+    public User assignImageToUser(Long userId, String imageName) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
         Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(imageName);
         if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
             UserImage userImage = optionalUserImage.get();
@@ -293,16 +280,11 @@ public class UserService {
             user.setUserImage(userImage);
             return userRepository.save(user);
         } else {
-            throw new RecordNotFoundException("User with apikey " + apikey + " not found");
+            throw new RecordNotFoundException("User with id: " + userId + " not found");
         }
 
     }
 
-//    @Transactional
-//    public User assignSongToUser(String apikey, String songTitle) {
-//        Optional<User> optionalUser = userRepository.findById(apikey);
-//        Optional<UserSong> optionalUserSong = songRepository.findBySongTitle(songTitle);
-//    }
 
     @Transactional
     public Resource getSongFromUser(String userName) {

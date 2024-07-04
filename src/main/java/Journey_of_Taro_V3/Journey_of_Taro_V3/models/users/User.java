@@ -20,7 +20,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Long userId;
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
@@ -42,7 +42,7 @@ public class User {
     private String email;
 
     // User files:
-    @JoinColumn(name = "userimage")
+    @JoinColumn(name = "userimage_id")
     @ManyToOne
     @JsonIgnoreProperties(value = {"contents","contentType"} )
     UserImage userImage;
@@ -66,12 +66,12 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

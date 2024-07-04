@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,6 +20,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -107,6 +109,13 @@ public class ImageServiceImpl implements ImageService {
         return image;
     }
 
+    @Override
+    public String storeFile(MultipartFile file) throws IOException {
+        String fileName = Objects.requireNonNull(file.getOriginalFilename());
+        Path targetLocation = this.fileStoragePath.resolve(fileName);
+        Files.copy(file.getInputStream(), targetLocation);
+        return fileName;
+    }
 
     public Resource downloadImageFile(String imageName) {
 

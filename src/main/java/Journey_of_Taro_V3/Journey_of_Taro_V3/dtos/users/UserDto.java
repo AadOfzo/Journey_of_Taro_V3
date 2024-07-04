@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UserDto {
 
-    public Long id;
+    public Long userId;
     public String username;
     public String password;
     public String apikey;
@@ -24,12 +24,12 @@ public class UserDto {
     public String artistname;
     public List<String> roles;
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
