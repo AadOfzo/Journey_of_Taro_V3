@@ -32,10 +32,9 @@ public class UserService {
     private final SongServiceImpl songService;
     private final PasswordEncoder passwordEncoder;
 
-    // TODO: 29/02/2024 Could not autowire PasswordEncoder code werkt wel. Users kunnen aangemaakt worden.
+
+    // Could not autowire PasswordEncoder passwords komen wel encoded in database.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
-
-
     public UserService(UserRepository userRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
@@ -45,14 +44,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
-    public UserDto getUserByApiKey(String apikey) {
-        User user = userRepository.findByApikey(apikey);
-        if (user != null) {
-            return fromUser(user);
-        } else {
-            throw new UsernameNotFoundException("User not found with apikey: " + apikey);
-        }
+    public String createUser(UserDto userDto) {
+        String randomString = RandomStringGenerator.generateAlphaNumeric(20);
+        userDto.setApikey(randomString);
+        User newUser = userRepository.save(toUser(userDto));
+        return newUser.getUsername();
     }
 
     public List<UserDto> getUsers() {
@@ -75,12 +71,15 @@ public class UserService {
         return dto;
     }
 
-    public String createUser(UserDto userDto) {
-        String randomString = RandomStringGenerator.generateAlphaNumeric(20);
-        userDto.setApikey(randomString);
-        User newUser = userRepository.save(toUser(userDto));
-        return newUser.getUsername();
+    public UserDto getUserByApiKey(String apikey) {
+        User user = userRepository.findByApikey(apikey);
+        if (user != null) {
+            return fromUser(user);
+        } else {
+            throw new UsernameNotFoundException("User not found with apikey: " + apikey);
+        }
     }
+
 
     public UserDto convertUserToDto(User user) {
         UserDto userDto = new UserDto();
