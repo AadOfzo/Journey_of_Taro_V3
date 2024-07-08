@@ -131,7 +131,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    // PUT mapping to update artistName for a user
+    // PUT update artistName for a user
     @PutMapping("/{id}/artistName")
     public ResponseEntity<Object> updateArtistName(@PathVariable("id") Long userId, @RequestParam("artistName") String artistName) {
         try {
