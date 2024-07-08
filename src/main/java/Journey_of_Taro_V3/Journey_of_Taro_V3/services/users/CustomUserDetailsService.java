@@ -2,9 +2,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.security.AuthorityService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        UserDto userDto = userService.getUser(username);
+        UserDto userDto = userService.getUserByUserName(username);
 
 
         String password = userDto.getPassword();

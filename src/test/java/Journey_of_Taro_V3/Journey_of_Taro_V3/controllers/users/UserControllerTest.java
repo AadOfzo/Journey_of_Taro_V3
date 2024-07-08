@@ -70,7 +70,7 @@ class UserControllerTest {
     void testGetUser() {
         UserDto userDto = new UserDto();
         userDto.setUsername("testUser");
-        when(userService.getUser("testUser")).thenReturn(userDto);
+        when(userService.getUserByUserName("testUser")).thenReturn(userDto);
 
         ResponseEntity<UserDto> responseEntity = userController.getUser("testUser");
 
@@ -79,7 +79,7 @@ class UserControllerTest {
         assertEquals("testUser", responseEntity.getBody().getUsername());
 
         // Verify service method was called
-        verify(userService).getUser("testUser");
+        verify(userService).getUserByUserName("testUser");
     }
 
 }

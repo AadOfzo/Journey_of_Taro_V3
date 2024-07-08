@@ -60,7 +60,7 @@ public class UserService {
         return collection;
     }
 
-    public UserDto getUser(String username) {
+    public UserDto getUserByUserName(String username) {
         UserDto dto;
         Optional<User> user = userRepository.findById(username);
         if (user.isPresent()) {
@@ -69,6 +69,16 @@ public class UserService {
             throw new UsernameNotFoundException(username);
         }
         return dto;
+    }
+
+    public UserDto getUserById(Long userId) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return fromUser(user);
+        } else {
+            throw new UsernameNotFoundException("User with ID: " + userId +" not found!");
+        }
     }
 
     public UserDto getUserByApiKey(String apikey) {
@@ -300,6 +310,5 @@ public class UserService {
         }
         return songService.downloadSongFile(song.getFileName());
     }
-
 
 }

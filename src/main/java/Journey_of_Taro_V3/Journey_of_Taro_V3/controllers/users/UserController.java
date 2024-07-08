@@ -36,7 +36,7 @@ public class UserController {
 
     private final SongServiceImpl songService;
     @Autowired
-    private final HttpServletRequest request;
+    private HttpServletRequest request;
 
     public UserController(UserService userService, ImageServiceImpl imageService, SongServiceImpl songService, HttpServletRequest request) {
         this.userService = userService;
@@ -53,13 +53,24 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsers());
     }
 
-    @GetMapping(value = "/{username}")
+    @GetMapping(value = "/username/{username}")
     public ResponseEntity<UserDto> getUser(@PathVariable("username") String username) {
 
-        UserDto optionalUser = userService.getUser(username);
+        UserDto optionalUser = userService.getUserByUserName(username);
 
         return ResponseEntity.ok().body(optionalUser);
 
+    }
+
+    @GetMapping(value = "/{id}")
+    @Transactional
+    public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId) {
+        UserDto userDto = userService.getUserById(userId);
+        if (userDto != null) {
+            return ResponseEntity.ok().body(userDto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping(value = "/apikey/{apikey}")
@@ -167,20 +178,38 @@ public class UserController {
     }
 
     // todo: POST add image to user
+
     @PostMapping("/{id}/images")
     public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
-                                               @RequestBody CustomMultipartFile imageFile)
-            throws IOException {
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/users/")
-                .path(Objects.requireNonNull(userId.toString()))
-                .path("/images")
-                .toUriString();
+                                               @RequestBody CustomMultipartFile imageFile) throws IOException {
+        String url = buildImageUrl(userId);
         String imageName = imageService.storeFile(imageFile);
         User user = userService.assignImageToUser(userId, imageName);
-
         return ResponseEntity.created(URI.create(url)).body(user);
     }
+
+    // Helper method to build image URL
+    private String buildImageUrl(Long userId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/")
+                .path(userId.toString())
+                .path("/images")
+                .toUriString();
+    }
+
+//    @PostMapping("/{id}/images")
+//    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
+//                                               @RequestBody CustomMultipartFile imageFile) throws IOException {
+//        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/users/")
+//                .path(Objects.requireNonNull(userId.toString()))
+//                .path("/images")
+//                .toUriString();
+//        String imageName = imageService.storeFile(imageFile);
+//        User user = userService.assignImageToUser(userId, imageName);
+//
+//        return ResponseEntity.created(URI.create(url)).body(user);
+//    }
 
 //    @PostMapping("/{id}/song")
 //    public ResponseEntity<User> addSongToUser(@PathVariable("id") String apikey,

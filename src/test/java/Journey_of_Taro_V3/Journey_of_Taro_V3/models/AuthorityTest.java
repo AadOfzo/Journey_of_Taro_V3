@@ -36,7 +36,7 @@ public class AuthorityTest {
 //        User expectedUsername = "test_user";
 //        String expectedAuthority = "ROLE_ADMIN";
 //        Authority authority = new Authority(expectedUsername, expectedAuthority);
-//        assertEquals(expectedUsername, authority.getUser());
+//        assertEquals(expectedUsername, authority.getUserByUserName());
 //        assertEquals(expectedAuthority, authority.getAuthority());
 //    }
 
