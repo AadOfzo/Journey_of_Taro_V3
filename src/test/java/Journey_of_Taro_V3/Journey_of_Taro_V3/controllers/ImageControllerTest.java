@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(ImageController.class)
 @AutoConfigureMockMvc(addFilters = false) // Exclude security filters
-public class ImageControllerIntegrationTest {
+public class ImageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,6 +55,12 @@ public class ImageControllerIntegrationTest {
                 .andExpect((ResultMatcher) jsonPath("$", hasSize(2)))
                 .andExpect((ResultMatcher) jsonPath("$[0].imageName", is("image1.jpg")))
                 .andExpect((ResultMatcher) jsonPath("$[1].imageName", is("image2.jpg")));
+    }
+
+    @Test
+    public void testEndpoint() throws Exception {
+        mockMvc.perform(get("/images")) // Adjust the URL as necessary
+                .andExpect(status().isOk());
     }
 }
 

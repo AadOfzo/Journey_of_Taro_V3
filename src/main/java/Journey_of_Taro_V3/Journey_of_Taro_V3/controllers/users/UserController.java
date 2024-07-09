@@ -33,9 +33,7 @@ public class UserController {
 
     private final UserService userService;
     private final ImageServiceImpl imageService;
-
     private final SongServiceImpl songService;
-    @Autowired
     private HttpServletRequest request;
 
     public UserController(UserService userService, ImageServiceImpl imageService, SongServiceImpl songService, HttpServletRequest request) {
@@ -44,7 +42,6 @@ public class UserController {
         this.songService = songService;
         this.request = request;
     }
-
 
     // Get Mapping
     @GetMapping
@@ -63,7 +60,6 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    @Transactional
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId) {
         UserDto userDto = userService.getUserById(userId);
         if (userDto != null) {
@@ -178,24 +174,20 @@ public class UserController {
     }
 
     // todo: POST add image to user
-
-    @PostMapping("/{id}/images")
+    @PostMapping("/{id}/image")
     public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
                                                @RequestBody CustomMultipartFile imageFile) throws IOException {
-        String url = buildImageUrl(userId);
-        String imageName = imageService.storeFile(imageFile);
-        User user = userService.assignImageToUser(userId, imageName);
-        return ResponseEntity.created(URI.create(url)).body(user);
-    }
-
-    // Helper method to build image URL
-    private String buildImageUrl(Long userId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
+        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/")
                 .path(userId.toString())
-                .path("/images")
+                .path("/image")
                 .toUriString();
+
+        Image image = imageService.storeFile(imageFile, imageUrl);
+        User user = userService.assignImageToUser(userId, image);
+        return ResponseEntity.created(URI.create(imageUrl)).body(user);
     }
+
 
 //    @PostMapping("/{id}/images")
 //    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,

@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -31,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
 
     @Autowired
-    public ImageServiceImpl(@Value("uploads/images") String fileStorageLocation, ImageRepository imageRepository) throws IOException{
+    public ImageServiceImpl(@Value("uploads/images") String fileStorageLocation, ImageRepository imageRepository) throws IOException {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.imageRepository = imageRepository;
@@ -41,12 +40,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ImageDto getImageById(Long id) {
-        if (imageRepository.findById(id).isPresent()) {
-            Image image = imageRepository.findById(id).get();
-            return transferToImageDto(image);
-        } else {
-            throw new RecordNotFoundException("No Images found with id: " + id);
-        }
+        return imageRepository.findById(id)
+                .map(this::transferToImageDto)
+                .orElseThrow(() -> new RecordNotFoundException("No Images found with id: " + id));
     }
 
     @Override
@@ -73,6 +69,29 @@ public class ImageServiceImpl implements ImageService {
 
         image = imageRepository.save(image);
         return transferToImageDto(image);
+    }
+
+    @Override
+    public Image storeFile(MultipartFile imageFile, String imageUrl) throws IOException {
+        String originalFileName = imageFile.getOriginalFilename();
+        byte[] imageData = imageFile.getBytes();
+        String contentType = imageFile.getContentType();
+
+        CustomMultipartFile customFile = new CustomMultipartFile(originalFileName, contentType, imageData);
+        Image image = new Image(customFile, imageUrl, imageData, originalFileName, contentType);
+
+        return imageRepository.save(image);
+    }
+
+    @Override
+    public Image storeFile(CustomMultipartFile imageFile, String imageUrl) throws IOException {
+        String originalFileName = imageFile.getOriginalFilename();
+        byte[] imageData = imageFile.getBytes();
+        String contentType = imageFile.getContentType();
+
+        Image image = new Image(imageFile, imageUrl, imageData, originalFileName, contentType);
+
+        return imageRepository.save(image);
     }
 
     private List<ImageDto> transferImageListToDtoList(List<Image> images) {
@@ -110,33 +129,22 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public String storeFile(MultipartFile file) throws IOException {
-        String fileName = Objects.requireNonNull(file.getOriginalFilename());
-        Path targetLocation = this.fileStoragePath.resolve(fileName);
-        Files.copy(file.getInputStream(), targetLocation);
-        return fileName;
-    }
-
     public Resource downloadImageFile(String imageName) {
-
         Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(imageName);
 
-        Resource resource;
-
         try {
-            resource = new UrlResource(path.toUri());
+            Resource resource = new UrlResource(path.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("The file doesn't exist or is not readable.");
+            }
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Issue in reading the file.");
-        }
-
-        if(resource.exists()&& resource.isReadable()) {
-            return resource;
-        } else {
-            throw new RuntimeException("The file doesn't exist or not readable.");
+            throw new RuntimeException("Issue in reading the file.", e);
         }
     }
 
-    // todo: filename uit database returnen, hoeft niet met DTO.
+    @Override
     public Image getImageWithData(String imageName) {
         Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(imageName);
 
@@ -154,5 +162,4 @@ public class ImageServiceImpl implements ImageService {
     public void deleteImage(Long id) {
         imageRepository.deleteById(id);
     }
-
 }

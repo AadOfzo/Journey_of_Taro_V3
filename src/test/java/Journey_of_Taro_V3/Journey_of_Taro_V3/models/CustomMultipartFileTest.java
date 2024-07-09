@@ -3,15 +3,15 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.CustomMultipartFileController;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,19 +33,14 @@ public class CustomMultipartFileTest {
     @Mock
     private SongService songService;
 
+    @Mock
+    private Environment environment;
+
     @BeforeEach
     public void setUp() {
-        // Setup any necessary behavior for the mocked SongService if needed
+        controller = new CustomMultipartFileController(imageService, songService, environment);
     }
 
-    public class MockMultipartFileAdapter extends CustomMultipartFile {
-        public MockMultipartFileAdapter(MockMultipartFile mockMultipartFile) throws IOException {
-            super(mockMultipartFile.getOriginalFilename(), mockMultipartFile.getContentType(), mockMultipartFile.getBytes());
-        }
-    }
-
-    // Voorbeeld gehaald van:
-    // https://www.baeldung.com/java-convert-byte-array-to-multipartfile
     @Test
     public void whenProvidingByteArray_thenMultipartFileCreated() throws IOException {
         // Arrange
@@ -69,42 +64,45 @@ public class CustomMultipartFileTest {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", inputArray);
 
         // Assert
-        Assertions.assertFalse(mockMultipartFile.isEmpty());
-        Assertions.assertArrayEquals(inputArray, mockMultipartFile.getBytes());
-        Assertions.assertEquals(inputArray.length, mockMultipartFile.getSize());
+        assertFalse(mockMultipartFile.isEmpty());
+        assertArrayEquals(inputArray, mockMultipartFile.getBytes());
+        assertEquals(inputArray.length, mockMultipartFile.getSize());
     }
 
+    // CustomMultipartFile voor Images
     @Test
-    public void testDetermineFileType_Image() throws IOException {
+    public void testFileUploadController_withImage() throws IOException {
         // Arrange
         byte[] imageData = "Sample image data".getBytes();
-        MultipartFile multipartFile = new MockMultipartFile("imageFile", "image.jpg", "image/jpeg", imageData);
+        MockMultipartFile imageFile = new MockMultipartFile("file", "image.jpg", "image/jpeg", imageData);
 
-        ImageService imageService = mock(ImageService.class);
-        SongService songService = mock(SongService.class);
-        CustomMultipartFileController controller = new CustomMultipartFileController(imageService, songService);
+        // Mock environment
+        Environment environment = mock(Environment.class);
+        CustomMultipartFileController controller = new CustomMultipartFileController(imageService, songService, environment);
 
         // Act
-        String result = controller.determineFileType(multipartFile.getContentType());
+        String result = controller.fileUploadController(imageFile, null, null, null).getStatusCode().toString();
 
         // Assert
-        assertEquals("image", result.toLowerCase());
+        assertEquals("200 OK", result);
     }
 
+    // CustomMultipartFile voor Songs
     @Test
-    public void testDetermineFileType_Audio() {
+    public void testFileUploadController_withAudio() throws IOException {
         // Arrange
         byte[] audioData = "Sample audio data".getBytes();
-        MultipartFile multipartFile = new MockMultipartFile("audioFile", "audio.mp3", "audio/mpeg", audioData);
+        MockMultipartFile audioFile = new MockMultipartFile("file", "audio.mp3", "audio/mpeg", audioData);
 
-        SongService songService = mock(SongService.class);
-        CustomMultipartFileController controller = new CustomMultipartFileController(null, songService);
+        // Mock environment
+        Environment environment = mock(Environment.class);
+        CustomMultipartFileController controller = new CustomMultipartFileController(imageService, songService, environment);
 
         // Act
-        String result = controller.determineFileType(multipartFile.getContentType());
+        String result = controller.fileUploadController(audioFile, "Artist Name", "Song Title", null).getStatusCode().toString();
 
         // Assert
-        assertEquals("audio", result.toLowerCase());
+        assertEquals("200 OK", result);
     }
 
     @Test

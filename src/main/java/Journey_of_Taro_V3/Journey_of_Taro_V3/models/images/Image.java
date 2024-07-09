@@ -32,18 +32,14 @@ public class Image {
     public Image() {
     }
 
-    public Image(CustomMultipartFile imageFile, String imageUrl, String imageName, String imageAltName) {
+    public Image(CustomMultipartFile imageFile, String imageUrl, byte[] imageData, String imageName, String imageAltName) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
         this.imageUrl = imageUrl;
-        try {
-            this.imageData = imageFile.getBytes();
-            this.fileName = imageFile.getOriginalFilename();
-            this.fileSize = imageFile.getSize();
-            this.uploadTime = LocalDateTime.now();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read image file data", e);
-        }
+        this.imageData = imageData;
+        this.fileName = imageFile.getOriginalFilename();
+        this.fileSize = imageFile.getSize();
+        this.uploadTime = LocalDateTime.now();
     }
 
 
