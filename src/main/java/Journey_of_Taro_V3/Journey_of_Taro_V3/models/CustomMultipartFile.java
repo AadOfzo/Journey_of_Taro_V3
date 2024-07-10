@@ -1,5 +1,4 @@
 // code gebruikt van: https://www.baeldung.com/java-convert-byte-array-to-multipartfile
-
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -10,12 +9,11 @@ public class CustomMultipartFile implements MultipartFile {
     private final String name;
     private final String originalFilename;
     private final String contentType;
-
     private final byte[] input;
 
 
     public CustomMultipartFile(String originalFilename, String contentType, byte[] inputArray) {
-        this.name = "file"; // Set default name
+        this.name = "file";
         this.originalFilename = originalFilename;
         this.contentType = contentType;
 

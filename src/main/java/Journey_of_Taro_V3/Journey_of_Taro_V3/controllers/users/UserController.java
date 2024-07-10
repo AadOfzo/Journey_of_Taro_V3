@@ -1,5 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
@@ -18,6 +20,7 @@ import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
@@ -176,15 +179,21 @@ public class UserController {
     // todo: POST add image to user
     @PostMapping("/{id}/image")
     public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
-                                               @RequestBody CustomMultipartFile imageFile) throws IOException {
+                                               @RequestParam("file") MultipartFile file) throws IOException {
         String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/")
                 .path(userId.toString())
                 .path("/image")
                 .toUriString();
 
-        Image image = imageService.storeFile(imageFile, imageUrl);
-        User user = userService.assignImageToUser(userId, image);
+        ImageInputDto inputDto = new ImageInputDto();
+        inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
+        inputDto.setImageName(file.getOriginalFilename());
+        inputDto.setImageAltName(file.getOriginalFilename());
+
+        ImageDto imageDto = imageService.addImage(inputDto);
+        User user = userService.assignImageToUser(userId, imageDto);
+
         return ResponseEntity.created(URI.create(imageUrl)).body(user);
     }
 

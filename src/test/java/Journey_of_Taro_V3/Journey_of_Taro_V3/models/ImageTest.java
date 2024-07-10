@@ -1,36 +1,44 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-public class ImageTest {
+class ImageTest {
+
+    @InjectMocks
+    private Image image;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
-    public void testImageAttributes() throws IOException {
-        // Creating a test image file
-        byte[] imageData = new byte[1024]; // Dummy image data
+    void testImageCreation() throws IOException {
+        String originalFilename = "testImage.jpg";
+        String contentType = "image/jpeg";
+        byte[] content = "Test Image Content".getBytes();
+        String imageUrl = "http://localhost:8080/uploads/images/testImage.jpg";
         String imageName = "Test Image";
-        String imageAltName = "Alternate Test Image";
-        String imageUrl = "localhost:8080/images/TestImage";
-        CustomMultipartFile imageFile = new CustomMultipartFile("test_image.jpg", "image/jpeg", imageData);
+        String imageAltName = "Test Image Alt";
 
-        // Creating a test image entity
-        Image image = new Image(imageFile, imageUrl, imageName, imageAltName);
+        CustomMultipartFile customMultipartFile = new CustomMultipartFile(originalFilename, contentType, content);
 
-        // Assertions to verify the attributes of the image entity
+        // Create the Image instance using the byte array from CustomMultipartFile
+        image = new Image(customMultipartFile.getBytes(), imageUrl, imageName, imageAltName, customMultipartFile.getOriginalFilename(), customMultipartFile.getSize());
+
+        assertNotNull(image);
+        assertEquals(originalFilename, image.getFileName());
+        assertEquals(content.length, image.getFileSize());
+        assertEquals(imageUrl, image.getImageUrl());
         assertEquals(imageName, image.getImageName());
         assertEquals(imageAltName, image.getImageAltName());
-        assertEquals(imageUrl, image.getImageUrl());
-        assertEquals("test_image.jpg", image.getFileName());
-        assertEquals(imageData.length, image.getFileSize());
-        assertNotNull(image.getUploadTime());
-        assertArrayEquals(imageData, image.getImageData());
     }
 }

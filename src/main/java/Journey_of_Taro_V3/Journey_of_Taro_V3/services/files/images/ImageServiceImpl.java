@@ -78,7 +78,7 @@ public class ImageServiceImpl implements ImageService {
         String contentType = imageFile.getContentType();
 
         CustomMultipartFile customFile = new CustomMultipartFile(originalFileName, contentType, imageData);
-        Image image = new Image(customFile, imageUrl, imageData, originalFileName, contentType);
+        Image image = new Image(customFile, imageUrl, imageData, originalFileName, originalFileName);
 
         return imageRepository.save(image);
     }
@@ -89,7 +89,7 @@ public class ImageServiceImpl implements ImageService {
         byte[] imageData = imageFile.getBytes();
         String contentType = imageFile.getContentType();
 
-        Image image = new Image(imageFile, imageUrl, imageData, originalFileName, contentType);
+        Image image = new Image(imageFile, imageUrl, imageData, originalFileName, originalFileName);
 
         return imageRepository.save(image);
     }

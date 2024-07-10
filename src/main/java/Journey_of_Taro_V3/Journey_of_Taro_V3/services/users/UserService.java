@@ -1,5 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
@@ -248,7 +249,7 @@ public class UserService {
 
     // UserImage methods relation User --> Image
     @Transactional
-    public User assignImageToUser(Long userId ,Image image) {
+    public User assignImageToUser(Long userId ,ImageDto image) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(image.getImageName());
         if (optionalUser.isPresent() && optionalUserImage.isPresent()) {

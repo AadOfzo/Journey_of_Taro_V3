@@ -4,7 +4,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
 import jakarta.persistence.*;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,11 +13,14 @@ public class Image {
     @Id
     @GeneratedValue
     private Long id;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
-    @Column (name = "imagename")
+
+    @Column(name = "imagename")
     private String imageName;
+
     private String imageAltName;
     private String fileName;
     private Long fileSize;
@@ -32,16 +34,28 @@ public class Image {
     public Image() {
     }
 
-    public Image(CustomMultipartFile imageFile, String imageUrl, byte[] imageData, String imageName, String imageAltName) {
+    public Image(byte[] imageData, String imageUrl, String imageName, String imageAltName, String fileName, Long fileSize) {
+        if (imageData == null || imageData.length == 0) {
+            throw new IllegalArgumentException("imageData can't be null or empty");
+        }
+        this.imageData = imageData;
+        this.imageUrl = imageUrl;
         this.imageName = imageName;
         this.imageAltName = imageAltName;
-        this.imageUrl = imageUrl;
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.uploadTime = LocalDateTime.now();
+    }
+
+    public Image(CustomMultipartFile imageFile, String imageUrl, byte[] imageData, String imageName, String imageAltName) {
         this.imageData = imageData;
+        this.imageUrl = imageUrl;
+        this.imageName = imageName;
+        this.imageAltName = imageAltName;
         this.fileName = imageFile.getOriginalFilename();
         this.fileSize = imageFile.getSize();
         this.uploadTime = LocalDateTime.now();
     }
-
 
     public Long getId() {
         return id;
