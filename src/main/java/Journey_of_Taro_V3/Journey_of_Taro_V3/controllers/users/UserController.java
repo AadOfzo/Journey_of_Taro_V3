@@ -176,23 +176,19 @@ public class UserController {
         }
     }
 
-    // todo: POST add image to user
+    // POST add image to user :Backend data uitwisseling Diploma
     @PostMapping("/{id}/image")
     public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
-                                               @RequestParam("file") MultipartFile file) throws IOException {
+                                               @RequestBody MultipartFile file)
+            throws IOException {
         String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/")
-                .path(userId.toString())
+                .path(Objects.requireNonNull(userId.toString()))
                 .path("/image")
                 .toUriString();
 
-        ImageInputDto inputDto = new ImageInputDto();
-        inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
-        inputDto.setImageName(file.getOriginalFilename());
-        inputDto.setImageAltName(file.getOriginalFilename());
-
-        ImageDto imageDto = imageService.addImage(inputDto);
-        User user = userService.assignImageToUser(userId, imageDto);
+        String fileName = imageService.storeFile(file);
+        User user = userService.assignImageToUser(fileName, userId);
 
         return ResponseEntity.created(URI.create(imageUrl)).body(user);
     }

@@ -16,7 +16,6 @@ public interface ImageService {
     ImageDto getImageById(Long id);
     ImageDto saveImage(ImageInputDto inputDto);
     void deleteImage(Long id);
-    Image storeFile(MultipartFile imageFile, String imageUrl) throws IOException;
     Image storeFile(CustomMultipartFile imageFile, String imageUrl) throws IOException;
     Resource downloadImageFile(String imageName);
     Image getImageWithData(String imageName);

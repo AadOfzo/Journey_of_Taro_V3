@@ -1,13 +1,12 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.FileUploadRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
@@ -28,6 +27,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FileUploadRepository uploadRepository;
     private final ImageRepository imageRepository;
     private final ImageServiceImpl imageService;
     private final SongRepository songRepository;
@@ -37,8 +37,9 @@ public class UserService {
 
     // Could not autowire PasswordEncoder passwords komen wel encoded in database.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
-    public UserService(UserRepository userRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, FileUploadRepository uploadRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.uploadRepository = uploadRepository;
         this.imageRepository = imageRepository;
         this.imageService = imageService;
         this.songRepository = songRepository;
@@ -249,11 +250,12 @@ public class UserService {
 
     // UserImage methods relation User --> Image
     @Transactional
-    public User assignImageToUser(Long userId ,ImageDto image) {
+    public User assignImageToUser(String filename, Long userId) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
-        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(image.getImageName());
-        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
-            UserImage userImage = optionalUserImage.get();
+        Optional<UserImage> optionalImage = uploadRepository.findByFileName(filename);
+
+        if (optionalUser.isPresent() && optionalImage.isPresent()) {
+            UserImage userImage = optionalImage.get();
             User user = optionalUser.get();
             user.setUserImage(userImage);
             return userRepository.save(user);

@@ -5,12 +5,14 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.FileUploadRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,9 +20,11 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -28,12 +32,13 @@ public class ImageServiceImpl implements ImageService {
     private final Path fileStoragePath;
     private final String fileStorageLocation;
     private final ImageRepository imageRepository;
+    private final FileUploadRepository repo;
 
-    @Autowired
-    public ImageServiceImpl(@Value("uploads/images") String fileStorageLocation, ImageRepository imageRepository) throws IOException {
+    public ImageServiceImpl(@Value("uploads/images") String fileStorageLocation, ImageRepository imageRepository, FileUploadRepository repo) throws IOException {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.imageRepository = imageRepository;
+        this.repo = repo;
 
         Files.createDirectories(fileStoragePath);
     }
@@ -52,7 +57,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public ImageDto addImage(ImageInputDto inputDto) {
+    public ImageDto   addImage(ImageInputDto inputDto) {
         Image image = transferToImage(inputDto);
 
         // Set imageUrl
@@ -71,16 +76,14 @@ public class ImageServiceImpl implements ImageService {
         return transferToImageDto(image);
     }
 
-    @Override
-    public Image storeFile(MultipartFile imageFile, String imageUrl) throws IOException {
-        String originalFileName = imageFile.getOriginalFilename();
-        byte[] imageData = imageFile.getBytes();
-        String contentType = imageFile.getContentType();
+    public String storeFile(MultipartFile file) throws IOException {
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        Path filePath = Paths.get(fileStoragePath + "\\" + fileName);
 
-        CustomMultipartFile customFile = new CustomMultipartFile(originalFileName, contentType, imageData);
-        Image image = new Image(customFile, imageUrl, imageData, originalFileName, originalFileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return imageRepository.save(image);
+        repo.save(new UserImage(fileName));
+        return fileName;
     }
 
     @Override
