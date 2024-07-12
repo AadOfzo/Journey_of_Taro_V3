@@ -56,6 +56,8 @@ public class SpringSecurityConfig {
 
                         // Allow public access to file and image endpoints
                         .requestMatchers(HttpMethod.POST, "/fileUpload").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/uploads").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/uploads").permitAll()
                         .requestMatchers(HttpMethod.POST, "/images").permitAll()
                         .requestMatchers(HttpMethod.GET, "/images").permitAll()
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
