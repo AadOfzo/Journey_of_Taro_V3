@@ -1,6 +1,10 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.CustomMultipartFileController;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +24,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomMultipartFileTest {
@@ -69,79 +74,76 @@ public class CustomMultipartFileTest {
         assertEquals(inputArray.length, mockMultipartFile.getSize());
     }
 
-    // CustomMultipartFile voor Images
     @Test
     public void testFileUploadController_withImage() throws IOException {
         // Arrange
         byte[] imageData = "Sample image data".getBytes();
-        MockMultipartFile imageFile = new MockMultipartFile("file", "image.jpg", "image/jpeg", imageData);
+        CustomMultipartFile imageFile = new CustomMultipartFile("image.jpg", "image/jpeg", imageData);
 
-        // Mock environment
-        Environment environment = mock(Environment.class);
-        CustomMultipartFileController controller = new CustomMultipartFileController(imageService, songService, environment);
+        ImageDto imageDto = new ImageDto();
+        when(imageService.addImage(any(ImageInputDto.class))).thenReturn(imageDto);
+        when(environment.getProperty("base.url", "http://localhost:8080")).thenReturn("http://localhost:8080");
 
         // Act
-        String result = controller.fileUploadController(imageFile, null, null, null).getStatusCode().toString();
+        ResponseEntity<?> response = controller.fileUploadController(imageFile, null, null, null);
 
         // Assert
-        assertEquals("200 OK", result);
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        verify(imageService, times(1)).addImage(any(ImageInputDto.class));
     }
 
-    // CustomMultipartFile voor Songs
     @Test
     public void testFileUploadController_withAudio() throws IOException {
         // Arrange
         byte[] audioData = "Sample audio data".getBytes();
-        MockMultipartFile audioFile = new MockMultipartFile("file", "audio.mp3", "audio/mpeg", audioData);
+        CustomMultipartFile audioFile = new CustomMultipartFile("audio.mp3", "audio/mpeg", audioData);
 
-        // Mock environment
-        Environment environment = mock(Environment.class);
-        CustomMultipartFileController controller = new CustomMultipartFileController(imageService, songService, environment);
+        SongDto songDto = new SongDto();
+        when(songService.addSong(any(SongInputDto.class))).thenReturn(songDto);
+        when(environment.getProperty("base.url", "http://localhost:8080")).thenReturn("http://localhost:8080");
 
         // Act
-        String result = controller.fileUploadController(audioFile, "Artist Name", "Song Title", null).getStatusCode().toString();
+        ResponseEntity<?> response = controller.fileUploadController(audioFile, "Artist Name", "Song Title", null);
 
         // Assert
-        assertEquals("200 OK", result);
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        verify(songService, times(1)).addSong(any(SongInputDto.class));
     }
 
     @Test
-    public void testCustomMultipartFile() {
+    public void testCustomMultipartFile() throws IOException {
         // Arrange
         String originalFilename = "test_song.mp3";
         String contentType = "audio/mpeg";
         byte[] fileContent = {1, 2, 3, 4, 5};
 
-        // Act
         MultipartFile multipartFile = new CustomMultipartFile(originalFilename, contentType, fileContent);
 
-        // Assert
-        assertEquals("file", multipartFile.getName());
+        // Act & Assert
+        assertEquals(originalFilename, multipartFile.getName());
         assertEquals(originalFilename, multipartFile.getOriginalFilename());
         assertEquals(contentType, multipartFile.getContentType());
         assertFalse(multipartFile.isEmpty());
         assertEquals(fileContent.length, multipartFile.getSize());
 
-        try {
-            byte[] content = multipartFile.getBytes();
-            assertArrayEquals(fileContent, content);
+        byte[] content = multipartFile.getBytes();
+        assertArrayEquals(fileContent, content);
 
-            InputStream inputStream = multipartFile.getInputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead = inputStream.read(buffer);
-            assertEquals(fileContent.length, bytesRead);
-            for (int i = 0; i < fileContent.length; i++) {
-                assertEquals(fileContent[i], buffer[i]);
-            }
-
-            File destinationFile = new File("destination_file.mp3");
-            multipartFile.transferTo(destinationFile);
-            byte[] transferredContent = Files.readAllBytes(destinationFile.toPath());
-            assertArrayEquals(fileContent, transferredContent);
-
-            destinationFile.delete();
-        } catch (IOException e) {
-            e.printStackTrace();
+        InputStream inputStream = multipartFile.getInputStream();
+        byte[] buffer = new byte[1024];
+        int bytesRead = inputStream.read(buffer);
+        assertEquals(fileContent.length, bytesRead);
+        for (int i = 0; i < fileContent.length; i++) {
+            assertEquals(fileContent[i], buffer[i]);
         }
+
+        File destinationFile = new File("destination_file.mp3");
+        multipartFile.transferTo(destinationFile);
+        byte[] transferredContent = Files.readAllBytes(destinationFile.toPath());
+        assertArrayEquals(fileContent, transferredContent);
+
+        destinationFile.delete();
     }
 }

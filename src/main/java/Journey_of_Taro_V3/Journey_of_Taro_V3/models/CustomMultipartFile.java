@@ -6,23 +6,19 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 
 public class CustomMultipartFile implements MultipartFile {
-    private final String name;
     private final String originalFilename;
     private final String contentType;
-    private final byte[] input;
+    private final byte[] content;
 
-
-    public CustomMultipartFile(String originalFilename, String contentType, byte[] inputArray) {
-        this.name = "file";
+    public CustomMultipartFile(String originalFilename, String contentType, byte[] content) {
         this.originalFilename = originalFilename;
         this.contentType = contentType;
-
-        this.input = inputArray.clone();
+        this.content = content.clone();
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return this.originalFilename;
     }
 
     @Override
@@ -37,30 +33,28 @@ public class CustomMultipartFile implements MultipartFile {
 
     @Override
     public boolean isEmpty() {
-        return input == null || input.length == 0;
+        return this.content == null || this.content.length == 0;
     }
 
     @Override
     public long getSize() {
-        return input.length;
+        return this.content.length;
     }
 
     @Override
     public byte[] getBytes() throws IOException {
-        return input;
+        return this.content;
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return new ByteArrayInputStream(input);
+        return new ByteArrayInputStream(this.content);
     }
 
     @Override
-    public void transferTo(File destination) throws IOException, IllegalStateException {
-        try (FileOutputStream fos = new FileOutputStream(destination)) {
-            fos.write(input);
+    public void transferTo(File dest) throws IOException, IllegalStateException {
+        try (FileOutputStream fos = new FileOutputStream(dest)) {
+            fos.write(this.content);
         }
     }
-
-
 }

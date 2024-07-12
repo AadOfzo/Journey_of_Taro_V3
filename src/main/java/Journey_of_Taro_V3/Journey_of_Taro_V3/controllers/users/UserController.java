@@ -1,11 +1,8 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -14,7 +11,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImp
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;

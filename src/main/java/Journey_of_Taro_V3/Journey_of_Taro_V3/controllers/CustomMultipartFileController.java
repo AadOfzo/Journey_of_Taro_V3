@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,29 +45,32 @@ public class CustomMultipartFileController {
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> fileUploadController(MultipartFile file, String artistName, String songTitle, String userName) {
+    public ResponseEntity<?> fileUploadController(@RequestParam("file") CustomMultipartFile customFile,
+                                                  @RequestParam("artistName") String artistName,
+                                                  @RequestParam("songTitle") String songTitle,
+                                                  @RequestParam("userName") String userName) {
         try {
-            if (file.isEmpty()) {
+            if (customFile.isEmpty()) {
                 throw new IllegalArgumentException("File is empty");
             }
 
-            String fileType = determineFileType(file.getContentType());
+            String fileType = determineFileType(customFile.getContentType());
 
             if (fileType == null) {
                 throw new IllegalArgumentException("Unsupported file type");
             }
 
-            String originalFilename = file.getOriginalFilename();
+            String originalFilename = customFile.getOriginalFilename();
 
             logger.info("Received file: {}", originalFilename);
-            logger.info("File size: {} bytes", file.getSize());
+            logger.info("File size: {} bytes", customFile.getSize());
             logger.info("File type: {}", fileType);
 
             if ("Image".equalsIgnoreCase(fileType)) {
-                String imageUrl = storeFileAndGetUrl(file, "uploads/images");
+                String imageUrl = storeFileAndGetUrl(customFile, "uploads/images");
 
                 ImageInputDto inputDto = new ImageInputDto();
-                inputDto.setImageFile(file);
+                inputDto.setImageFile(customFile);
                 inputDto.setImageName(originalFilename);
                 inputDto.setImageAltName(originalFilename);
 
@@ -76,15 +78,15 @@ public class CustomMultipartFileController {
                 return ResponseEntity.ok().body(dto);
 
             } else if ("Audio".equalsIgnoreCase(fileType)) {
-                String songUrl = storeFileAndGetUrl(file, "uploads/songs");
+                String songUrl = storeFileAndGetUrl(customFile, "uploads/songs");
 
                 // Process audio file:
                 SongInputDto inputDto = new SongInputDto();
-                inputDto.setSongFile(new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()));
+                inputDto.setSongFile(customFile);
                 inputDto.setSongTitle(songTitle == null ? originalFilename : songTitle);
                 inputDto.setArtistName(artistName);
                 inputDto.setFileName(originalFilename);
-                inputDto.setFileSize(file.getSize());
+                inputDto.setFileSize(customFile.getSize());
                 inputDto.setUploadTime(LocalDateTime.now());
                 inputDto.setSongUrl(songUrl);
 
@@ -109,7 +111,7 @@ public class CustomMultipartFileController {
         }
     }
 
-    private String storeFileAndGetUrl(MultipartFile file, String uploadDir) throws IOException {
+    private String storeFileAndGetUrl(CustomMultipartFile file, String uploadDir) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);

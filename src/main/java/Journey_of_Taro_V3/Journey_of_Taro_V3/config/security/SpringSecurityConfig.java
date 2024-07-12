@@ -1,8 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.config.security;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.filter.JwtRequestFilter;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -55,6 +53,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 //                .requestMatchers(HttpMethod.GET,"/users").authenticated()
                 .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
 //                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
 
@@ -93,7 +92,7 @@ public class SpringSecurityConfig {
 //                .requestMatchers(HttpMethod.DELETE, "/songCollectionTypes/**").hasRole("ADMIN").requestMatchers(HttpMethod.POST,"/songCollectionTypes").permitAll()
                 // Je mag meerdere paths tegelijk definieren
 //                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/fileUpload", "/songs", "/images", "/uploads/**", "/songCollections").hasAnyRole("ADMIN", "USER")
+//                .requestMatchers("/fileUpload", "/songs", "/images", "/uploads/**", "/songCollections").hasAnyRole("ADMIN", "USER")
 //                .requestMatchers("/fileUpload", "/songs", "/images").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticate").permitAll()
                 .requestMatchers("/authenticated").authenticated()
