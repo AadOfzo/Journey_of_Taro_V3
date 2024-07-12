@@ -16,8 +16,8 @@ VALUES (1001, 'ADMIN'),
 -- INSERT INTO properties (key, value) VALUES ('image.url', 'https://example.com/images');
 -- INSERT INTO properties (key, value) VALUES ('song.url', 'https://example.com/songs');
 
--- insert into images(id, imagename, imagealtname, imageurl);
--- values (101, 'TestTitle', 'TestAltTitle', 'localhost:8080/images/101');
+-- insert into images(id, imagedata, imagename, imagealtname, imageurl)
+-- VALUES (1001, 'How many bytes?', 'TestTitle', 'TestAltTitle', 'localhost:8080/images/1001');
 
 -- insert into songs(id, songFile, songTitle, artistName, songUrl, fileName, fileSize, uploadTime, mimeType, songCollection, songCollectionType, songData)
 -- VALUES (1001, 'Testfile.mp3', 'TestTitle', 'Test Artist 1', 'songs/Testfile.mp3', 'Test_Artist_Name_1', 1000, '10-10-2010', 'audio', 'TestCollection', 'DEMO', 1111);

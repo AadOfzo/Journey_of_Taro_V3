@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.UsernameNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -70,10 +71,11 @@ public class UserController {
 
     @GetMapping(value = "/apikey/{apikey}")
     public ResponseEntity<UserDto> getUserByApiKey(@PathVariable("apikey") String apikey) {
-        UserDto userDto = userService.getUserByApiKey(apikey);
-        if (userDto != null) {
+        try {
+            UserDto userDto = userService.getUserByApiKey(apikey);
             return ResponseEntity.ok().body(userDto);
-        } else {
+        } catch (UsernameNotFoundException e) {
+            System.err.println("User with apikey not found: " + e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -83,6 +85,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getRoles(username));
     }
 
+    // User Images en Songs:
     @GetMapping("/{id}/images")
     public ResponseEntity<byte[]> getUserImage(@PathVariable("id") Long id) {
 
