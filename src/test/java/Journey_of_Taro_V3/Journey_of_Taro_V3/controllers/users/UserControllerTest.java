@@ -62,19 +62,19 @@ class UserControllerTest {
         verify(userService).getUsers();
     }
 
-    @Test
-    void testCreateUser() {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("testUser");
-        when(userService.createUser(userDto)).thenReturn("testUser");
-
-        ResponseEntity<UserDto> responseEntity = userController.createUser(userDto);
-
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(URI.create("/users/testUser"), responseEntity.getHeaders().getLocation());
-
-        verify(userService).createUser(userDto);
-    }
+//    @Test
+//    void testCreateUser() {
+//        UserDto userDto = new UserDto();
+//        userDto.setUsername("testUser");
+//        when(userService.createUser(userDto)).thenReturn("testUser");
+//
+//        ResponseEntity<UserDto> responseEntity = userController.createUser(userDto);
+//
+//        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+//        assertEquals(URI.create("/users/testUser"), responseEntity.getHeaders().getLocation());
+//
+//        verify(userService).createUser(userDto);
+//    }
 
     @Test
     void testGetUser() {

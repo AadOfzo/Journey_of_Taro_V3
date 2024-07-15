@@ -153,13 +153,31 @@ public class UserController {
     }
 
     // POST Mapping
-    @PostMapping(value = "")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserDto> createUser(
+            @RequestPart("user") UserDto userDto,
+            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
 
-        String newUsername = userService.createUser(dto);
+        // Create the user first
+        String newUsername = userService.createUser(userDto);
         userService.addRole(newUsername, "User");
 
+        // If a file is present, handle the file upload
+        if (file != null && !file.isEmpty()) {
+            // Process the file and set the URL or handle as needed
+            Long userId = userService.getUserByUserName(newUsername).getUserId();
+
+            ImageInputDto inputDto = new ImageInputDto();
+            inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
+            inputDto.setImageName(file.getOriginalFilename());
+            inputDto.setImageAltName(file.getOriginalFilename());
+
+            ImageDto imageDto = imageService.addImage(inputDto);
+            userService.assignImageToUser(userId, imageDto);
+        }
+
         URI location = ServletUriComponentsBuilder.fromPath("/users/")
+                .path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).build();
