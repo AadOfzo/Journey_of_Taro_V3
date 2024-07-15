@@ -24,7 +24,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "images")
+@RequestMapping(value = "/images")
 public class ImageController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
@@ -41,8 +41,9 @@ public class ImageController {
     public Environment environment;
 
     @GetMapping
-    public List<ImageDto> getAllImages() {
-        return imageService.getAllImages();
+    public ResponseEntity<List<ImageDto>> getAllImages() {
+        List<ImageDto> images = imageService.getAllImages();
+        return ResponseEntity.ok(images);
     }
 
     @GetMapping("/{id}")
