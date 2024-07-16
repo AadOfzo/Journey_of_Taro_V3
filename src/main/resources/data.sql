@@ -13,6 +13,8 @@ VALUES (1001, 'ADMIN'),
 --        (1003, 'USER');
 
 -- File URL's Template nu in application.properties:
+-- insert into songs (id, songTitle) VALUES (1001, 'Example Song' );
+
 -- INSERT INTO properties (key, value) VALUES ('image.url', 'https://example.com/images');
 -- INSERT INTO properties (key, value) VALUES ('song.url', 'https://example.com/songs');
 

@@ -9,8 +9,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceI
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -26,19 +24,15 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/images")
 public class ImageController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
-
     private final UserService userService;
     private final ImageServiceImpl imageService;
+    public Environment environment;
 
     @Autowired
     public ImageController(UserService userService, ImageServiceImpl imageService) {
         this.userService = userService;
         this.imageService = imageService;
     }
-
-    public Environment environment;
 
     @GetMapping
     public ResponseEntity<List<ImageDto>> getAllImages() {
@@ -63,6 +57,26 @@ public class ImageController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @GetMapping("/image/{imageName}")
+    public ResponseEntity<byte[]> getImageFile(@PathVariable("imageName") String imageName){
+
+        Image image = imageService.getImageWithData(imageName);
+
+        MediaType mediaType;
+
+        try {
+            mediaType = MediaType.IMAGE_JPEG;
+        } catch (InvalidMediaTypeException ignore){
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + image.getImageName())
+                .body(image.getImageData());
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -101,27 +115,6 @@ public class ImageController {
         String fileUrl = environment.getProperty("base.url") + "/files/" + fileName;
 
         return fileUrl;
-    }
-
-    @GetMapping("/image/{imageName}")
-    public ResponseEntity<byte[]> getImageFile(@PathVariable("imageName") String imageName){
-
-        Image image = imageService.getImageWithData(imageName);
-
-        MediaType mediaType;
-
-        try {
-//            mediaType = MediaType.parseMediaType(image.im());
-            mediaType = MediaType.IMAGE_JPEG;
-        } catch (InvalidMediaTypeException ignore){
-            mediaType = MediaType.APPLICATION_OCTET_STREAM;
-        }
-
-        return ResponseEntity
-                .ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + image.getImageName())
-                .body(image.getImageData());
     }
 
     // Delete Mapping

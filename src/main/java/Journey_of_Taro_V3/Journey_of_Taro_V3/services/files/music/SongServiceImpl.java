@@ -47,7 +47,7 @@ public class SongServiceImpl implements SongService {
 
     // @Value(${my.upload.location}/songs krijgt een 403 error.
     @Autowired
-    public SongServiceImpl(@Value("songs") String fileStorageLocation, SongRepository songRepository, UserRepository userRepository) throws IOException {
+    public SongServiceImpl(@Value("uploads/songs") String fileStorageLocation, SongRepository songRepository, UserRepository userRepository) throws IOException {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.songRepository = songRepository;
@@ -94,10 +94,10 @@ public class SongServiceImpl implements SongService {
 
             Song song = transferToSong(inputDto);
 
-            // Set the fetched User as the owner of the Song
+            // Set de fetched User als de owner van de Song
             song.setArtistName(user);
 
-            // Set the song URL based on the fileStorageLocation and song title
+            // Set  songURL in de fileStorageLocation en song title
             String songUrl = fileStorageLocation + "/" + song.getFileName();
             song.setSongUrl(songUrl);
 

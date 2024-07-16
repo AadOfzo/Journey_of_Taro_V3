@@ -1,6 +1,5 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
@@ -167,9 +166,9 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
-    public User updateUser(String username, UserDto newUser) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found with username: " + username));
+    public User updateUser(Long userId, UserDto newUser) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RecordNotFoundException("User not found with ID: " + userId));
 
         if (newUser.getPassword() != null && !newUser.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(newUser.getPassword()));
@@ -249,7 +248,7 @@ public class UserService {
 
     // UserImage methods relation User --> Image
     @Transactional
-    public User assignImageToUser(Long userId ,ImageDto image) {
+    public User assignImageToUser(Long userId ,Image image) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(image.getImageName());
         if (optionalUser.isPresent() && optionalUserImage.isPresent()) {

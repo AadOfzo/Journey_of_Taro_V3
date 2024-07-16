@@ -128,9 +128,9 @@ public class UserController {
     }
 
     // PUT mapping
-    @PutMapping(value = "/{username}")
-    public ResponseEntity<Void> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
-        userService.updateUser(username, dto);
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Void> updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto dto) {
+        userService.updateUser(userId, dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -153,31 +153,13 @@ public class UserController {
     }
 
     // POST Mapping
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UserDto> createUser(
-            @RequestPart("user") UserDto userDto,
-            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+    @PostMapping(value = "")
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
 
-        // Create the user first
-        String newUsername = userService.createUser(userDto);
+        String newUsername = userService.createUser(dto);
         userService.addRole(newUsername, "User");
 
-        // If a file is present, handle the file upload
-        if (file != null && !file.isEmpty()) {
-            // Process the file and set the URL or handle as needed
-            Long userId = userService.getUserByUserName(newUsername).getUserId();
-
-            ImageInputDto inputDto = new ImageInputDto();
-            inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
-            inputDto.setImageName(file.getOriginalFilename());
-            inputDto.setImageAltName(file.getOriginalFilename());
-
-            ImageDto imageDto = imageService.addImage(inputDto);
-            userService.assignImageToUser(userId, imageDto);
-        }
-
         URI location = ServletUriComponentsBuilder.fromPath("/users/")
-                .path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).build();
@@ -194,7 +176,7 @@ public class UserController {
         }
     }
 
-    // todo: POST add image to user
+    // POST add image to user
     @PostMapping("/{id}/image")
     public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
                                                @RequestParam("file") MultipartFile file) throws IOException {
@@ -209,42 +191,11 @@ public class UserController {
         inputDto.setImageName(file.getOriginalFilename());
         inputDto.setImageAltName(file.getOriginalFilename());
 
-        ImageDto imageDto = imageService.addImage(inputDto);
-        User user = userService.assignImageToUser(userId, imageDto);
+        Image image = imageService.storeFile(file, imageUrl);
+        User user = userService.assignImageToUser(userId, image);
 
         return ResponseEntity.created(URI.create(imageUrl)).body(user);
     }
-
-
-//    @PostMapping("/{id}/images")
-//    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
-//                                               @RequestBody CustomMultipartFile imageFile) throws IOException {
-//        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/users/")
-//                .path(Objects.requireNonNull(userId.toString()))
-//                .path("/images")
-//                .toUriString();
-//        String imageName = imageService.storeFile(imageFile);
-//        User user = userService.assignImageToUser(userId, imageName);
-//
-//        return ResponseEntity.created(URI.create(url)).body(user);
-//    }
-
-//    @PostMapping("/{id}/song")
-//    public ResponseEntity<User> addSongToUser(@PathVariable("id") String apikey,
-//                                               @RequestBody CustomMultipartFile songFile)
-//            throws IOException {
-//        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/users/")
-//                .path(Objects.requireNonNull(apikey))
-//                .path("*/song")
-//                .toUriString();
-//        String songTitle = songService.storeSongFile(songFile);
-//        User userDto = userService.addSongToUser(songTitle, apikey);
-//
-//        return ResponseEntity.created(URI.create(url)).body(userDto);
-//
-//    }
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
