@@ -4,6 +4,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.security.AuthenticationRequest
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.security.AuthenticationResponse;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.CustomUserDetailsService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.JwtUtil;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,18 +16,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.logging.Logger;
 
 @CrossOrigin
 @RestController
 public class AuthenticationController {
 
-    private static final Logger logger = (Logger) LoggerFactory.getLogger(AuthenticationController.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     private final AuthenticationManager authenticationManager;
-
     private final UserDetailsService userDetailsService;
-
     private final JwtUtil jwtUtl;
 
     public AuthenticationController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtUtil jwtUtl) {
@@ -35,7 +32,6 @@ public class AuthenticationController {
         this.jwtUtl = jwtUtl;
     }
 
-
     /*
         Deze methode geeft de principal (basis user gegevens) terug van de ingelogde gebruiker
     */
@@ -43,7 +39,6 @@ public class AuthenticationController {
     public ResponseEntity<Object> authenticated(Authentication authentication, Principal principal) {
         return ResponseEntity.ok().body(principal);
     }
-
 
     /*
     Deze methode geeft het JWT token terug wanneer de gebruiker de juiste inloggegevens op geeft.
@@ -68,12 +63,10 @@ public class AuthenticationController {
 
     private Authentication authenticate(Long userId, String username, String password) {
         if (userId != null) {
-            // Authenticate using userId and password
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userId.toString(), password)
             );
         } else {
-            // Authenticate using username and password
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
