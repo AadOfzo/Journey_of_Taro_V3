@@ -2,15 +2,25 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.security;
 
 public class AuthenticationRequest {
 
+    private Long userId;
     private String username;
     private String password;
-//      AuthenticationRequest wordt niet gepakt met een lege constructor (uit gecomment 26-10-23)
+
     public AuthenticationRequest() {
     }
 
-    public AuthenticationRequest(String username, String password) {
+    public AuthenticationRequest(Long userId, String username, String password) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

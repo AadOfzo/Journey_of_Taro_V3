@@ -45,27 +45,34 @@ public class AuthenticationController {
     Deze methode geeft het JWT token terug wanneer de gebruiker de juiste inloggegevens op geeft.
      */
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-
+    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        Long userId = authenticationRequest.getUserId();
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
 
         try {
-            authenticationManager.authenticate(
+            Authentication authentication = authenticate(userId, username, password);
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtUtl.generateToken(userDetails);
+
+            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        } catch (BadCredentialsException ex) {
+            throw new Exception("Incorrect username or password", ex);
+        }
+    }
+
+    private Authentication authenticate(Long userId, String username, String password) {
+        if (userId != null) {
+            // Authenticate using userId and password
+            return authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userId.toString(), password)
+            );
+        } else {
+            // Authenticate using username and password
+            return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
         }
-        catch (BadCredentialsException ex) {
-            throw new Exception("Incorrect username or password", ex);
-        }
-
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(username);
-
-        final String jwt = jwtUtl.generateToken(userDetails);
-
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
-
-
 }

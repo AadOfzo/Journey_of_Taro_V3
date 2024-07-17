@@ -108,7 +108,7 @@ public class ImageController {
         }
     }
 
-    // Method to store file and return URL
+    // Method to store file and return URL moet waarschijnlijk in de ImageService.
     private String storeFileAndGetUrl(MultipartFile file) throws java.io.IOException {
 
         String fileName = file.getOriginalFilename();

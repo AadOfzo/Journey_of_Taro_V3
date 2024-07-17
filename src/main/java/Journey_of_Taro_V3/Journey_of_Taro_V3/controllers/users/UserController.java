@@ -15,6 +15,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
@@ -88,21 +89,21 @@ public class UserController {
     }
 
     @GetMapping("/{id}/images")
-    public ResponseEntity<byte[]> getUserImage(@PathVariable("id") Long id) {
-
+    public ResponseEntity<byte[]> getUserImage(@PathVariable("id") Long id, HttpServletRequest request) {
+        Resource resource = userService.getImageFromUser(id);
         Image image = (Image) userService.getImageFromUser(id);
 
-        MediaType mediaType;
+        String mimeType;
 
         try {
-            mediaType = MediaType.parseMediaType(image.getImageUrl());
-        } catch (InvalidMediaTypeException ignore) {
-            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
 
         return ResponseEntity
                 .ok()
-                .contentType(mediaType)
+                .contentType(MediaType.parseMediaType(mimeType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename" + image.getImageName())
                 .body(image.getImageData());
     }
@@ -129,7 +130,7 @@ public class UserController {
 
     // PUT mapping
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto dto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto dto) {
         userService.updateUser(userId, dto);
         return ResponseEntity.noContent().build();
     }
@@ -155,9 +156,8 @@ public class UserController {
     // POST Mapping
     @PostMapping(value = "")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
-
         String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername, "User");
+        userService.addRole(newUsername, "ROLE_USER");
 
         URI location = ServletUriComponentsBuilder.fromPath("/users/")
                 .buildAndExpand(newUsername).toUri();

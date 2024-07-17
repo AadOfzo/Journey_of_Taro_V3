@@ -91,9 +91,9 @@ public class UserService {
         }
     }
 
-
     public UserDto convertUserToDto(User user) {
         UserDto userDto = new UserDto();
+
         userDto.setUserId(user.getUserId());
         userDto.setUsername(user.getUsername());
         userDto.setPassword(user.getPassword());
@@ -107,14 +107,15 @@ public class UserService {
         userDto.setUserSong(user.getUserSong());
         userDto.setArtistname(user.getArtistName());
 
-        // Bepaal user's roles gebaseerd op authorities
+        // Baseer roles in authorities
         List<String> roles = user.getAuthorities().stream()
-                .map(authority -> authority.getAuthority().substring(5)) // verwijder "ROLE_" prefix
+                .map(authority -> authority.getAuthority().substring(5)) // Remove "ROLE_" prefix
                 .collect(Collectors.toList());
         userDto.setRoles(roles);
 
         return userDto;
     }
+
 
     public static UserDto fromUser(User user) {
 
@@ -166,49 +167,54 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
-    public User updateUser(Long userId, UserDto newUser) {
+    public UserDto updateUser(Long userId, UserDto newUserDto) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RecordNotFoundException("User not found with ID: " + userId));
 
-        if (newUser.getPassword() != null && !newUser.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        // Update user fields based on newUserDto
+        if (newUserDto.getPassword() != null && !newUserDto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
         }
-        if (newUser.getUsername() != null && !newUser.getUsername().isEmpty()) {
-            user.setUsername(newUser.getUsername());
+        if (newUserDto.getUsername() != null && !newUserDto.getUsername().isEmpty()) {
+            user.setUsername(newUserDto.getUsername());
         }
-        if (newUser.getFirstname() != null && !newUser.getFirstname().isEmpty()) {
-            user.setFirstName(newUser.getFirstname());
+        if (newUserDto.getFirstname() != null && !newUserDto.getFirstname().isEmpty()) {
+            user.setFirstName(newUserDto.getFirstname());
         }
-        if (newUser.getLastname() != null && !newUser.getLastname().isEmpty()) {
-            user.setLastName(newUser.getLastname());
+        if (newUserDto.getLastname() != null && !newUserDto.getLastname().isEmpty()) {
+            user.setLastName(newUserDto.getLastname());
         }
-        if (newUser.getDateofbirth() != null) {
-            user.setDateOfBirth(newUser.getDateofbirth());
+        if (newUserDto.getDateofbirth() != null) {
+            user.setDateOfBirth(newUserDto.getDateofbirth());
         }
-        if (newUser.getCountry() != null && !newUser.getCountry().isEmpty()) {
-            user.setCountry(newUser.getCountry());
+        if (newUserDto.getCountry() != null && !newUserDto.getCountry().isEmpty()) {
+            user.setCountry(newUserDto.getCountry());
         }
-        if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
-            user.setEmail(newUser.getEmail());
+        if (newUserDto.getEmail() != null && !newUserDto.getEmail().isEmpty()) {
+            user.setEmail(newUserDto.getEmail());
         }
-        if (newUser.getUserimage() != null) {
-            user.setUserImage(newUser.getUserimage());
+        if (newUserDto.getUserimage() != null) {
+            user.setUserImage(newUserDto.getUserimage());
         }
-        if (newUser.getUserSong() != null) {
-            user.setUserSong(newUser.getUserSong());
+        if (newUserDto.getUserSong() != null) {
+            user.setUserSong(newUserDto.getUserSong());
         }
-        if (newUser.getArtistname() != null && !newUser.getArtistname().isEmpty()) {
-            user.setArtistName(newUser.getArtistname());
+        if (newUserDto.getArtistname() != null && !newUserDto.getArtistname().isEmpty()) {
+            user.setArtistName(newUserDto.getArtistname());
         }
-        if (newUser.getRoles() != null && !newUser.getRoles().isEmpty()) {
+        if (newUserDto.getRoles() != null && !newUserDto.getRoles().isEmpty()) {
             Set<Authority> authorities = new HashSet<>();
-            for (String role : newUser.getRoles()) {
+            for (String role : newUserDto.getRoles()) {
                 authorities.add(new Authority(user, role));
             }
             user.setAuthorities(authorities);
         }
 
-        return userRepository.save(user);
+        // Save the updated user entity
+        User updatedUser = userRepository.save(user);
+
+        // Convert updatedUser to UserDto
+        return convertUserToDto(updatedUser);
     }
 
     // Roles & Authorities methods relation User --> roles / authorities.
