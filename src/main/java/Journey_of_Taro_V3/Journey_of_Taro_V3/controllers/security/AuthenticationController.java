@@ -4,6 +4,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.security.AuthenticationRequest
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.security.AuthenticationResponse;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.CustomUserDetailsService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.JwtUtil;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,10 +15,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.logging.Logger;
 
 @CrossOrigin
 @RestController
 public class AuthenticationController {
+
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(AuthenticationController.class);
 
     private final AuthenticationManager authenticationManager;
 
