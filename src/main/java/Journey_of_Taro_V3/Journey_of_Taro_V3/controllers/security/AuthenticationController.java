@@ -2,10 +2,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.security;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.security.AuthenticationRequest;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.security.AuthenticationResponse;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.CustomUserDetailsService;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.utils.JwtUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,7 +18,6 @@ import java.security.Principal;
 @RestController
 public class AuthenticationController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtl;
@@ -32,6 +28,7 @@ public class AuthenticationController {
         this.jwtUtl = jwtUtl;
     }
 
+
     /*
         Deze methode geeft de principal (basis user gegevens) terug van de ingelogde gebruiker
     */
@@ -39,6 +36,7 @@ public class AuthenticationController {
     public ResponseEntity<Object> authenticated(Authentication authentication, Principal principal) {
         return ResponseEntity.ok().body(principal);
     }
+
 
     /*
     Deze methode geeft het JWT token terug wanneer de gebruiker de juiste inloggegevens op geeft.
@@ -50,7 +48,9 @@ public class AuthenticationController {
         String password = authenticationRequest.getPassword();
 
         try {
-            Authentication authentication = authenticate(userId, username, password);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String jwt = jwtUtl.generateToken(userDetails);
@@ -61,15 +61,5 @@ public class AuthenticationController {
         }
     }
 
-    private Authentication authenticate(Long userId, String username, String password) {
-        if (userId != null) {
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userId.toString(), password)
-            );
-        } else {
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-        }
-    }
+
 }
