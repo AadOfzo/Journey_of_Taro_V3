@@ -1,6 +1,5 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
@@ -14,7 +13,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImp
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.InvalidMediaTypeException;
@@ -28,7 +26,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -157,7 +154,7 @@ public class UserController {
     @PostMapping(value = "")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
         String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername, "ROLE_USER");
+        userService.addRole(newUsername, "USER");
 
         URI location = ServletUriComponentsBuilder.fromPath("/users/")
                 .buildAndExpand(newUsername).toUri();
