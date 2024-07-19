@@ -269,14 +269,14 @@ public class UserService {
     }
 
     @Transactional
-    public Resource getImageFromUser(Long id) {
-        Optional<User> optionalUser = userRepository.findByUserId(id);
+    public Resource getImageFromUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isEmpty()){
-            throw new RecordNotFoundException("User " + id + " not found. ");
+            throw new RecordNotFoundException("User " + userId + " not found. ");
         }
         UserImage userImage = optionalUser.get().getUserImage();
         if (userImage == null){
-            throw new RecordNotFoundException("User " + id + " has no Image");
+            throw new RecordNotFoundException("User " + userId + " has no Image");
         }
         return imageService.downloadImageFile(userImage.getFileName());
     }
@@ -306,14 +306,14 @@ public class UserService {
 
     // UserSong methods
     @Transactional
-    public Resource getSongFromUser(String userName) {
-        Optional<User> optionalUser = userRepository.findByUsername(userName);
+    public Resource getSongFromUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isEmpty()){
-            throw new RecordNotFoundException("User " + userName + " not found. ");
+            throw new RecordNotFoundException("User " + userId + " not found. ");
         }
         Song song = (Song) optionalUser.get().getSongs();
         if (song == null){
-            throw new RecordNotFoundException("User " + userName + " has no Image");
+            throw new RecordNotFoundException("User " + userId + " has no Image");
         }
         return songService.downloadSongFile(song.getFileName());
     }

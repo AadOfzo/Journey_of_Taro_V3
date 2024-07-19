@@ -86,9 +86,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/images")
-    public ResponseEntity<byte[]> getUserImage(@PathVariable("id") Long id, HttpServletRequest request) {
-        Resource resource = userService.getImageFromUser(id);
-        Image image = (Image) userService.getImageFromUser(id);
+    public ResponseEntity<byte[]> getUserImage(@PathVariable("id") Long userId, HttpServletRequest request) {
+        Resource resource = userService.getImageFromUser(userId);
+        Image image = (Image) userService.getImageFromUser(userId);
 
         String mimeType;
 
@@ -106,9 +106,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/songs")
-    public ResponseEntity<byte[]> getUserSong(@PathVariable("id") String userName) {
+    public ResponseEntity<byte[]> getUserSong(@PathVariable("id") Long userId) {
 
-        Song song = (Song) userService.getSongFromUser(userName);
+        Song song = (Song) userService.getSongFromUser(userId);
 
         MediaType mediaType;
 
