@@ -3,7 +3,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,24 +17,32 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ImageServiceImpl implements ImageService {
-
     private final Path fileStoragePath;
     private final String fileStorageLocation;
     private final ImageRepository imageRepository;
 
+
     @Autowired
-    public ImageServiceImpl(@Value("uploads/images") String fileStorageLocation, ImageRepository imageRepository) throws IOException {
+    public ImageServiceImpl(@Value("${my.upload.location}") String fileStorageLocation, ImageRepository imageRepository) throws IOException {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.imageRepository = imageRepository;
 
         Files.createDirectories(fileStoragePath);
+    }
+
+    @Override
+    public List<ImageDto> getAllImages() {
+        List<Image> images = imageRepository.findAll();
+        return transferImageListToDtoList(images);
     }
 
     @Override
@@ -46,19 +53,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<ImageDto> getAllImages() {
-        List<Image> images = imageRepository.findAll();
-        return transferImageListToDtoList(images);
-    }
-
-    @Override
     public ImageDto addImage(ImageInputDto inputDto) {
         Image image = transferToImage(inputDto);
-
-        // Set imageUrl
-        String imageUrl = "/uploads/images/" + inputDto.getImageFile().getOriginalFilename();
-        image.setImageUrl(imageUrl);
-
         image = imageRepository.save(image);
         return transferToImageDto(image);
     }
@@ -66,32 +62,74 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ImageDto saveImage(ImageInputDto inputDto) {
         Image image = transferToImage(inputDto);
-
+        String imageUrl = "/uploads/images/" + inputDto.getImageFile().getOriginalFilename();
+        image.setImageUrl(imageUrl);
         image = imageRepository.save(image);
         return transferToImageDto(image);
     }
 
     @Override
-    public Image storeFile(MultipartFile imageFile, String imageUrl) throws IOException {
-        String originalFileName = imageFile.getOriginalFilename();
-        byte[] imageData = imageFile.getBytes();
-        String contentType = imageFile.getContentType();
+    public Image storeFile(MultipartFile file, String imageUrl) throws IOException {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Cannot store empty file");
+        }
 
-        CustomMultipartFile customFile = new CustomMultipartFile(originalFileName, contentType, imageData);
-        Image image = new Image(customFile, imageUrl, imageData, originalFileName, originalFileName);
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path targetLocation = this.fileStoragePath.resolve(fileName);
+
+        // Ensure target directory exists
+        if (!Files.exists(this.fileStoragePath)) {
+            Files.createDirectories(this.fileStoragePath);
+        }
+
+        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+        Image image = new Image();
+        image.setImageName(fileName); // Use unique file name
+        image.setImageUrl(imageUrl);
+        image.setImageData(file.getBytes());
+        image.setFileName(fileName); // Use unique file name
+        image.setFileSize(file.getSize());
+        image.setUploadTime(LocalDateTime.now());
 
         return imageRepository.save(image);
     }
 
+
     @Override
-    public Image storeFile(CustomMultipartFile imageFile, String imageUrl) throws IOException {
-        String originalFileName = imageFile.getOriginalFilename();
-        byte[] imageData = imageFile.getBytes();
-        String contentType = imageFile.getContentType();
+    public Resource downloadImageFile(String imageName) {
+        Path path = this.fileStoragePath.resolve(imageName).normalize();
 
-        Image image = new Image(imageFile, imageUrl, imageData, originalFileName, originalFileName);
+        try {
+            Resource resource = new UrlResource(path.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("The file doesn't exist or is not readable.");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Issue in reading the file.", e);
+        }
+    }
 
-        return imageRepository.save(image);
+    @Override
+    public Image getImageWithData(String imageName) {
+        Path path = this.fileStoragePath.resolve(imageName).normalize();
+
+        try {
+            byte[] imageData = Files.readAllBytes(path);
+            Image image = new Image();
+            image.setImageName(imageName);
+            image.setImageData(imageData);
+            return image;
+        } catch (IOException e) {
+            throw new RuntimeException("Issue reading the file", e);
+        }
+    }
+
+    @Override
+    public void deleteImage(Long id) {
+        imageRepository.deleteById(id);
     }
 
     private List<ImageDto> transferImageListToDtoList(List<Image> images) {
@@ -104,7 +142,7 @@ public class ImageServiceImpl implements ImageService {
 
     private ImageDto transferToImageDto(Image image) {
         ImageDto dto = new ImageDto();
-        dto.setId(image.getId());
+        dto.setImageId(image.getImageId());
         dto.setImageName(image.getImageName());
         dto.setImageAltName(image.getImageAltName());
         dto.setImageUrl(image.getImageUrl());
@@ -124,42 +162,6 @@ public class ImageServiceImpl implements ImageService {
         } catch (IOException e) {
             throw new RuntimeException("Error creating image entity", e);
         }
-
         return image;
-    }
-
-    @Override
-    public Resource downloadImageFile(String imageName) {
-        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(imageName);
-
-        try {
-            Resource resource = new UrlResource(path.toUri());
-            if (resource.exists() && resource.isReadable()) {
-                return resource;
-            } else {
-                throw new RuntimeException("The file doesn't exist or is not readable.");
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Issue in reading the file.", e);
-        }
-    }
-
-    @Override
-    public Image getImageWithData(String imageName) {
-        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(imageName);
-
-        try {
-            byte[] imageData = Files.readAllBytes(path);
-            Image image = new Image();
-            image.setImageData(imageData);
-            return image;
-        } catch (IOException e) {
-            throw new RuntimeException("Issue reading the file", e);
-        }
-    }
-
-    @Override
-    public void deleteImage(Long id) {
-        imageRepository.deleteById(id);
     }
 }

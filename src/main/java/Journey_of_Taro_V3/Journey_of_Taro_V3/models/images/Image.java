@@ -12,7 +12,7 @@ public class Image {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long imageId;
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
@@ -57,12 +57,12 @@ public class Image {
         this.uploadTime = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
+    public Long getImageId() {
+        return imageId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 
     public byte[] getImageData() {

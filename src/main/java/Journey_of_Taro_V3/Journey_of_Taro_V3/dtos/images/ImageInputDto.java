@@ -12,13 +12,6 @@ public class ImageInputDto {
     public ImageInputDto() {
     }
 
-//    public ImageInputDto(MultipartFile imageFile, String imageName, String imageAltName, String imageUrl) {
-//        this.imageFile = imageFile;
-//        this.imageName = imageName;
-//        this.imageAltName = imageAltName;
-//        this.imageUrl = imageUrl;
-//    }
-
     public MultipartFile getImageFile() {
         return imageFile;
     }

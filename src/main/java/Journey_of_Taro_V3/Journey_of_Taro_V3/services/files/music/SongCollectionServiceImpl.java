@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -174,7 +173,7 @@ public class SongCollectionServiceImpl implements SongCollectionService {
         Image image = collection.getCollectionImage();
         if (image != null) {
             imageDto = new ImageDto(
-                    image.getId(),
+                    image.getImageId(),
                     image.getImageName(),
                     image.getImageAltName(),
                     image.getImageUrl()

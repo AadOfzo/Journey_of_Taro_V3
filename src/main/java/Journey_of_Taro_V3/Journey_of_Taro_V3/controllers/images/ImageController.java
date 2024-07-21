@@ -98,7 +98,7 @@ public class ImageController {
             // Add image
             ImageDto dto = imageService.addImage(inputDto);
 
-            Long imageId = dto.getId();
+            Long imageId = dto.getImageId();
 
             System.out.println("Added " + imageName + " to the database with id: " + imageId);
             return ResponseEntity.created(new URI(dto.getImageUrl())).body(dto.getImageUrl());

@@ -50,6 +50,8 @@ public class SpringSecurityConfig {
                         // Allow public access to specific endpoints
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/{id}/image").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/{id}/image").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/users/**").permitAll()

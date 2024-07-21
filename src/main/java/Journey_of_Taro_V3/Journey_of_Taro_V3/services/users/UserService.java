@@ -254,18 +254,26 @@ public class UserService {
 
     // UserImage methods relation User --> Image
     @Transactional
-    public User assignImageToUser(Long userId ,Image image) {
+    public User assignImageToUser(Long userId, Image image) {
+        // Fetch the user by ID
         Optional<User> optionalUser = userRepository.findByUserId(userId);
-        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(image.getImageName());
-        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
-            UserImage userImage = optionalUserImage.get();
-            User user = optionalUser.get();
-            user.setUserImage(userImage);
-            return userRepository.save(user);
-        } else {
+        if (optionalUser.isEmpty()) {
             throw new RecordNotFoundException("User with id: " + userId + " not found");
         }
 
+        // Fetch the image by name
+        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(image.getImageName());
+        if (optionalUserImage.isEmpty()) {
+            throw new RecordNotFoundException("Image with name: " + image.getImageName() + " not found");
+        }
+
+        // If both user and image exist, assign the image to the user
+        User user = optionalUser.get();
+        UserImage userImage = optionalUserImage.get();
+        user.setUserImage(userImage);
+
+        // Save the updated user
+        return userRepository.save(user);
     }
 
     @Transactional

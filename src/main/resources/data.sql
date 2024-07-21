@@ -18,7 +18,7 @@ VALUES (1001, 'ADMIN'),
 -- INSERT INTO properties (key, value) VALUES ('image.url', 'https://example.com/images');
 -- INSERT INTO properties (key, value) VALUES ('song.url', 'https://example.com/songs');
 
-insert into images(id, imagename, image_alt_name, image_url)
+insert into images(image_id, imagename, image_alt_name, image_url)
 values (101, 'TestTitle', 'TestAltTitle', 'localhost:8080/images/101');
 
 -- insert into songs(id)

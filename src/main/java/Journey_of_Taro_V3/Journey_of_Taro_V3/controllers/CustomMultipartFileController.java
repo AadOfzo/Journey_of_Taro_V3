@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -108,22 +107,24 @@ public class CustomMultipartFileController {
             return "Unknown";
         }
     }
-
     private String storeFileAndGetUrl(MultipartFile file, String uploadDir) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
+        // Generate a unique file name
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-
         Path filePath = uploadPath.resolve(fileName);
 
+        // Copy file to target location
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+        // Construct URL for the file
         String baseUrl = environment.getProperty("base.url", "http://localhost:8080");
         String fileUrl = baseUrl + "/files/" + fileName;
 
         return fileUrl;
     }
+
 }

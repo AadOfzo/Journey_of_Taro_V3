@@ -80,12 +80,66 @@ public class UserController {
         }
     }
 
+    // POST Mapping
+    @PostMapping(value = "")
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
+        String newUsername = userService.createUser(dto);
+        userService.addRole(newUsername, "USER");
+
+        URI location = ServletUriComponentsBuilder.fromPath("/users/")
+                .buildAndExpand(newUsername).toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+    // PUT mapping
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long userId, @RequestBody UserDto dto) {
+        userService.updateUser(userId, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    // PUT update artistName for a user
+    @PutMapping("/{id}/artistName")
+    public ResponseEntity<Object> updateArtistName(@PathVariable("id") Long userId, @RequestParam("artistName") String artistName) {
+        try {
+            userService.updateArtistName(userId, artistName);
+            return ResponseEntity.noContent().build();
+        } catch (RecordNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping(value = "/{username}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
+        userService.deleteUser(username);
+        return ResponseEntity.noContent().build();
+    }
+
+    // User --> Authorities endpoints
     @GetMapping(value = "/{username}/authorities")
     public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
         return ResponseEntity.ok().body(userService.getRoles(username));
     }
 
-    @GetMapping("/{id}/images")
+    @PostMapping(value = "/{username}/authorities")
+    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
+        try {
+            String authorityName = (String) fields.get("authority");
+            userService.addRole(username, authorityName);
+            return ResponseEntity.noContent().build();
+        } catch (Exception ex) {
+            throw new BadRequestException();
+        }
+    }
+    @PutMapping("/{username}/grant-admin")
+    public ResponseEntity<Object> grantAdminPrivilege(@PathVariable("username") String username) {
+        userService.grantAdminPrivilege(username);
+        return ResponseEntity.ok().build();
+    }
+
+    // Users & images endpoinds
+    @GetMapping("/{id}/image")
     public ResponseEntity<byte[]> getUserImage(@PathVariable("id") Long userId, HttpServletRequest request) {
         Resource resource = userService.getImageFromUser(userId);
         Image image = (Image) userService.getImageFromUser(userId);
@@ -105,6 +159,29 @@ public class UserController {
                 .body(image.getImageData());
     }
 
+    @PostMapping("/{id}/image")
+    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
+                                               @RequestParam("file") MultipartFile file) throws IOException {
+        System.out.println("Received request to add image for user with ID: " + userId + " and file: " + file.getOriginalFilename());
+
+        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/")
+                .path(userId.toString())
+                .path("/image")
+                .toUriString();
+
+        ImageInputDto inputDto = new ImageInputDto();
+        inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
+        inputDto.setImageName(file.getOriginalFilename());
+        inputDto.setImageAltName(file.getOriginalFilename());
+
+        Image image = imageService.storeFile(file, imageUrl);
+        User user = userService.assignImageToUser(userId, image);
+
+        return ResponseEntity.created(URI.create(imageUrl)).body(user);
+    }
+
+    // Users & Songs endpoints
     @GetMapping("/{id}/songs")
     public ResponseEntity<byte[]> getUserSong(@PathVariable("id") Long userId) {
 
@@ -123,81 +200,6 @@ public class UserController {
                 .contentType(mediaType)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename" + song.getSongTitle())
                 .body(song.getSongData());
-    }
-
-    // PUT mapping
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto dto) {
-        userService.updateUser(userId, dto);
-        return ResponseEntity.noContent().build();
-    }
-
-    // Frontend Component UserList
-    @PutMapping("/{username}/grant-admin")
-    public ResponseEntity<Object> grantAdminPrivilege(@PathVariable("username") String username) {
-        userService.grantAdminPrivilege(username);
-        return ResponseEntity.ok().build();
-    }
-
-    // PUT update artistName for a user
-    @PutMapping("/{id}/artistName")
-    public ResponseEntity<Object> updateArtistName(@PathVariable("id") Long userId, @RequestParam("artistName") String artistName) {
-        try {
-            userService.updateArtistName(userId, artistName);
-            return ResponseEntity.noContent().build();
-        } catch (RecordNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // POST Mapping
-    @PostMapping(value = "")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
-        String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername, "USER");
-
-        URI location = ServletUriComponentsBuilder.fromPath("/users/")
-                .buildAndExpand(newUsername).toUri();
-
-        return ResponseEntity.created(location).build();
-    }
-
-    @PostMapping(value = "/{username}/authorities")
-    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
-        try {
-            String authorityName = (String) fields.get("authority");
-            userService.addRole(username, authorityName);
-            return ResponseEntity.noContent().build();
-        } catch (Exception ex) {
-            throw new BadRequestException();
-        }
-    }
-
-    // POST add image to user
-    @PostMapping("/{id}/image")
-    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
-                                               @RequestParam("file") MultipartFile file) throws IOException {
-        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/users/")
-                .path(userId.toString())
-                .path("/image")
-                .toUriString();
-
-        ImageInputDto inputDto = new ImageInputDto();
-        inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
-        inputDto.setImageName(file.getOriginalFilename());
-        inputDto.setImageAltName(file.getOriginalFilename());
-
-        Image image = imageService.storeFile(file, imageUrl);
-        User user = userService.assignImageToUser(userId, image);
-
-        return ResponseEntity.created(URI.create(imageUrl)).body(user);
-    }
-
-    @DeleteMapping(value = "/{username}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
-        userService.deleteUser(username);
-        return ResponseEntity.noContent().build();
     }
 
 }
