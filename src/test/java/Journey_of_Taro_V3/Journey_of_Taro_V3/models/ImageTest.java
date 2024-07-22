@@ -31,7 +31,7 @@ class ImageTest {
 
         CustomMultipartFile customMultipartFile = new CustomMultipartFile(originalFilename, contentType, content);
 
-        // Create the Image instance using the byte array from CustomMultipartFile
+        // Use an existing constructor that matches the parameters
         image = new Image(customMultipartFile.getBytes(), imageUrl, imageName, imageAltName, customMultipartFile.getOriginalFilename(), customMultipartFile.getSize());
 
         assertNotNull(image);
