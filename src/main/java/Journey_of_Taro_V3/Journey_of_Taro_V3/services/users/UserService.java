@@ -133,7 +133,7 @@ public class UserService {
         dto.dateofbirth = user.getDateOfBirth();
         dto.email = user.getEmail();
         dto.country = user.getCountry();
-        dto.userimage = user.getUserImage();
+        dto.userimage = (user.getUserImage());
         dto.userSong = user.getUserSong();
         dto.artistname = user.getArtistName();
 

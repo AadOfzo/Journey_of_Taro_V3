@@ -84,34 +84,6 @@ public class ImageServiceImpl implements ImageService {
         return imageName;
     }
 
-//    @Override
-//    public Image storeFile(MultipartFile file) throws IOException {
-//        if (file.isEmpty()) {
-//            throw new IllegalArgumentException("Cannot store empty file");
-//        }
-//
-//        String imageName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-//        Path targetLocation = this.fileStoragePath.resolve(imageName);
-//
-//        // Ensure target directory exists
-//        if (!Files.exists(this.fileStoragePath)) {
-//            Files.createDirectories(this.fileStoragePath);
-//        }
-//
-//        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-//
-//        Image image = new Image();
-//        image.setImageName(imageName);
-//        image.setImageUrl(imageUrl);
-//        image.setImageData(file.getBytes());
-//        image.setFileName(fileName);
-//        image.setFileSize(file.getSize());
-//        image.setUploadTime(LocalDateTime.now());
-//
-//        return imageRepository.save(image);
-//    }
-
-
     @Override
     public Resource downloadImageFile(String imageName) {
         Path path = this.fileStoragePath.resolve(imageName).normalize();
