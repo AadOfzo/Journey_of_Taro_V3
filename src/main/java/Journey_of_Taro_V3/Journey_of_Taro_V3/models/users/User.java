@@ -42,9 +42,10 @@ public class User {
     private String email;
 
     // User files:
-    @JoinColumn(name = "userimage_id")
-    @ManyToOne
-    @JsonIgnoreProperties(value = {"contents","contentType"} )
+//    @JoinColumn(name = "userimage")
+//    @ManyToOne
+//    @JsonIgnoreProperties(value = {"contents","contentType"} )
+    @OneToOne
     UserImage userImage;
 
     @JoinColumn(name = "usersong")

@@ -28,7 +28,6 @@ public class AuthenticationController {
         this.jwtUtl = jwtUtl;
     }
 
-
     /*
         Deze methode geeft de principal (basis user gegevens) terug van de ingelogde gebruiker
     */
@@ -37,13 +36,11 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(principal);
     }
 
-
     /*
     Deze methode geeft het JWT token terug wanneer de gebruiker de juiste inloggegevens op geeft.
      */
     @PostMapping(value = "/authenticate")
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-        Long userId = authenticationRequest.getUserId();
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
 

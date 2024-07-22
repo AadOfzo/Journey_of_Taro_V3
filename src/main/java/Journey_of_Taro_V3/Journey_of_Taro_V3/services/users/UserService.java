@@ -78,7 +78,7 @@ public class UserService {
             User user = optionalUser.get();
             return fromUser(user);
         } else {
-            throw new UsernameNotFoundException("User with ID: " + userId +" not found!");
+            throw new UsernameNotFoundException("User with ID: " + userId + " not found!");
         }
     }
 
@@ -231,12 +231,12 @@ public class UserService {
         if (!userRepository.existsByUsername(username)) {
             throw new UsernameNotFoundException(username);
         }
-            User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-            Authority authority = new Authority();
-            authority.setAuthority(roleName);
-            user.addAuthorities(authority);
-            userRepository.save(user);
-        }
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        Authority authority = new Authority();
+        authority.setAuthority(roleName);
+        user.addAuthorities(authority);
+        userRepository.save(user);
+    }
 
     @Transactional
     public void grantAdminPrivilege(String username) {
@@ -254,76 +254,69 @@ public class UserService {
 
     // UserImage methods relation User --> Image
     @Transactional
-    public User assignImageToUser(Long userId, Image image) {
+    public User assignImageToUser(Long userId, String imageName) {
         // Fetch the user by ID
         Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isEmpty()) {
-            throw new RecordNotFoundException("User with id: " + userId + " not found");
-        }
-
-        // Fetch the image by name
-        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(image.getImageName());
-        if (optionalUserImage.isEmpty()) {
-            throw new RecordNotFoundException("Image with name: " + image.getImageName() + " not found");
-        }
-
-        // If both user and image exist, assign the image to the user
-        User user = optionalUser.get();
-        UserImage userImage = optionalUserImage.get();
-        user.setUserImage(userImage);
-
-        // Save the updated user
-        return userRepository.save(user);
-    }
-
-    @Transactional
-    public Resource getImageFromUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isEmpty()){
-            throw new RecordNotFoundException("User " + userId + " not found. ");
-        }
-        UserImage userImage = optionalUser.get().getUserImage();
-        if (userImage == null){
-            throw new RecordNotFoundException("User " + userId + " has no Image");
-        }
-        return imageService.downloadImageFile(userImage.getFileName());
-    }
-
-    // ArtistName relation User --> Song
-    public UserDto getArtistName(String artistName) {
-        // Find the user by artistName
-        User user = userRepository.findByArtistName(artistName)
-                .orElseThrow(() -> new RecordNotFoundException("User not found for artistName: " + artistName));
-
-        // Convert User entity to UserDto (if needed)
-        UserDto userDto = convertUserToDto(user);
-
-        return userDto;
-    }
-
-    public void updateArtistName(Long userId, String artistName) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isPresent()) {
+        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(imageName);
+        // Als user en image bestaan, assign image aan user
+        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
             User user = optionalUser.get();
-            user.setArtistName(artistName);
-            userRepository.save(user);
+            UserImage userImage = optionalUserImage.get();
+            user.setUserImage(userImage);
+            return userRepository.save(user);
         } else {
-            throw new RecordNotFoundException("User not found with id: " + userId);
+            throw new RecordNotFoundException();
         }
     }
 
-    // UserSong methods
-    @Transactional
-    public Resource getSongFromUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isEmpty()){
-            throw new RecordNotFoundException("User " + userId + " not found. ");
+        @Transactional
+        public Resource getImageFromUser (Long userId){
+            Optional<User> optionalUser = userRepository.findByUserId(userId);
+            if (optionalUser.isEmpty()) {
+                throw new RecordNotFoundException("User " + userId + " not found. ");
+            }
+            UserImage userImage = optionalUser.get().getUserImage();
+            if (userImage == null) {
+                throw new RecordNotFoundException("User " + userId + " has no Image");
+            }
+            return imageService.downloadImageFile(userImage.getUserImage());
         }
-        Song song = (Song) optionalUser.get().getSongs();
-        if (song == null){
-            throw new RecordNotFoundException("User " + userId + " has no Image");
-        }
-        return songService.downloadSongFile(song.getFileName());
-    }
 
-}
+        // ArtistName relation User --> Song
+        public UserDto getArtistName (String artistName){
+            // Find the user by artistName
+            User user = userRepository.findByArtistName(artistName)
+                    .orElseThrow(() -> new RecordNotFoundException("User not found for artistName: " + artistName));
+
+            // Convert User entity to UserDto (if needed)
+            UserDto userDto = convertUserToDto(user);
+
+            return userDto;
+        }
+
+        public void updateArtistName (Long userId, String artistName){
+            Optional<User> optionalUser = userRepository.findByUserId(userId);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                user.setArtistName(artistName);
+                userRepository.save(user);
+            } else {
+                throw new RecordNotFoundException("User not found with id: " + userId);
+            }
+        }
+
+        // UserSong methods
+        @Transactional
+        public Resource getSongFromUser (Long userId){
+            Optional<User> optionalUser = userRepository.findByUserId(userId);
+            if (optionalUser.isEmpty()) {
+                throw new RecordNotFoundException("User " + userId + " not found. ");
+            }
+            Song song = (Song) optionalUser.get().getSongs();
+            if (song == null) {
+                throw new RecordNotFoundException("User " + userId + " has no Image");
+            }
+            return songService.downloadSongFile(song.getFileName());
+        }
+
+    }

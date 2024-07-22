@@ -12,7 +12,6 @@ public class UserDto {
     public String username;
     public String password;
     public String apikey;
-
     public String firstname;
     public String lastname;
     public Date dateofbirth;

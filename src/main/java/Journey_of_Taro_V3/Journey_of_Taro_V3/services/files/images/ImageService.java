@@ -14,7 +14,10 @@ public interface ImageService {
     List<ImageDto> getAllImages();
     ImageDto addImage(ImageInputDto inputDto);
     ImageDto saveImage(ImageInputDto inputDto);
-    Image storeFile(MultipartFile imageFile, String imageUrl) throws IOException;
+    String storeFile(MultipartFile file) throws IOException;
+
+//    Image storeFile(MultipartFile file) throws IOException;
+
     Resource downloadImageFile(String imageName);
     Image getImageWithData(String imageName);
     void deleteImage(Long id);

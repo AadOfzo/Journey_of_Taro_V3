@@ -15,14 +15,14 @@ public class UserImage {
     @Id
     private String imageName;
 
-    public UserImage(String fileName) {
-        this.imageName = fileName;
+    public UserImage(String imageName) {
+        this.imageName = imageName;
     }
 
     public UserImage() {
     }
 
-    public String getFileName() {
+    public String getUserImage() {
         return imageName;
     }
 

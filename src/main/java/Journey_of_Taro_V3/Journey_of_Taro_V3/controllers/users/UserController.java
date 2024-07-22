@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -166,7 +167,7 @@ public class UserController {
 
         String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/")
-                .path(userId.toString())
+                .path(Objects.requireNonNull(userId.toString()))
                 .path("/image")
                 .toUriString();
 
@@ -175,8 +176,8 @@ public class UserController {
         inputDto.setImageName(file.getOriginalFilename());
         inputDto.setImageAltName(file.getOriginalFilename());
 
-        Image image = imageService.storeFile(file, imageUrl);
-        User user = userService.assignImageToUser(userId, image);
+        String imageName = imageService.storeFile(file);
+        User user = userService.assignImageToUser(userId, imageName);
 
         return ResponseEntity.created(URI.create(imageUrl)).body(user);
     }
