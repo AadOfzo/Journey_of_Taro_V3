@@ -8,6 +8,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.UserImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserImageRepository userImageRepository;
     private final ImageRepository imageRepository;
     private final ImageServiceImpl imageService;
     private final SongRepository songRepository;
@@ -36,8 +38,9 @@ public class UserService {
 
     // Could not autowire PasswordEncoder passwords komen wel encoded in database.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
-    public UserService(UserRepository userRepository, ImageRepository imageRepository, ImageServiceImpl imageService, SongRepository songRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ImageRepository imageRepository, UserImageRepository userImageRepository, ImageServiceImpl imageService, SongRepository songRepository, SongServiceImpl songService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userImageRepository = userImageRepository;
         this.imageRepository = imageRepository;
         this.imageService = imageService;
         this.songRepository = songRepository;
@@ -257,7 +260,7 @@ public class UserService {
     public User assignImageToUser(Long userId, String imageName) {
         // Fetch the user by ID
         Optional<User> optionalUser = userRepository.findByUserId(userId);
-        Optional<UserImage> optionalUserImage = imageRepository.findImageByImageName(imageName);
+        Optional<UserImage> optionalUserImage = userImageRepository.findUserImageByImageName(imageName);
         // Als user en image bestaan, assign image aan user
         if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
             User user = optionalUser.get();
@@ -269,54 +272,54 @@ public class UserService {
         }
     }
 
-        @Transactional
-        public Resource getImageFromUser (Long userId){
-            Optional<User> optionalUser = userRepository.findByUserId(userId);
-            if (optionalUser.isEmpty()) {
-                throw new RecordNotFoundException("User " + userId + " not found. ");
-            }
-            UserImage userImage = optionalUser.get().getUserImage();
-            if (userImage == null) {
-                throw new RecordNotFoundException("User " + userId + " has no Image");
-            }
-            return imageService.downloadImageFile(userImage.getUserImage());
+    @Transactional
+    public Resource getImageFromUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if (optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("User " + userId + " not found. ");
         }
-
-        // ArtistName relation User --> Song
-        public UserDto getArtistName (String artistName){
-            // Find the user by artistName
-            User user = userRepository.findByArtistName(artistName)
-                    .orElseThrow(() -> new RecordNotFoundException("User not found for artistName: " + artistName));
-
-            // Convert User entity to UserDto (if needed)
-            UserDto userDto = convertUserToDto(user);
-
-            return userDto;
+        UserImage userImage = optionalUser.get().getUserImage();
+        if (userImage == null) {
+            throw new RecordNotFoundException("User " + userId + " has no Image");
         }
-
-        public void updateArtistName (Long userId, String artistName){
-            Optional<User> optionalUser = userRepository.findByUserId(userId);
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-                user.setArtistName(artistName);
-                userRepository.save(user);
-            } else {
-                throw new RecordNotFoundException("User not found with id: " + userId);
-            }
-        }
-
-        // UserSong methods
-        @Transactional
-        public Resource getSongFromUser (Long userId){
-            Optional<User> optionalUser = userRepository.findByUserId(userId);
-            if (optionalUser.isEmpty()) {
-                throw new RecordNotFoundException("User " + userId + " not found. ");
-            }
-            Song song = (Song) optionalUser.get().getSongs();
-            if (song == null) {
-                throw new RecordNotFoundException("User " + userId + " has no Image");
-            }
-            return songService.downloadSongFile(song.getFileName());
-        }
-
+        return imageService.downloadImageFile(userImage.getUserImage());
     }
+
+    // ArtistName relation User --> Song
+    public UserDto getArtistName(String artistName) {
+        // Find the user by artistName
+        User user = userRepository.findByArtistName(artistName)
+                .orElseThrow(() -> new RecordNotFoundException("User not found for artistName: " + artistName));
+
+        // Convert User entity to UserDto (if needed)
+        UserDto userDto = convertUserToDto(user);
+
+        return userDto;
+    }
+
+    public void updateArtistName(Long userId, String artistName) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setArtistName(artistName);
+            userRepository.save(user);
+        } else {
+            throw new RecordNotFoundException("User not found with id: " + userId);
+        }
+    }
+
+    // UserSong methods
+    @Transactional
+    public Resource getSongFromUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if (optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("User " + userId + " not found. ");
+        }
+        Song song = (Song) optionalUser.get().getSongs();
+        if (song == null) {
+            throw new RecordNotFoundException("User " + userId + " has no Image");
+        }
+        return songService.downloadSongFile(song.getFileName());
+    }
+
+}
