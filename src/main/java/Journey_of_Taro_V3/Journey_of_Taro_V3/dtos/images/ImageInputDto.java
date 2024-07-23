@@ -6,14 +6,16 @@ public class ImageInputDto {
     private String imageName;
     private String imageAltName;
     private MultipartFile imageFile;
+    private String imageUrl;
 
     public ImageInputDto() {
     }
 
-    public ImageInputDto(String imageName, String imageAltName, MultipartFile imageFile) {
+    public ImageInputDto(String imageName, String imageAltName, MultipartFile imageFile, String imageUrl) {
         this.imageName = imageName;
         this.imageAltName = imageAltName;
         this.imageFile = imageFile;
+        this.imageUrl =imageUrl;
     }
 
     public String getImageName() {
@@ -38,5 +40,13 @@ public class ImageInputDto {
 
     public void setImageFile(MultipartFile imageFile) {
         this.imageFile = imageFile;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
