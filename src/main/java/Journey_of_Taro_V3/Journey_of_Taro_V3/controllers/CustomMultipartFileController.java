@@ -44,8 +44,8 @@ public class CustomMultipartFileController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> fileUploadController(@RequestParam("file") MultipartFile file,
-                                                  @RequestParam("artistName") String artistName,
-                                                  @RequestParam("songTitle") String songTitle) {
+                                                  @RequestParam(value = "artistName", required = false) String artistName,
+                                                  @RequestParam(value = "songTitle", required = false) String songTitle) {
         try {
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("File is empty");
@@ -63,7 +63,6 @@ public class CustomMultipartFileController {
             logger.info("Received file: {}", originalFilename);
             logger.info("File size: {} bytes", file.getSize());
             logger.info("File type: {}", fileType);
-            logger.info("Artist Name: {}", artistName);
 
             if ("Image".equalsIgnoreCase(fileType)) {
                 String imageUrl = storeFileAndGetUrl(customFile, "uploads/images");
@@ -78,6 +77,10 @@ public class CustomMultipartFileController {
                 return ResponseEntity.ok().body(dto);
 
             } else if ("Audio".equalsIgnoreCase(fileType)) {
+                if (artistName == null || artistName.isEmpty()) {
+                    throw new IllegalArgumentException("Artist name is required for audio files");
+                }
+
                 String songUrl = storeFileAndGetUrl(customFile, "uploads/songs");
 
                 SongInputDto inputDto = new SongInputDto();
