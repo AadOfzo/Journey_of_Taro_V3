@@ -104,7 +104,7 @@ public class UserService {
         userDto.setDateofbirth(user.getDateOfBirth());
         userDto.setEmail(user.getEmail());
         userDto.setCountry(user.getCountry());
-        userDto.setUserimage(user.getUserImage());
+        userDto.setUserImage(user.getUserImage());
         userDto.setUserSong(user.getUserSong());
         userDto.setArtistname(user.getArtistName());
 
@@ -131,7 +131,7 @@ public class UserService {
         dto.dateofbirth = user.getDateOfBirth();
         dto.email = user.getEmail();
         dto.country = user.getCountry();
-        dto.userimage = (user.getUserImage());
+        dto.userImage = (user.getUserImage());
         dto.userSong = user.getUserSong();
         dto.artistname = user.getArtistName();
 
@@ -158,7 +158,7 @@ public class UserService {
         user.setEmail(userDto.getEmail());
         user.setArtistName(userDto.getArtistname());
 
-        user.setUserImage(userDto.getUserimage());
+        user.setUserImage(userDto.getUserImage());
         user.setUserSong(userDto.getUserSong());
 
         return user;
@@ -194,8 +194,8 @@ public class UserService {
         if (newUserDto.getEmail() != null && !newUserDto.getEmail().isEmpty()) {
             user.setEmail(newUserDto.getEmail());
         }
-        if (newUserDto.getUserimage() != null) {
-            user.setUserImage(newUserDto.getUserimage());
+        if (newUserDto.getUserImage() != null) {
+            user.setUserImage(newUserDto.getUserImage());
         }
         if (newUserDto.getUserSong() != null) {
             user.setUserSong(newUserDto.getUserSong());

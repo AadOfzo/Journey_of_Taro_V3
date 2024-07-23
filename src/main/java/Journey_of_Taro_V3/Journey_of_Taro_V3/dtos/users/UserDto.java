@@ -17,7 +17,7 @@ public class UserDto {
     public Date dateofbirth;
     public String country;
     public String email;
-    public UserImage userimage;
+    public UserImage userImage;
     public UserSong userSong;
 
     public String artistname;
@@ -96,12 +96,12 @@ public class UserDto {
         this.lastname = lastname;
     }
 
-    public UserImage getUserimage() {
-        return userimage;
+    public UserImage getUserImage() {
+        return userImage;
     }
 
-    public void setUserimage(UserImage userimage) {
-        this.userimage = userimage;
+    public void setUserImage(UserImage userImage) {
+        this.userImage = userImage;
     }
 
     public UserSong getUserSong() {
