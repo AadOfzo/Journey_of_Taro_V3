@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +34,6 @@ public class CustomMultipartFileController {
     private static final Logger logger = LoggerFactory.getLogger(CustomMultipartFileController.class);
     private final ImageService imageService;
     private final SongService songService;
-
     private final Environment environment;
 
     @Autowired
@@ -45,8 +46,12 @@ public class CustomMultipartFileController {
     @PostMapping(value = "/fileUpload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> fileUploadController(MultipartFile file, String artistName, String songTitle, String userName) {
-        try {
+    public ResponseEntity<?> fileUploadController(
+            @RequestPart MultipartFile file,
+            @RequestPart String artistName,
+            @RequestPart String songTitle,
+            @RequestPart String userName,
+            @RequestHeader("Authorization") String token) {try {
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("File is empty");
             }
@@ -62,6 +67,7 @@ public class CustomMultipartFileController {
             logger.info("Received file: {}", originalFilename);
             logger.info("File size: {} bytes", file.getSize());
             logger.info("File type: {}", fileType);
+            logger.info("Artist Name: {}", artistName);
 
             if ("Image".equalsIgnoreCase(fileType)) {
                 String imageUrl = storeFileAndGetUrl(file, "uploads/images");
@@ -70,6 +76,7 @@ public class CustomMultipartFileController {
                 inputDto.setImageFile(file);
                 inputDto.setImageName(originalFilename);
                 inputDto.setImageAltName(originalFilename);
+                inputDto.setImageUrl(imageUrl);
 
                 ImageDto dto = imageService.addImage(inputDto);
                 return ResponseEntity.ok().body(dto);
@@ -81,7 +88,7 @@ public class CustomMultipartFileController {
                 SongInputDto inputDto = new SongInputDto();
                 inputDto.setSongFile(new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()));
                 inputDto.setSongTitle(songTitle == null ? originalFilename : songTitle);
-                inputDto.setArtistName(artistName);
+                inputDto.setArtistName(artistName);  // Ensure artistName is set here
                 inputDto.setFileName(originalFilename);
                 inputDto.setFileSize(file.getSize());
                 inputDto.setUploadTime(LocalDateTime.now());
@@ -107,24 +114,19 @@ public class CustomMultipartFileController {
             return "Unknown";
         }
     }
+
     private String storeFileAndGetUrl(MultipartFile file, String uploadDir) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // Generate a unique file name
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         Path filePath = uploadPath.resolve(fileName);
 
-        // Copy file to target location
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // Construct URL for the file
         String baseUrl = environment.getProperty("base.url", "http://localhost:8080");
-        String fileUrl = baseUrl + "/files/" + fileName;
-
-        return fileUrl;
+        return baseUrl + "/files/" + fileName;
     }
-
 }

@@ -55,16 +55,6 @@ public class Image {
         this.uploadTime = LocalDateTime.now();
     }
 
-//    public Image(CustomMultipartFile imageFile, String imageUrl, byte[] imageData, String imageName, String imageAltName) {
-//        this.imageData = imageData;
-//        this.imageUrl = imageUrl;
-//        this.imageName = imageName;
-//        this.imageAltName = imageAltName;
-//        this.fileName = imageFile.getOriginalFilename();
-//        this.fileSize = imageFile.getSize();
-//        this.uploadTime = LocalDateTime.now();
-//    }
-
     public Long getImageId() {
         return imageId;
     }

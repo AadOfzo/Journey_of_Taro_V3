@@ -111,9 +111,9 @@ public class ImageController {
     private String storeFileAndGetUrl(MultipartFile file) throws java.io.IOException {
 
         String fileName = file.getOriginalFilename();
-        String fileUrl = environment.getProperty("base.url") + "/files/" + fileName;
+        String imageUrl = environment.getProperty("base.url") + "/files/" + fileName;
 
-        return fileUrl;
+        return imageUrl;
     }
 
     // Delete Mapping

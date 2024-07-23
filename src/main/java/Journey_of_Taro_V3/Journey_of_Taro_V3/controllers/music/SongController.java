@@ -133,9 +133,9 @@ public class SongController {
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         // Construct the URL to access the file
-        String baseUrl = environment.getProperty("base.url", "http://localhost:8080");
-        String fileUrl = baseUrl + "/songs/files/" + fileName;
+        String baseUrl = environment.getProperty("base.url") + "/files/" + fileName;
+        String songUrl = baseUrl + "/songs/files/" + fileName;
 
-        return fileUrl;
+        return songUrl;
     }
 }
