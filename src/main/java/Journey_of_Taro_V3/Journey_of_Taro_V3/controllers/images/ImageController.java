@@ -93,7 +93,6 @@ public class ImageController {
             inputDto.setImageFile(file);
             inputDto.setImageName(imageName);
             inputDto.setImageAltName(imageAltName);
-            inputDto.setImageUrl(imageUrl);
 
             // Add image
             ImageDto dto = imageService.addImage(inputDto);

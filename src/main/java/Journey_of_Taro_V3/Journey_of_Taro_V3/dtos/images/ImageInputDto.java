@@ -3,20 +3,16 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ImageInputDto {
-
-    private MultipartFile imageFile;
     private String imageName;
     private String imageAltName;
-    private String imageUrl;
+    private MultipartFile imageFile;
 
     public ImageInputDto() {
     }
 
-    public MultipartFile getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(MultipartFile imageFile) {
+    public ImageInputDto(String imageName, String imageAltName, MultipartFile imageFile) {
+        this.imageName = imageName;
+        this.imageAltName = imageAltName;
         this.imageFile = imageFile;
     }
 
@@ -36,11 +32,11 @@ public class ImageInputDto {
         this.imageAltName = imageAltName;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public MultipartFile getImageFile() {
+        return imageFile;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
     }
 }

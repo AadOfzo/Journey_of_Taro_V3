@@ -13,14 +13,11 @@ public class Image {
     @Id
     @GeneratedValue
     private Long imageId;
-
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
-
     @Column(name = "imagename")
     private String imageName;
-
     private String imageAltName;
     private String fileName;
     private Long fileSize;
@@ -32,6 +29,17 @@ public class Image {
     private SongCollection songCollection;
 
     public Image() {
+    }
+
+    public Image(Long imageId, String fileName, String imageName, String imageAltName, String imageUrl, byte[] imageData, LocalDateTime uploadTime, Long fileSize) {
+        this.imageId = imageId;
+        this.fileName = fileName;
+        this.imageName = imageName;
+        this.imageAltName = imageAltName;
+        this.imageUrl = imageUrl;
+        this.imageData = imageData;
+        this.uploadTime = uploadTime;
+        this.fileSize = fileSize;
     }
 
     public Image(byte[] imageData, String imageUrl, String imageName, String imageAltName, String fileName, Long fileSize) {
@@ -47,15 +55,15 @@ public class Image {
         this.uploadTime = LocalDateTime.now();
     }
 
-    public Image(CustomMultipartFile imageFile, String imageUrl, byte[] imageData, String imageName, String imageAltName) {
-        this.imageData = imageData;
-        this.imageUrl = imageUrl;
-        this.imageName = imageName;
-        this.imageAltName = imageAltName;
-        this.fileName = imageFile.getOriginalFilename();
-        this.fileSize = imageFile.getSize();
-        this.uploadTime = LocalDateTime.now();
-    }
+//    public Image(CustomMultipartFile imageFile, String imageUrl, byte[] imageData, String imageName, String imageAltName) {
+//        this.imageData = imageData;
+//        this.imageUrl = imageUrl;
+//        this.imageName = imageName;
+//        this.imageAltName = imageAltName;
+//        this.fileName = imageFile.getOriginalFilename();
+//        this.fileSize = imageFile.getSize();
+//        this.uploadTime = LocalDateTime.now();
+//    }
 
     public Long getImageId() {
         return imageId;
