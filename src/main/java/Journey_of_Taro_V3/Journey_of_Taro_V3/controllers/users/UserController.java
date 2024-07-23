@@ -1,6 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.controllers.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.BadRequestException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -202,5 +204,86 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename" + song.getSongTitle())
                 .body(song.getSongData());
     }
+
+    @PostMapping("/{id}/song")
+    public ResponseEntity<User> addSongToUser(@PathVariable("id") Long userId,
+                                               @RequestParam("file") MultipartFile file) throws IOException {
+        System.out.println("Received request to add song for user with ID: " + userId + " and file: " + file.getOriginalFilename());
+
+        String songUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/")
+                .path(Objects.requireNonNull(userId.toString()))
+                .path("/song")
+                .toUriString();
+
+        // Retrieve the user by ID
+        UserDto userDto = userService.getUserById(userId);
+        if (userDto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Prepare SongInputDto
+        SongInputDto inputDto = new SongInputDto();
+        inputDto.setSongFile(file);
+        inputDto.setSongTitle(file.getOriginalFilename());
+        inputDto.setArtistName(userDto.getArtistname()); // Artist name as a string
+        inputDto.setFileName(file.getOriginalFilename());
+        inputDto.setFileSize(file.getSize());
+        inputDto.setUploadTime(LocalDateTime.now());
+
+        String songTitle = songService.storeSongFile(file);
+        User user = userService.assignSongToUser(userId, songTitle);
+
+        return ResponseEntity.created(URI.create(songUrl)).body(user);
+    }
+
+//    @PostMapping("/{id}/song")
+//    public ResponseEntity<UserDto> addSongToUser(@PathVariable("id") Long userId,
+//                                                 @RequestParam("file") MultipartFile file) throws IOException {
+//        System.out.println("Received request to add song for user with ID: " + userId + " and file: " + file.getOriginalFilename());
+//
+//        // Construct the URL for the created song
+//        String songUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/users/")
+//                .path(Objects.requireNonNull(userId.toString()))
+//                .path("/song")
+//                .toUriString();
+//
+//        // Retrieve the user by ID
+//        UserDto userDto = userService.getUserById(userId);
+//        if (userDto == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        // Prepare SongInputDto
+//        SongInputDto inputDto = new SongInputDto();
+//        inputDto.setSongFile(file);
+//        inputDto.setSongTitle(file.getOriginalFilename());
+//        inputDto.setArtistName(userDto.getArtistname()); // Artist name as a string
+//        inputDto.setFileName(file.getOriginalFilename());
+//        inputDto.setFileSize(file.getSize());
+//        inputDto.setUploadTime(LocalDateTime.now());
+//
+//        // Fetch User entity based on artist name
+//        User artist = userService.getUserByArtistName(inputDto.getArtistName());
+//        if (artist == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        // Create and set the Song entity
+//        Song song = new Song();
+//        song.setSongTitle(inputDto.getSongTitle());
+//        song.setArtistName(artist); // Setting the User entity
+//        song.setFileName(inputDto.getFileName());
+//        song.setFileSize(inputDto.getFileSize());
+//        song.setUploadTime(inputDto.getUploadTime());
+//
+//        // Store the file and save the song
+//        String songTitle = songService.storeSongFile(file);
+//        song.setSongUrl(songUrl); // Set song URL
+//        songService.saveSong(songTitle); // Save song to the database
+//
+//        return ResponseEntity.created(URI.create(songUrl)).body(userDto);
+//    }
 
 }

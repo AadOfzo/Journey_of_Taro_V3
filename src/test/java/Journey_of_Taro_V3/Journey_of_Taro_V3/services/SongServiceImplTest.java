@@ -7,11 +7,13 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserSongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -35,21 +37,25 @@ public class SongServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @MockBean
+    private UserSongRepository userSongRepository;
+
     private SongServiceImpl songService;
 
-    private static final String SONGS_DIR = "songs";
+    private static final String TEST_SONGS_DIR = "test-songs-dir"; // Use a temporary directory for tests
 
     @BeforeEach
     public void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
 
-        // Ensure the SONGS_DIR directory exists
-        Path songsDirPath = Paths.get(SONGS_DIR);
+        // Ensure the TEST_SONGS_DIR directory exists
+        Path songsDirPath = Paths.get(TEST_SONGS_DIR);
         if (!Files.exists(songsDirPath)) {
             Files.createDirectory(songsDirPath);
         }
 
-        songService = new SongServiceImpl(SONGS_DIR, songRepository, userRepository);
+        // Initialize the SongServiceImpl with the test directory
+        songService = new SongServiceImpl(TEST_SONGS_DIR, songRepository, userRepository, userSongRepository);
     }
 
     @Test
