@@ -5,7 +5,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.UserImageRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -117,7 +117,7 @@ public class ImageServiceImplTest {
     public void testAddImage() throws IOException {
         // Arrange
         MockMultipartFile file = new MockMultipartFile("file", "image1.jpg", "image/jpeg", "test image data".getBytes());
-        ImageInputDto inputDto = new ImageInputDto("Image 1", "alt1", file);
+        ImageInputDto inputDto = new ImageInputDto("Image 1", "alt1", file, "/uploads/images");
         Image image = new Image();
         image.setImageId(1L);
         image.setImageName("Image 1");
@@ -134,7 +134,7 @@ public class ImageServiceImplTest {
     public void testSaveImage() throws IOException {
         // Arrange
         MockMultipartFile file = new MockMultipartFile("file", "image1.jpg", "image/jpeg", "test image data".getBytes());
-        ImageInputDto inputDto = new ImageInputDto("Image 1", "alt1", file);
+        ImageInputDto inputDto = new ImageInputDto("Image 1", "alt1", file, "/uploads/images");
         Image image = new Image();
         image.setImageId(1L);
         image.setImageName("Image 1");

@@ -15,10 +15,8 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.InvalidMediaTypeException;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -164,25 +162,77 @@ public class UserController {
 
     @PostMapping("/{id}/image")
     public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
-                                               @RequestParam("file") MultipartFile file) throws IOException {
-        System.out.println("Received request to add image for user with ID: " + userId + " and file: " + file.getOriginalFilename());
+                                               @RequestParam("file") MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body(null);
+            }
 
-        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/users/")
-                .path(Objects.requireNonNull(userId.toString()))
-                .path("/image")
-                .toUriString();
+            // Process file upload
+            String imageName = imageService.storeFile(file);
 
-        ImageInputDto inputDto = new ImageInputDto();
-        inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
-        inputDto.setImageName(file.getOriginalFilename());
-        inputDto.setImageAltName(file.getOriginalFilename());
+            // Assign the image to the user
+            User user = userService.assignImageToUser(userId, imageName);
 
-        String imageName = imageService.storeFile(file);
-        User user = userService.assignImageToUser(userId, imageName);
+            String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/users/")
+                    .path(userId.toString())
+                    .path("/image")
+                    .toUriString();
 
-        return ResponseEntity.created(URI.create(imageUrl)).body(user);
+            return ResponseEntity.created(URI.create(imageUrl)).body(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
+//    @PostMapping("/{id}/image")
+//    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
+//                                               @RequestParam("file") MultipartFile file) throws IOException {
+//        // Log the incoming request
+//        System.out.println("Received request to add image for user with ID: " + userId + " and file: " + file.getOriginalFilename());
+//
+//        // Create the image URL
+//        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/users/")
+//                .path(userId.toString())
+//                .path("/image")
+//                .toUriString();
+//
+//        // Store the file and get the image name
+//        String imageName = imageService.storeFile(file);
+//
+//        // Assign the image to the user
+//        User user = userService.assignImageToUser(userId, imageName);
+//
+//        // Return the response with the location of the newly created image
+//        return ResponseEntity.created(URI.create(imageUrl)).body(user);
+//    }
+
+
+//    @PostMapping("/{id}/image")
+//    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
+//                                               @RequestParam("file") MultipartFile file) throws IOException {
+//        System.out.println("Received request to add image for user with ID: " + userId + " and file: " + file.getOriginalFilename());
+//
+//        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/users/")
+//                .path(Objects.requireNonNull(userId.toString()))
+//                .path("/image")
+//                .toUriString();
+//
+//        ImageInputDto inputDto = new ImageInputDto();
+//        inputDto.setImageFile(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
+//        inputDto.setImageName(file.getOriginalFilename());
+//        inputDto.setImageAltName(file.getOriginalFilename());
+//        inputDto.setImageUrl(inputDto.getImageUrl());
+//
+//        String imageName = imageService.storeFile(file);
+//        User user = userService.assignImageToUser(userId, imageName);
+//
+//        return ResponseEntity.created(URI.create(imageUrl)).body(user);
+//    }
 
     // Users & Songs endpoints
     @GetMapping("/{id}/songs")

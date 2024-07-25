@@ -7,7 +7,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.UserImageRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserSongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
@@ -64,7 +64,7 @@ public class UserService {
 
     public UserDto getUserByUserName(String username) {
         UserDto dto;
-        Optional<User> user = userRepository.findById(username);
+        Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
             dto = fromUser(user.get());
         } else {
@@ -259,17 +259,34 @@ public class UserService {
     public User assignImageToUser(Long userId, String imageName) {
         // Fetch the user by ID
         Optional<User> optionalUser = userRepository.findByUserId(userId);
-        Optional<UserImage> optionalUserImage = userImageRepository.findUserImageByImageName(imageName);
-        // Als user en image bestaan, assign image aan user
-        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
+        List<UserImage> userImages = userImageRepository.findAllByImageName(imageName);
+
+        // If user exists and at least one image exists, assign the first image to the user
+        if (optionalUser.isPresent() && !userImages.isEmpty()) {
             User user = optionalUser.get();
-            UserImage userImage = optionalUserImage.get();
+            UserImage userImage = userImages.get(0); // Choose the first available image
             user.setUserImage(userImage);
             return userRepository.save(user);
         } else {
             throw new RecordNotFoundException();
         }
     }
+
+//    @Transactional
+//    public User assignImageToUser(Long userId, String imageName) {
+//        // Fetch the user by ID
+//        Optional<User> optionalUser = userRepository.findByUserId(userId);
+//        Optional<UserImage> optionalUserImage = userImageRepository.findUserImageByImageName(imageName);
+//        // Als user en image bestaan, assign image aan user
+//        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
+//            User user = optionalUser.get();
+//            UserImage userImage = optionalUserImage.get();
+//            user.setUserImage(userImage);
+//            return userRepository.save(user);
+//        } else {
+//            throw new RecordNotFoundException();
+//        }
+//    }
 
     @Transactional
     public Resource getImageFromUser(Long userId) {

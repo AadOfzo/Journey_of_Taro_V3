@@ -6,7 +6,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.UserImageRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -29,18 +29,16 @@ import java.util.Objects;
 @Service
 public class ImageServiceImpl implements ImageService {
     private final Path fileStoragePath;
-    private final String fileStorageLocation;
     private final ImageRepository imageRepository;
     private final UserImageRepository userImageRepository;
 
     @Autowired
     public ImageServiceImpl(@Value("${my.upload.location}") String fileStorageLocation, ImageRepository imageRepository, UserImageRepository userImageRepository) throws IOException {
-        fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
-        this.fileStorageLocation = fileStorageLocation;
+        this.fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.imageRepository = imageRepository;
         this.userImageRepository = userImageRepository;
 
-        Files.createDirectories(fileStoragePath);
+        Files.createDirectories(this.fileStoragePath);
     }
 
     @Override
@@ -75,7 +73,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public String storeFile(MultipartFile file) throws IOException {
         String imageName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        Path filePath = Paths.get(fileStoragePath + "\\" + imageName);
+        Path filePath = fileStoragePath.resolve(imageName);
 
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
@@ -85,7 +83,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Resource downloadImageFile(String imageName) {
-        Path path = this.fileStoragePath.resolve(imageName).normalize();
+        Path path = fileStoragePath.resolve(imageName).normalize();
 
         try {
             Resource resource = new UrlResource(path.toUri());
@@ -101,7 +99,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image getImageWithData(String imageName) {
-        Path path = this.fileStoragePath.resolve(imageName).normalize();
+        Path path = fileStoragePath.resolve(imageName).normalize();
 
         try {
             byte[] imageData = Files.readAllBytes(path);
