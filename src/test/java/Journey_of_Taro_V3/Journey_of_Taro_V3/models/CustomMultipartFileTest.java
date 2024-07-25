@@ -10,7 +10,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongService;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import java.io.IOException;
-import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,8 +17,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-
-import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
