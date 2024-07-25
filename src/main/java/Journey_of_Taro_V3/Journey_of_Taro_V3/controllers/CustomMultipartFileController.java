@@ -40,9 +40,7 @@ public class CustomMultipartFileController {
         this.environment = environment;
     }
 
-    @PostMapping(value = "/fileUpload",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/fileUpload")
     public ResponseEntity<?> fileUploadController(@RequestParam("file") MultipartFile file,
                                                   @RequestParam(value = "artistName", required = false) String artistName,
                                                   @RequestParam(value = "songTitle", required = false) String songTitle) {
