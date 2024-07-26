@@ -25,8 +25,11 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class ImageServiceImplTest {
@@ -58,7 +61,7 @@ public class ImageServiceImplTest {
     public void testStoreFile() throws IOException {
         // Arrange
         MockMultipartFile file = new MockMultipartFile("file", "image1.jpg", "image/jpeg", "test image data".getBytes());
-        String expectedFileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String expectedFileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
         Path filePath = fileStoragePath.resolve(expectedFileName);
 
         // Act
@@ -67,6 +70,7 @@ public class ImageServiceImplTest {
         // Assert
         assertEquals(expectedFileName, result);
         assertTrue(Files.exists(filePath));
+        assertArrayEquals("test image data".getBytes(), Files.readAllBytes(filePath));
     }
 
     @Test
@@ -75,7 +79,7 @@ public class ImageServiceImplTest {
         Image image = new Image();
         image.setImageId(1L);
         image.setImageName("Image 1");
-        when(imageRepository.findById(1L)).thenReturn(Optional.of(image));
+        when(imageRepository.findById(anyLong())).thenReturn(Optional.of(image));
 
         // Act
         ImageDto result = imageService.getImageById(1L);
@@ -87,7 +91,7 @@ public class ImageServiceImplTest {
     @Test
     public void testGetImageById_NotFound() {
         // Arrange
-        when(imageRepository.findById(1L)).thenReturn(Optional.empty());
+        when(imageRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(RecordNotFoundException.class, () -> imageService.getImageById(1L));
@@ -157,7 +161,6 @@ public class ImageServiceImplTest {
         try {
             Files.write(path, "test image data".getBytes());
             Resource resource = new UrlResource(path.toUri());
-            when(imageService.downloadImageFile(imageName)).thenReturn(resource);
 
             // Act
             Resource result = imageService.downloadImageFile(imageName);
@@ -174,7 +177,7 @@ public class ImageServiceImplTest {
     public void testDownloadImageFile_FileNotFound() {
         // Arrange
         String imageName = "nonexistent.jpg";
-        when(imageService.downloadImageFile(imageName)).thenThrow(new RuntimeException("File not found"));
+        when(imageRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> imageService.downloadImageFile(imageName));
@@ -185,18 +188,14 @@ public class ImageServiceImplTest {
         // Arrange
         String imageName = "image1.jpg";
         Path path = fileStoragePath.resolve(imageName).normalize();
-        try {
-            Files.write(path, "test image data".getBytes());
+        Files.write(path, "test image data".getBytes());
 
-            // Act
-            Image result = imageService.getImageWithData(imageName);
+        // Act
+        Image result = imageService.getImageWithData(imageName);
 
-            // Assert
-            assertEquals(imageName, result.getImageName());
-            assertArrayEquals("test image data".getBytes(), result.getImageData());
-        } catch (IOException e) {
-            fail("IOException should not be thrown during file operations");
-        }
+        // Assert
+        assertEquals(imageName, result.getImageName());
+        assertArrayEquals("test image data".getBytes(), result.getImageData());
     }
 
     @Test

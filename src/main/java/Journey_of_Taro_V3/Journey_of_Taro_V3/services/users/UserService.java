@@ -2,7 +2,6 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.users;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
@@ -245,6 +244,30 @@ public class UserService {
     }
 
     @Transactional
+    public void removeRole(String username, String roleName) {
+        // Check if the user exists
+        if (!userRepository.existsByUsername(username)) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+
+        // Fetch the user
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        // Find the authority to remove
+        Authority authorityToRemove = user.getAuthorities().stream()
+                .filter(authority -> authority.getAuthority().equals(roleName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Role " + roleName + " not found for user"));
+
+        // Remove the authority from the user
+        user.getAuthorities().remove(authorityToRemove);
+
+        // Save the updated user
+        userRepository.save(user);
+    }
+
+    @Transactional
     public void grantAdminPrivilege(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
@@ -290,11 +313,6 @@ public class UserService {
     }
 
     // ArtistName relation User --> Song
-    public User getUserByArtistName(String artistName) {
-        return userRepository.findByArtistName(artistName)
-                .orElseThrow(() -> new RecordNotFoundException("User not found with artistName: " + artistName));
-    }
-
     public UserDto getArtistName(String artistName) {
         // Find the user by artistName
         User user = userRepository.findByArtistName(artistName)
@@ -340,11 +358,12 @@ public class UserService {
         if (optionalUser.isEmpty()) {
             throw new RecordNotFoundException("User " + userId + " not found. ");
         }
-        Song song = (Song) optionalUser.get().getSongs();
-        if (song == null) {
+        UserSong userSong = optionalUser.get().getUserSong();
+        if (userSong == null) {
             throw new RecordNotFoundException("User " + userId + " has no Image");
         }
-        return songService.downloadSongFile(song.getFileName());
+        return songService.downloadSongFile(userSong.getSongTitle());
     }
+
 
 }
