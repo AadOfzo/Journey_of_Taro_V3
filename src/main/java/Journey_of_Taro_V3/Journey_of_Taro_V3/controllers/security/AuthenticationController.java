@@ -19,7 +19,9 @@ import java.security.Principal;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
+
     private final UserDetailsService userDetailsService;
+
     private final JwtUtil jwtUtl;
 
     public AuthenticationController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtUtil jwtUtl) {
@@ -27,6 +29,7 @@ public class AuthenticationController {
         this.userDetailsService = userDetailsService;
         this.jwtUtl = jwtUtl;
     }
+
 
     /*
         Deze methode geeft de principal (basis user gegevens) terug van de ingelogde gebruiker
@@ -36,26 +39,31 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(principal);
     }
 
+
     /*
     Deze methode geeft het JWT token terug wanneer de gebruiker de juiste inloggegevens op geeft.
      */
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
 
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
-
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String jwt = jwtUtl.generateToken(userDetails);
-
-            return ResponseEntity.ok(new AuthenticationResponse(jwt));
-        } catch (BadCredentialsException ex) {
+        }
+        catch (BadCredentialsException ex) {
             throw new Exception("Incorrect username or password", ex);
         }
+
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(username);
+
+        final String jwt = jwtUtl.generateToken(userDetails);
+
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
 
