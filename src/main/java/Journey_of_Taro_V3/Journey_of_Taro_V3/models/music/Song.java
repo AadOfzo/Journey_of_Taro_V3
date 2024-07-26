@@ -23,13 +23,12 @@ public class Song {
     private String songTitle;
 
     @ManyToOne
-//    @JoinColumn(name = "artist_username", referencedColumnName = "username")
+    @JoinColumn(name = "artist_id") // Ensure this column exists in your database schema
     private User artistName;
     private String songUrl;
     private String fileName;
     private Long fileSize;
     private LocalDateTime uploadTime;
-    private MimeType mimeType;
 
     @ManyToOne
     @JoinColumn(name = "collection_id")
@@ -58,7 +57,6 @@ public class Song {
         this.songFile = songFile;
         this.artistName = artistName;
         this.songUrl = songUrl;
-        this.mimeType = mimeType;
 
         // Convert CustomMultipartFile to byte[]
         try {
@@ -168,14 +166,6 @@ public class Song {
 
     public SongCollection getSongCollection() {
         return songCollection;
-    }
-
-    public String getMimeType() {
-        return "audio/mpeg";
-    }
-
-    public void setMimeType(MimeType mimeType) {
-        this.mimeType = mimeType;
     }
 
     // Song to String

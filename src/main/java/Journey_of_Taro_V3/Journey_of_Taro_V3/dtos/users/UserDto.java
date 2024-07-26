@@ -8,28 +8,27 @@ import java.util.List;
 
 public class UserDto {
 
-    public Long id;
+    public Long userId;
     public String username;
     public String password;
     public String apikey;
-
     public String firstname;
     public String lastname;
     public Date dateofbirth;
     public String country;
     public String email;
-    public UserImage userimage;
+    public UserImage userImage;
     public UserSong userSong;
 
     public String artistname;
     public List<String> roles;
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -97,12 +96,12 @@ public class UserDto {
         this.lastname = lastname;
     }
 
-    public UserImage getUserimage() {
-        return userimage;
+    public UserImage getUserImage() {
+        return userImage;
     }
 
-    public void setUserimage(UserImage userimage) {
-        this.userimage = userimage;
+    public void setUserImage(UserImage userImage) {
+        this.userImage = userImage;
     }
 
     public UserSong getUserSong() {

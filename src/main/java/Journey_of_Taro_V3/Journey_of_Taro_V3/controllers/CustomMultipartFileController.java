@@ -14,9 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,7 +31,6 @@ public class CustomMultipartFileController {
     private static final Logger logger = LoggerFactory.getLogger(CustomMultipartFileController.class);
     private final ImageService imageService;
     private final SongService songService;
-
     private final Environment environment;
 
     @Autowired
@@ -43,10 +40,10 @@ public class CustomMultipartFileController {
         this.environment = environment;
     }
 
-    @PostMapping(value = "/fileUpload",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> fileUploadController(MultipartFile file, String artistName, String songTitle, String userName) {
+    @PostMapping(value = "/fileUpload")
+    public ResponseEntity<?> fileUploadController(@RequestParam("file") MultipartFile file,
+                                                  @RequestParam(value = "artistName", required = false) String artistName,
+                                                  @RequestParam(value = "songTitle", required = false) String songTitle) {
         try {
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("File is empty");
@@ -59,32 +56,37 @@ public class CustomMultipartFileController {
             }
 
             String originalFilename = file.getOriginalFilename();
+            CustomMultipartFile customFile = new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes());
 
             logger.info("Received file: {}", originalFilename);
             logger.info("File size: {} bytes", file.getSize());
             logger.info("File type: {}", fileType);
 
             if ("Image".equalsIgnoreCase(fileType)) {
-                String imageUrl = storeFileAndGetUrl(file, "uploads/images");
+                String imageUrl = storeFileAndGetUrl(customFile, "uploads/images");
 
                 ImageInputDto inputDto = new ImageInputDto();
-                inputDto.setImageFile(file);
+                inputDto.setImageFile(customFile);
                 inputDto.setImageName(originalFilename);
                 inputDto.setImageAltName(originalFilename);
+                inputDto.setImageUrl(imageUrl);
 
                 ImageDto dto = imageService.addImage(inputDto);
                 return ResponseEntity.ok().body(dto);
 
             } else if ("Audio".equalsIgnoreCase(fileType)) {
-                String songUrl = storeFileAndGetUrl(file, "uploads/songs");
+                if (artistName == null || artistName.isEmpty()) {
+                    throw new IllegalArgumentException("Artist name is required for audio files");
+                }
 
-                // Process audio file:
+                String songUrl = storeFileAndGetUrl(customFile, "uploads/songs");
+
                 SongInputDto inputDto = new SongInputDto();
-                inputDto.setSongFile(new CustomMultipartFile(originalFilename, file.getContentType(), file.getBytes()));
+                inputDto.setSongFile(customFile);
                 inputDto.setSongTitle(songTitle == null ? originalFilename : songTitle);
                 inputDto.setArtistName(artistName);
                 inputDto.setFileName(originalFilename);
-                inputDto.setFileSize(file.getSize());
+                inputDto.setFileSize(customFile.getSize());
                 inputDto.setUploadTime(LocalDateTime.now());
                 inputDto.setSongUrl(songUrl);
 
@@ -116,14 +118,11 @@ public class CustomMultipartFileController {
         }
 
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-
         Path filePath = uploadPath.resolve(fileName);
 
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         String baseUrl = environment.getProperty("base.url", "http://localhost:8080");
-        String fileUrl = baseUrl + "/files/" + fileName;
-
-        return fileUrl;
+        return baseUrl + "/files/" + fileName;
     }
 }

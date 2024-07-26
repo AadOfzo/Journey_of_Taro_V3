@@ -1,5 +1,6 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.images;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -13,17 +14,23 @@ public class UserImage {
        dus met de naam kunnen we naar het bestand verwijzen als "./uploads/{fileName}"
     */
     @Id
+    @Column(nullable = false)
     private String imageName;
 
-    public UserImage(String fileName) {
-        this.imageName = fileName;
+    public UserImage(String imageName) {
+        this.imageName = imageName;
     }
 
     public UserImage() {
     }
 
-    public String getFileName() {
+    public String getUserImageName() {
         return imageName;
     }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
 
 }

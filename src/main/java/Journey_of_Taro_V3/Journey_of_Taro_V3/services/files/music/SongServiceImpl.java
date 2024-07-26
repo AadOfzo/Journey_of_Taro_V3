@@ -3,14 +3,13 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongInputDto;
-//import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.ArtistNameNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserSongRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +40,18 @@ public class SongServiceImpl implements SongService {
     private final Path fileStoragePath;
     private final String fileStorageLocation;
     private static final Logger logger = LoggerFactory.getLogger(SongServiceImpl.class);
-
     private final UserRepository userRepository;
     private final SongRepository songRepository;
+    private final UserSongRepository userSongRepository;
 
-    // @Value(${my.upload.location}/songs krijgt een 403 error.
+    // @Value(${my.upload.location}/songs krijgt een 403 error
     @Autowired
-    public SongServiceImpl(@Value("songs") String fileStorageLocation, SongRepository songRepository, UserRepository userRepository) throws IOException {
+    public SongServiceImpl(@Value("${my.upload.location}") String fileStorageLocation, SongRepository songRepository,UserRepository userRepository, UserSongRepository userSongRepository) throws IOException {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.songRepository = songRepository;
         this.userRepository = userRepository;
+        this.userSongRepository = userSongRepository;
 
         Files.createDirectories(fileStoragePath);
     }
@@ -94,10 +94,10 @@ public class SongServiceImpl implements SongService {
 
             Song song = transferToSong(inputDto);
 
-            // Set the fetched User as the owner of the Song
+            // Set de fetched User als de owner van de Song
             song.setArtistName(user);
 
-            // Set the song URL based on the fileStorageLocation and song title
+            // Set  songURL in de fileStorageLocation en song title
             String songUrl = fileStorageLocation + "/" + song.getFileName();
             song.setSongUrl(songUrl);
 
@@ -112,7 +112,6 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public SongDto saveSong(SongInputDto inputDto) {
-
         User user = userRepository.findByArtistName(inputDto.getArtistName())
                 .orElseThrow(() -> new RecordNotFoundException("User not found with artistName: " + inputDto.getArtistName()));
 
@@ -131,7 +130,7 @@ public class SongServiceImpl implements SongService {
 
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        songRepository.save(new UserSong(songTitle));
+        userSongRepository.save(new UserSong(songTitle));
         return songTitle;
     }
 

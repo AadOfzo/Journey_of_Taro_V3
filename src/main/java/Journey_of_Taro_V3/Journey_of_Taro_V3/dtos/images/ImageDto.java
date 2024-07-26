@@ -1,7 +1,7 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images;
 
 public class ImageDto {
-        private Long id;
+        private Long imageId;
         private String imageName;
         private String imageAltName;
         private String imageUrl;
@@ -11,19 +11,19 @@ public class ImageDto {
     public ImageDto() {
         }
 
-        public ImageDto(Long id, String imageName, String imageAltName, String imageUrl) {
-            this.id = id;
+        public ImageDto(Long imageId, String imageName, String imageAltName, String imageUrl) {
+            this.imageId = imageId;
             this.imageName = imageName;
             this.imageAltName = imageAltName;
             this.imageUrl = imageUrl;
         }
 
-    public Long getId() {
-        return id;
+    public Long getImageId() {
+        return imageId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 
     public String getImageName() {

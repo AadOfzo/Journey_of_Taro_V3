@@ -6,8 +6,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -22,7 +20,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Long userId;
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
@@ -44,10 +42,10 @@ public class User {
     private String email;
 
     // User files:
-    @JoinColumn(name = "userimage")
-    @ManyToOne
-    @JsonIgnoreProperties(value = {"contents","contentType"} )
-    UserImage userImage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_image_image_name", referencedColumnName = "imageName")
+    private UserImage userImage;
+
 
     @JoinColumn(name = "usersong")
     @ManyToOne
@@ -68,36 +66,12 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
 
-    @Size(max = 255)
-    @Column(name = "artist_name")
-    private String artistName1;
-
-    @NotNull
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled = false;
-
-    public Boolean getEnabled() {
-        return enabled;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getArtistName1() {
-        return artistName1;
-    }
-
-    public void setArtistName1(String artistName1) {
-        this.artistName1 = artistName1;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

@@ -5,14 +5,13 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.CustomMultipartFile;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,25 +22,22 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "images")
+@RequestMapping(value = "/images")
 public class ImageController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
-
     private final UserService userService;
-    private final ImageService imageService;
+    private final ImageServiceImpl imageService;
+    public Environment environment;
 
     @Autowired
-    public ImageController(UserService userService, ImageService imageService) {
+    public ImageController(UserService userService, ImageServiceImpl imageService) {
         this.userService = userService;
         this.imageService = imageService;
     }
 
-    public Environment environment;
-
     @GetMapping
-    public List<ImageDto> getAllImages() {
-        return imageService.getAllImages();
+    public ResponseEntity<List<ImageDto>> getAllImages() {
+        List<ImageDto> images = imageService.getAllImages();
+        return ResponseEntity.ok(images);
     }
 
     @GetMapping("/{id}")
@@ -52,6 +48,35 @@ public class ImageController {
         } catch (RecordNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{imageName:.+}")
+    public ResponseEntity<Resource> downloadImage(@PathVariable String imageName) {
+        Resource resource = imageService.downloadImageFile(imageName);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
+    @GetMapping("/image/{imageName}")
+    public ResponseEntity<byte[]> getImageFile(@PathVariable("imageName") String imageName){
+
+        Image image = imageService.getImageWithData(imageName);
+
+        MediaType mediaType;
+
+        try {
+            mediaType = MediaType.IMAGE_JPEG;
+        } catch (InvalidMediaTypeException ignore){
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + image.getImageName())
+                .body(image.getImageData());
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -68,12 +93,14 @@ public class ImageController {
             inputDto.setImageFile(file);
             inputDto.setImageName(imageName);
             inputDto.setImageAltName(imageAltName);
-            inputDto.setImageUrl(imageUrl); // Set the imageUrl
+            inputDto.setImageUrl(imageUrl);
 
             // Add image
             ImageDto dto = imageService.addImage(inputDto);
 
-            System.out.println("Added " + imageName + " to the database.");
+            Long imageId = dto.getImageId();
+
+            System.out.println("Added " + imageName + " to the database with id: " + imageId);
             return ResponseEntity.created(new URI(dto.getImageUrl())).body(dto.getImageUrl());
         } catch (IOException | URISyntaxException | java.io.IOException e) {
             // Handle exception
@@ -81,40 +108,19 @@ public class ImageController {
         }
     }
 
-    // Method to store file and return URL
+    // Method to store file and return URL moet waarschijnlijk in de ImageService.
     private String storeFileAndGetUrl(MultipartFile file) throws java.io.IOException {
 
         String fileName = file.getOriginalFilename();
-        String fileUrl = environment.getProperty("base.url") + "/files/" + fileName;
+        String imageUrl = environment.getProperty("base.url") + "/files/" + fileName;
 
-        return fileUrl;
-    }
-
-    @GetMapping("/image/{imageName}")
-    public ResponseEntity<byte[]> getImageFile(@PathVariable("imageName") String imageName){
-
-        Image image = imageService.getImageWithData(imageName);
-
-        MediaType mediaType;
-
-        try {
-//            mediaType = MediaType.parseMediaType(image.im());
-            mediaType = MediaType.IMAGE_JPEG;
-        } catch (InvalidMediaTypeException ignore){
-            mediaType = MediaType.APPLICATION_OCTET_STREAM;
-        }
-
-        return ResponseEntity
-                .ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + image.getImageName())
-                .body(image.getImageData());
+        return imageUrl;
     }
 
     // Delete Mapping
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteImage(@PathVariable Long id) {
-        imageService.deleteImage(id);
+    public ResponseEntity<Object> deleteImage(@PathVariable Long imageId) {
+        imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
     }
 

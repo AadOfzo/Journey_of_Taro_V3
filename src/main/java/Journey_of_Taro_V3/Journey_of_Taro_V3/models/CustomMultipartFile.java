@@ -1,5 +1,4 @@
 // code gebruikt van: https://www.baeldung.com/java-convert-byte-array-to-multipartfile
-
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -10,16 +9,13 @@ public class CustomMultipartFile implements MultipartFile {
     private final String name;
     private final String originalFilename;
     private final String contentType;
+    private final byte[] content;
 
-    private final byte[] input;
-
-
-    public CustomMultipartFile(String originalFilename, String contentType, byte[] inputArray) {
-        this.name = "file"; // Set default name
+    public CustomMultipartFile(String originalFilename, String contentType, byte[] content) {
+        this.name = "file";
         this.originalFilename = originalFilename;
         this.contentType = contentType;
-
-        this.input = inputArray.clone();
+        this.content = content.clone();
     }
 
     @Override
@@ -39,30 +35,28 @@ public class CustomMultipartFile implements MultipartFile {
 
     @Override
     public boolean isEmpty() {
-        return input == null || input.length == 0;
+        return content == null || content.length == 0;
     }
 
     @Override
     public long getSize() {
-        return input.length;
+        return content.length;
     }
 
     @Override
     public byte[] getBytes() throws IOException {
-        return input;
+        return content;
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return new ByteArrayInputStream(input);
+        return new ByteArrayInputStream(content);
     }
 
     @Override
     public void transferTo(File destination) throws IOException, IllegalStateException {
         try (FileOutputStream fos = new FileOutputStream(destination)) {
-            fos.write(input);
+            fos.write(content);
         }
     }
-
-
 }

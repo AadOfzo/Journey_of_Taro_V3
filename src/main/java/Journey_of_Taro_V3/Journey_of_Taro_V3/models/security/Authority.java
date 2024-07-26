@@ -13,6 +13,7 @@ public class Authority implements Serializable {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(nullable = false)

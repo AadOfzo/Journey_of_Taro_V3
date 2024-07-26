@@ -1,14 +1,12 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.config.users;
 
-import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
 
@@ -17,16 +15,24 @@ public class MyUserDetails implements UserDetails {
     public MyUserDetails(User user) {
         this.user = user;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-
-        for (Authority authority : user.getAuthorities()) {
-            authorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
-        }
-
-        return authorities;
+        return user.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                .collect(Collectors.toList());
     }
+
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//
+//        for (Authority authority : user.getAuthorities()) {
+//            authorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
+//        }
+//
+//        return authorities;
+//    }
 
     @Override
     public String getPassword() {

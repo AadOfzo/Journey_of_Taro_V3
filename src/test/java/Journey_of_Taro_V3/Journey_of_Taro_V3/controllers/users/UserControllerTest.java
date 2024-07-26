@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users.UserDto;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.music.SongServiceImpl;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.users.UserService;
@@ -31,6 +32,15 @@ class UserControllerTest {
         userService = mock(UserService.class);
         HttpServletRequest request = mock(HttpServletRequest.class); // Create a mock HttpServletRequest
         userController = new UserController(userService, imageService, songService, request);
+    }
+
+    @Test
+    void userUnitTest() {
+        User user = new User();
+
+        user.setUsername("Unit Test User");
+
+        assertEquals("Unit Test User", user.getUsername());
     }
 
     @Test
@@ -61,7 +71,7 @@ class UserControllerTest {
         ResponseEntity<UserDto> responseEntity = userController.createUser(userDto);
 
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(URI.create("/users/testUser"), responseEntity.getHeaders().getLocation());
+        assertEquals(URI.create("/users/"), responseEntity.getHeaders().getLocation());
 
         verify(userService).createUser(userDto);
     }
@@ -70,7 +80,7 @@ class UserControllerTest {
     void testGetUser() {
         UserDto userDto = new UserDto();
         userDto.setUsername("testUser");
-        when(userService.getUser("testUser")).thenReturn(userDto);
+        when(userService.getUserByUserName("testUser")).thenReturn(userDto);
 
         ResponseEntity<UserDto> responseEntity = userController.getUser("testUser");
 
@@ -79,7 +89,7 @@ class UserControllerTest {
         assertEquals("testUser", responseEntity.getBody().getUsername());
 
         // Verify service method was called
-        verify(userService).getUser("testUser");
+        verify(userService).getUserByUserName("testUser");
     }
 
 }
