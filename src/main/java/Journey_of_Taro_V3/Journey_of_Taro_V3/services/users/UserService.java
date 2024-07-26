@@ -7,6 +7,7 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserSongRepository;
@@ -32,18 +33,21 @@ public class UserService {
     private final SongServiceImpl songService;
     private final PasswordEncoder passwordEncoder;
     private final UserSongRepository userSongRepository;
+    private final ImageRepository imageRepository;
 
 
     // Could not autowire PasswordEncoder passwords komen wel encoded in database.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
     public UserService(UserRepository userRepository, UserImageRepository userImageRepository, ImageServiceImpl imageService, SongServiceImpl songService, PasswordEncoder passwordEncoder,
-                       UserSongRepository userSongRepository) {
+                       UserSongRepository userSongRepository,
+                       ImageRepository imageRepository) {
         this.userRepository = userRepository;
         this.userImageRepository = userImageRepository;
         this.imageService = imageService;
         this.songService = songService;
         this.passwordEncoder = passwordEncoder;
         this.userSongRepository = userSongRepository;
+        this.imageRepository = imageRepository;
     }
 
     public String createUser(UserDto userDto) {
@@ -256,39 +260,6 @@ public class UserService {
 
     // UserImage methods relation User --> Image
     @Transactional
-    public User assignImageToUser(Long userId, String imageName) {
-        // Fetch the user by ID
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        List<UserImage> userImages = userImageRepository.findAllByImageName(imageName);
-
-        // If user exists and at least one image exists, assign the first image to the user
-        if (optionalUser.isPresent() && !userImages.isEmpty()) {
-            User user = optionalUser.get();
-            UserImage userImage = userImages.get(0); // Choose the first available image
-            user.setUserImage(userImage);
-            return userRepository.save(user);
-        } else {
-            throw new RecordNotFoundException();
-        }
-    }
-
-//    @Transactional
-//    public User assignImageToUser(Long userId, String imageName) {
-//        // Fetch the user by ID
-//        Optional<User> optionalUser = userRepository.findByUserId(userId);
-//        Optional<UserImage> optionalUserImage = userImageRepository.findUserImageByImageName(imageName);
-//        // Als user en image bestaan, assign image aan user
-//        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
-//            User user = optionalUser.get();
-//            UserImage userImage = optionalUserImage.get();
-//            user.setUserImage(userImage);
-//            return userRepository.save(user);
-//        } else {
-//            throw new RecordNotFoundException();
-//        }
-//    }
-
-    @Transactional
     public Resource getImageFromUser(Long userId) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isEmpty()) {
@@ -298,7 +269,24 @@ public class UserService {
         if (userImage == null) {
             throw new RecordNotFoundException("User " + userId + " has no Image");
         }
-        return imageService.downloadImageFile(userImage.getUserImage());
+        return imageService.downloadImageFile(userImage.getUserImageName());
+    }
+
+    @Transactional
+    public User assignImageToUser(Long userId, String imageName) {
+
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        Optional<UserImage> optionalUserImage = userImageRepository.findUserImageByImageName(imageName);
+
+        // If user exists and at least one image exists, assign the first image to the user
+        if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
+            UserImage userImage = optionalUserImage.get();
+            User user = optionalUser.get();
+            user.setUserImage(userImage);
+            return userRepository.save(user);
+        } else {
+            throw new RecordNotFoundException();
+        }
     }
 
     // ArtistName relation User --> Song

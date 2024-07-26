@@ -93,6 +93,7 @@ public class ImageController {
             inputDto.setImageFile(file);
             inputDto.setImageName(imageName);
             inputDto.setImageAltName(imageAltName);
+            inputDto.setImageUrl(imageUrl);
 
             // Add image
             ImageDto dto = imageService.addImage(inputDto);
@@ -118,8 +119,8 @@ public class ImageController {
 
     // Delete Mapping
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteImage(@PathVariable Long id) {
-        imageService.deleteImage(id);
+    public ResponseEntity<Object> deleteImage(@PathVariable Long imageId) {
+        imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
     }
 

@@ -292,7 +292,7 @@ public class UserServiceTest {
         user.setUserImage(userImage);
 
         when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
-        when(imageService.downloadImageFile(userImage.getUserImage())).thenReturn(mock(Resource.class));
+        when(imageService.downloadImageFile(userImage.getUserImageName())).thenReturn(mock(Resource.class));
 
         Resource resource = userService.getImageFromUser(1L);
 

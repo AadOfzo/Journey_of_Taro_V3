@@ -7,6 +7,8 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserImageRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -34,10 +37,12 @@ public class ImageServiceImpl implements ImageService {
 
     @Autowired
     public ImageServiceImpl(@Value("${my.upload.location}") String fileStorageLocation, ImageRepository imageRepository, UserImageRepository userImageRepository) throws IOException {
-        this.fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
+        // Ensure the storage path includes the images directory
+        this.fileStoragePath = Paths.get(fileStorageLocation, "images").toAbsolutePath().normalize();
         this.imageRepository = imageRepository;
         this.userImageRepository = userImageRepository;
 
+        // Create the directory if it does not exist
         Files.createDirectories(this.fileStoragePath);
     }
 
@@ -72,19 +77,19 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String storeFile(MultipartFile file) throws IOException {
-        String imageName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        Path filePath = fileStoragePath.resolve(imageName);
-
+        // Clean the original file name and append a UUID to ensure uniqueness
+        String imageName = UUID.randomUUID() + "_" + StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        Path filePath = this.fileStoragePath.resolve(imageName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+        // Save the image reference to the database
         userImageRepository.save(new UserImage(imageName));
         return imageName;
     }
 
     @Override
     public Resource downloadImageFile(String imageName) {
-        Path path = fileStoragePath.resolve(imageName).normalize();
-
+        Path path = this.fileStoragePath.resolve(imageName).normalize();
         try {
             Resource resource = new UrlResource(path.toUri());
             if (resource.exists() && resource.isReadable()) {
@@ -99,8 +104,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image getImageWithData(String imageName) {
-        Path path = fileStoragePath.resolve(imageName).normalize();
-
+        Path path = this.fileStoragePath.resolve(imageName).normalize();
         try {
             byte[] imageData = Files.readAllBytes(path);
             Image image = new Image();

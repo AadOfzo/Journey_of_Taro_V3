@@ -24,7 +24,7 @@ public class UserImage {
     public UserImage() {
     }
 
-    public String getUserImage() {
+    public String getUserImageName() {
         return imageName;
     }
 
@@ -32,11 +32,5 @@ public class UserImage {
         this.imageName = imageName;
     }
 
-    @Override
-    public String toString() {
-        return "UserImage{" +
-                "imageName='" + imageName + '\'' +
-                '}';
-    }
 
 }

@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
@@ -16,15 +15,23 @@ public class MyUserDetailsService implements UserDetailsService {
     public MyUserDetailsService(UserRepository repos) {
         this.userRepos = repos;
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> ou = userRepos.findByUsername(username);
-        if (ou.isPresent()) {
-            User user = ou.get();
-            return new MyUserDetails(user);
-        }
-        else {
-            throw new UsernameNotFoundException(username);
-        }
+        User user = userRepos.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return new MyUserDetails(user);
     }
+
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        Optional<User> ou = userRepos.findByUsername(username);
+//        if (ou.isPresent()) {
+//            User user = ou.get();
+//            return new MyUserDetails(user);
+//        }
+//        else {
+//            throw new UsernameNotFoundException(username);
+//        }
+//    }
 }
