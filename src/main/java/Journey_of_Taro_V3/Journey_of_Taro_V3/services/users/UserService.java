@@ -6,7 +6,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.security.Authority;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
-import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserSongRepository;

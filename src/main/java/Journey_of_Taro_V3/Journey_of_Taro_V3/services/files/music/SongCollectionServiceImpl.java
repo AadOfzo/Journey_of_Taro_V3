@@ -4,18 +4,23 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.images.ImageDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.*;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.exceptions.RecordNotFoundException;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.Song;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.users.User;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongCollectionRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.music.SongRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.services.files.images.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,13 +31,15 @@ public class SongCollectionServiceImpl implements SongCollectionService {
     private final SongRepository songRepository;
     private final SongServiceImpl songService;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     @Autowired
-    public SongCollectionServiceImpl(SongCollectionRepository collectionRepository, SongRepository songRepository, SongServiceImpl songService, ImageService imageService) {
+    public SongCollectionServiceImpl(SongCollectionRepository collectionRepository, SongRepository songRepository, SongServiceImpl songService, ImageService imageService, ImageRepository imageRepository) {
         this.collectionRepository = collectionRepository;
         this.songRepository = songRepository;
         this.songService = songService;
         this.imageService = imageService;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -79,6 +86,34 @@ public class SongCollectionServiceImpl implements SongCollectionService {
                 .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
         List<Song> songs = collection.getSongs();
         return songService.transferSongListToDtoList(songs);
+    }
+
+    @Transactional
+    public Resource getImageFromSongCollection(Long id) {
+        Optional<SongCollection> optionalSongCollection = collectionRepository.findById(id);
+        if (optionalSongCollection.isEmpty()) {
+            throw new RecordNotFoundException("Song Collection" + id + " not found.");
+        }
+        Image image = optionalSongCollection.get().getCollectionImage();
+        if (image == null) {
+            throw new RecordNotFoundException("Song Collection " + id + " has no image.");
+        }
+        return imageService.downloadImageFile(image.getImageName());
+    }
+    @Transactional
+    public SongCollection assignImageToSongCollection(Long id, String imageName) {
+
+        Optional<SongCollection> optionalSongCollection = collectionRepository.findById(id);
+        Optional<Image> optionalImage = imageRepository.findImageByImageName(imageName);
+
+        if (optionalSongCollection.isPresent() && optionalImage.isPresent()) {
+            Image image = optionalImage.get();
+            SongCollection songCollection = optionalSongCollection.get();
+            songCollection.setCollectionImage(image);
+            return collectionRepository.save(songCollection);
+        } else {
+            throw new RecordNotFoundException();
+        }
     }
 
     @Override

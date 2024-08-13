@@ -4,6 +4,8 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongCollectionInputDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.music.SongDto;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
+import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.SongCollection;
+import org.springframework.core.io.Resource;
 
 import java.util.List;
 
@@ -25,4 +27,6 @@ public interface SongCollectionService {
     SongCollectionDto saveSongCollection(SongCollectionInputDto dto);
     SongCollectionDto createFolderAndCopyFiles(Long collectionId);
 
+    Resource getImageFromSongCollection(Long id);
+    SongCollection assignImageToSongCollection(Long id, String imageName);
 }
