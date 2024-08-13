@@ -23,17 +23,6 @@ public class MyUserDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//
-//        for (Authority authority : user.getAuthorities()) {
-//            authorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
-//        }
-//
-//        return authorities;
-//    }
-
     @Override
     public String getPassword() {
         return user.getPassword();

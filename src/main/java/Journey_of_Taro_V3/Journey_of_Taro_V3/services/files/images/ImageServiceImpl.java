@@ -7,8 +7,6 @@ import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.Image;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.images.ImageRepository;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.repositories.users.UserImageRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -53,10 +51,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public ImageDto getImageById(Long id) {
-        return imageRepository.findById(id)
+    public ImageDto getImageById(Long imageId) {
+        return imageRepository.findById(imageId)
                 .map(this::transferToImageDto)
-                .orElseThrow(() -> new RecordNotFoundException("No Images found with id: " + id));
+                .orElseThrow(() -> new RecordNotFoundException("No Images found with id: " + imageId));
     }
 
     @Override
@@ -117,8 +115,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void deleteImage(Long id) {
-        imageRepository.deleteById(id);
+    public void deleteImage(Long imageId) {
+        imageRepository.deleteById(imageId);
     }
 
     private List<ImageDto> transferImageListToDtoList(List<Image> images) {

@@ -207,9 +207,9 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUser() {
-        userService.deleteUser("testuser");
+        userService.deleteByUsername("testuser");
 
-        verify(userRepository).deleteById("testuser");
+        verify(userRepository).deleteById(1L);
     }
 
     @Test

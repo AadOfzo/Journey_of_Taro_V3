@@ -41,9 +41,9 @@ public class ImageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ImageDto> getImage(@PathVariable("id") Long id) {
+    public ResponseEntity<ImageDto> getImage(@PathVariable("id") Long imageId) {
         try {
-            ImageDto image = imageService.getImageById(id);
+            ImageDto image = imageService.getImageById(imageId);
             return ResponseEntity.ok().body(image);
         } catch (RecordNotFoundException ex) {
             return ResponseEntity.notFound().build();
@@ -119,7 +119,7 @@ public class ImageController {
 
     // Delete Mapping
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteImage(@PathVariable Long imageId) {
+    public ResponseEntity<Object> deleteImage(@PathVariable("id") Long imageId) {
         imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
     }

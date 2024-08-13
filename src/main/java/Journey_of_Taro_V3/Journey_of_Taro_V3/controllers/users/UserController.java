@@ -107,9 +107,15 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "/{username}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
-        userService.deleteUser(username);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteUserById(@PathVariable("id") Long userId) {
+        userService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/username/{username}")
+    public ResponseEntity<Object> deleteByUserName(@PathVariable("username") String username) {
+        userService.deleteByUsername(username);
         return ResponseEntity.noContent().build();
     }
 
@@ -182,33 +188,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
-
-
-//    @PostMapping("/{id}/image")
-//    public ResponseEntity<User> addImageToUser(@PathVariable("id") Long userId,
-//                                               @RequestParam("file") MultipartFile file) {
-//        try {
-//            if (file.isEmpty()) {
-//                return ResponseEntity.badRequest().body(null);
-//            }
-//
-//            String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                    .path("/users/")
-//                    .path(userId.toString())
-//                    .path("/uploads/images/")
-//                    .path(file.getOriginalFilename())
-////                    .path("/image")
-//                    .toUriString();
-//
-//            String imageName = imageService.storeFile(file);
-//            User user = userService.assignImageToUser(userId, imageName);
-//
-//            return ResponseEntity.created(URI.create(imageUrl)).body(user);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
 
     // Users & Songs endpoints
     @GetMapping("/{id}/songs")

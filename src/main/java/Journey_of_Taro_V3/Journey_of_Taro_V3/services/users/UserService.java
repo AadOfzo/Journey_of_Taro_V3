@@ -32,21 +32,18 @@ public class UserService {
     private final SongServiceImpl songService;
     private final PasswordEncoder passwordEncoder;
     private final UserSongRepository userSongRepository;
-    private final ImageRepository imageRepository;
 
 
     // Could not autowire PasswordEncoder passwords komen wel encoded in database.
     // https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
     public UserService(UserRepository userRepository, UserImageRepository userImageRepository, ImageServiceImpl imageService, SongServiceImpl songService, PasswordEncoder passwordEncoder,
-                       UserSongRepository userSongRepository,
-                       ImageRepository imageRepository) {
+                       UserSongRepository userSongRepository) {
         this.userRepository = userRepository;
         this.userImageRepository = userImageRepository;
         this.imageService = imageService;
         this.songService = songService;
         this.passwordEncoder = passwordEncoder;
         this.userSongRepository = userSongRepository;
-        this.imageRepository = imageRepository;
     }
 
     public String createUser(UserDto userDto) {
@@ -167,8 +164,15 @@ public class UserService {
         return user;
     }
 
-    public void deleteUser(String username) {
-        userRepository.deleteById(username);
+    public void deleteUserById(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
+    public void deleteByUsername(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        userRepository.deleteByUsername(username);
     }
 
     public UserDto updateUser(Long userId, UserDto newUserDto) {
