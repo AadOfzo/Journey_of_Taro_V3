@@ -160,6 +160,15 @@ public class UserService {
         user.setUserImage(userDto.getUserImage());
         user.setUserSong(userDto.getUserSong());
 
+        Set<Authority> authorities = new HashSet<>();
+        for (String role : userDto.getRoles()) {
+            Authority authority = new Authority();
+            authority.setAuthority(role);
+            authority.setUser(user);
+            authorities.add(authority);
+        }
+        user.setAuthorities(authorities);
+
         return user;
     }
 

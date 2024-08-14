@@ -79,7 +79,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "uploads/songs/songCollections").permitAll()
                         .requestMatchers(HttpMethod.POST, "/songCollections/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/songCollections/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/songCollections/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/songCollections/**").hasRole("ADMIN")
 
                         // Allow public access to authentication endpoints
                         .requestMatchers("/authenticate").permitAll()
