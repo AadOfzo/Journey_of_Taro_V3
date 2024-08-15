@@ -66,7 +66,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/images").permitAll()
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/images/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/images/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "uploads/images").permitAll()
                         .requestMatchers(HttpMethod.GET, "uploads/images/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/songs").permitAll()

@@ -109,7 +109,7 @@ public class UserService {
 
         // Baseer roles in authorities
         List<String> roles = user.getAuthorities().stream()
-                .map(authority -> authority.getAuthority().substring(5)) // Remove "ROLE_" prefix
+                .map(authority -> authority.getAuthority()) // Remove "ROLE_" prefix .substring(5)
                 .collect(Collectors.toList());
         userDto.setRoles(roles);
 
