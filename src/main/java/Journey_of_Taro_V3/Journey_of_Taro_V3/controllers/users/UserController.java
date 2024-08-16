@@ -81,7 +81,6 @@ public class UserController {
     @PostMapping(value = "")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {
         String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername, "USER");
 
         URI location = ServletUriComponentsBuilder.fromPath("/users/")
                 .buildAndExpand(newUsername).toUri();
@@ -170,7 +169,7 @@ public class UserController {
             }
 
             String imageName = imageService.storeFile(file);
-            User user = userService.assignImageToUser(userId, imageName);
+            UserDto userDto = userService.assignImageToUser(userId, imageName);
 
             // Log the URI being created
             URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -180,7 +179,7 @@ public class UserController {
 
             System.out.println("Created URI location: " + location.toString());
 
-            return ResponseEntity.created(location).body(user);
+            return ResponseEntity.created(location).body(userDto);
         } catch (IOException e) {
             e.printStackTrace(); // Log the stack trace for debugging
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not store file");

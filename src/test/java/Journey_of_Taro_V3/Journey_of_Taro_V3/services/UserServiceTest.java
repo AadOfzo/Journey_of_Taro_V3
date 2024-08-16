@@ -140,7 +140,7 @@ public class UserServiceTest {
         User user = new User();
         user.setUserId(1L);
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         UserDto userDto = userService.getUserById(1L);
 
@@ -150,7 +150,7 @@ public class UserServiceTest {
 
     @Test
     void testGetUserByIdNotFound() {
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> userService.getUserById(1L));
     }
@@ -222,7 +222,7 @@ public class UserServiceTest {
         newUserDto.setUsername("newuser");
         newUserDto.setPassword("newpassword");
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(passwordEncoder.encode("newpassword")).thenReturn("encodedNewPassword");
         when(userRepository.save(any(User.class))).thenReturn(existingUser);
 
@@ -246,7 +246,7 @@ public class UserServiceTest {
 //        user.setAuthorities(new HashSet<>());
 
         // Mock user repository to return the existing user
-        when(userRepository.findByUserId(userDto.getUserId())).thenReturn(Optional.of(user));
+        when(userRepository.findById(userDto.getUserId())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -272,7 +272,7 @@ public class UserServiceTest {
         UserDto newUserDto = new UserDto();
         newUserDto.setUsername("newuser");
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> userService.updateUser(1L, newUserDto));
     }
@@ -352,11 +352,11 @@ public class UserServiceTest {
         User user = new User();
         UserImage userImage = new UserImage();
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userImageRepository.findUserImageByImageName("image")).thenReturn(Optional.of(userImage));
         when(userRepository.save(user)).thenReturn(user);
 
-        User updatedUser = userService.assignImageToUser(1L, "image");
+        UserDto updatedUser = userService.assignImageToUser(1L, "image");
 
         assertEquals(userImage, updatedUser.getUserImage());
     }
@@ -367,7 +367,7 @@ public class UserServiceTest {
         UserImage userImage = new UserImage();
         user.setUserImage(userImage);
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(imageService.downloadImageFile(userImage.getUserImageName())).thenReturn(mock(Resource.class));
 
         Resource resource = userService.getImageFromUser(1L);
@@ -392,7 +392,7 @@ public class UserServiceTest {
         User user = new User();
         user.setUserId(1L);
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
         userService.updateArtistName(1L, "newArtist");
@@ -413,7 +413,7 @@ public class UserServiceTest {
         Resource mockResource = mock(Resource.class);
 
         // Mock repository and service
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(songService.downloadSongFile("test_song.mp3")).thenReturn(mockResource);
 
         // Act

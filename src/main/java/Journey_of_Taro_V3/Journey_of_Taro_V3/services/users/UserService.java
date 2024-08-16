@@ -52,6 +52,7 @@ public class UserService {
         return newUser.getUsername();
     }
 
+    @Transactional
     public List<UserDto> getUsers() {
         List<UserDto> collection = new ArrayList<>();
         List<User> list = userRepository.findAll();
@@ -72,8 +73,9 @@ public class UserService {
         return dto;
     }
 
+    @Transactional
     public UserDto getUserById(Long userId) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             return fromUser(user);
@@ -161,12 +163,10 @@ public class UserService {
         user.setUserSong(userDto.getUserSong());
 
         Set<Authority> authorities = new HashSet<>();
-        for (String role : userDto.getRoles()) {
-            Authority authority = new Authority();
-            authority.setAuthority(role);
-            authority.setUser(user);
-            authorities.add(authority);
-        }
+        Authority authority = new Authority();
+        authority.setAuthority("ROLE_USER");
+        authority.setUser(user);
+        authorities.add(authority);
         user.setAuthorities(authorities);
 
         return user;
@@ -184,7 +184,7 @@ public class UserService {
     }
 
     public UserDto updateUser(Long userId, UserDto newUserDto) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException("User not found with ID: " + userId));
 
         // Update user fields based on newUserDto
@@ -296,7 +296,7 @@ public class UserService {
     // UserImage methods relation User --> Image
     @Transactional
     public Resource getImageFromUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             throw new RecordNotFoundException("User " + userId + " not found. ");
         }
@@ -308,19 +308,19 @@ public class UserService {
     }
 
     @Transactional
-    public User assignImageToUser(Long userId, String imageName) {
-
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
+    public UserDto assignImageToUser(Long userId, String imageName) {
+        Optional<User> optionalUser = userRepository.findById(userId);
         Optional<UserImage> optionalUserImage = userImageRepository.findUserImageByImageName(imageName);
 
-        // If user exists and at least one image exists, assign the first image to the user
         if (optionalUser.isPresent() && optionalUserImage.isPresent()) {
             UserImage userImage = optionalUserImage.get();
             User user = optionalUser.get();
             user.setUserImage(userImage);
-            return userRepository.save(user);
+            User savedUser = userRepository.save(user);
+
+            return fromUser(savedUser);
         } else {
-            throw new RecordNotFoundException();
+            throw new RecordNotFoundException("User or image not found");
         }
     }
 
@@ -337,7 +337,7 @@ public class UserService {
     }
 
     public void updateArtistName(Long userId, String artistName) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setArtistName(artistName);
@@ -351,7 +351,7 @@ public class UserService {
     @Transactional
     public User assignSongToUser(Long userId, String songTitle) {
         // Fetch the user by ID
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
         Optional<UserSong> optionalUserSong = userSongRepository.findUserSongBySongTitle(songTitle);
         // Als user en image bestaan, assign image aan user
         if (optionalUser.isPresent() && optionalUserSong.isPresent()) {
@@ -366,7 +366,7 @@ public class UserService {
 
     @Transactional
     public Resource getSongFromUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             throw new RecordNotFoundException("User " + userId + " not found. ");
         }

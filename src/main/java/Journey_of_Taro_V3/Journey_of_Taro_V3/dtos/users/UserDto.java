@@ -3,6 +3,7 @@ package Journey_of_Taro_V3.Journey_of_Taro_V3.dtos.users;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.images.UserImage;
 import Journey_of_Taro_V3.Journey_of_Taro_V3.models.music.UserSong;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class UserDto {
     public UserSong userSong;
 
     public String artistname;
-    public List<String> roles;
+    public List<String> roles = new ArrayList<>();
 
     public Long getUserId() {
         return userId;

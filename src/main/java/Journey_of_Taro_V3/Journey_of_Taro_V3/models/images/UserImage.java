@@ -1,13 +1,13 @@
 package Journey_of_Taro_V3.Journey_of_Taro_V3.models.images;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserImage {
-
-
     /* Het opgeslagen bestand staat niet in deze klasse opgeslagen.
        Deze klasse heeft enkel een verwijzing naar de naam van het bestand.
        We weten waar het bestand staat opgeslagen,
