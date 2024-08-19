@@ -144,20 +144,29 @@ public class UserController {
     // Users & images endpoinds
     @GetMapping("/{id}/image")
     public ResponseEntity<Resource> getUserImage(@PathVariable("id") Long userId, HttpServletRequest request) {
-        Resource resource = userService.getImageFromUser(userId);
-
-        String mimeType;
         try {
-            mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException e) {
-            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        }
+            Resource resource = userService.getImageFromUser(userId);
 
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.parseMediaType(mimeType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+            // Logging for debugging
+            System.out.println("Serving image for user: " + userId);
+
+            String mimeType;
+            try {
+                mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+            } catch (IOException e) {
+                mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            }
+
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.parseMediaType(mimeType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            // Logging for debugging
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/{id}/image")
