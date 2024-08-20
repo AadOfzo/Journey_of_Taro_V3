@@ -24,7 +24,7 @@ public class SongCollection {
 
     private String songCollectionUrl;
 
-    private Boolean isPublic;
+    private Boolean isPublic = false;
 
     public SongCollection() {
         songs = new ArrayList<>();
