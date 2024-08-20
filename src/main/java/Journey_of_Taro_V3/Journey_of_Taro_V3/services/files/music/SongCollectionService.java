@@ -14,16 +14,14 @@ public interface SongCollectionService {
     void addSongsToCollection(Long collectionId, List<Long> songIds);
     List<SongDto> getSongsByCollection(Long collectionId);
     void removeSongsFromCollection(Long collectionId, List<Long> songIds);
-
     List<SongCollectionDto> getAllSongCollections();
     SongCollectionDto getSongCollectionById(Long id);
     SongCollectionDto createSongCollection(SongCollectionInputDto dto);
     void deleteSongCollection(Long id);
     SongCollectionDto updateSongCollection(Long id, SongCollectionInputDto dto);
-
+    SongCollectionDto toggleVisibility(Long id, boolean isPublic);
     void addImageToSongCollection(Long collectionId, Image image);
 
-    // This method should be declared in the interface
     SongCollectionDto saveSongCollection(SongCollectionInputDto dto);
     SongCollectionDto createFolderAndCopyFiles(Long collectionId);
 

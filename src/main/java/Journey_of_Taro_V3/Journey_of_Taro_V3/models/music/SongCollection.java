@@ -24,6 +24,8 @@ public class SongCollection {
 
     private String songCollectionUrl;
 
+    private Boolean isPublic;
+
     public SongCollection() {
         songs = new ArrayList<>();
     }
@@ -66,6 +68,15 @@ public class SongCollection {
 
     public void setCollectionImage(Image collectionImage) {
         this.collectionImage = collectionImage;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    // Add the setter for isPublic
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 }
     

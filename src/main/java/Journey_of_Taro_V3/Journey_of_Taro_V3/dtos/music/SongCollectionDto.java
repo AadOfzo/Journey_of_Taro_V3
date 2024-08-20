@@ -9,13 +9,16 @@ public class SongCollectionDto {
     private String songCollectionTitle;
     private ImageDto image;
     private String songCollectionUrl;  // Add this field
+    private Boolean isPublic;
 
-    public SongCollectionDto(Long id, List<SongIdDto> songIds, String songCollectionTitle, ImageDto image, String songCollectionUrl) {
+
+    public SongCollectionDto(Long id, List<SongIdDto> songIds, String songCollectionTitle, ImageDto image, String songCollectionUrl, Boolean isPublic) {
         this.id = id;
         this.songIds = songIds;
         this.songCollectionTitle = songCollectionTitle;
         this.image = image;
         this.songCollectionUrl = songCollectionUrl;
+        this.isPublic = isPublic;
     }
 
     public Long getId() {
@@ -56,5 +59,13 @@ public class SongCollectionDto {
 
     public void setSongCollectionUrl(String songCollectionUrl) {
         this.songCollectionUrl = songCollectionUrl;
+    }
+
+    public Boolean getPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(Boolean aPublic) {
+        isPublic = aPublic;
     }
 }

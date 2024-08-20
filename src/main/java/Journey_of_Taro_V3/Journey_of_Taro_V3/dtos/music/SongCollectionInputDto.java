@@ -6,13 +6,7 @@ public class SongCollectionInputDto {
 
     private List<Long> songIds;
     private String songCollectionTitle;
-
-    public SongCollectionInputDto() {
-    }
-
-    public SongCollectionInputDto(List<Long> songIds) {
-        this.songIds = songIds;
-    }
+    private boolean isPublic;
 
     public List<Long> getSongIds() {
         return songIds;
@@ -28,5 +22,13 @@ public class SongCollectionInputDto {
 
     public void setSongCollectionTitle(String songCollectionTitle) {
         this.songCollectionTitle = songCollectionTitle;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

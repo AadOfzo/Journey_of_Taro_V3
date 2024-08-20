@@ -152,6 +152,19 @@ public class SongCollectionServiceImpl implements SongCollectionService {
     }
 
     @Override
+    public SongCollectionDto toggleVisibility(Long id, boolean isPublic) {
+        SongCollection songCollection = collectionRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + id));
+
+        songCollection.setIsPublic(isPublic);
+
+        collectionRepository.save(songCollection);
+
+        // Return the updated DTO
+        return convertToDto(songCollection);
+    }
+
+    @Override
     public void addImageToSongCollection(Long collectionId, Image image) {
         SongCollection collection = collectionRepository.findById(collectionId)
                 .orElseThrow(() -> new RecordNotFoundException("No collection found with the ID: " + collectionId));
@@ -224,7 +237,8 @@ public class SongCollectionServiceImpl implements SongCollectionService {
                 songIdDtos,
                 collection.getSongCollectionTitle(),
                 imageDto,
-                songCollectionUrl
+                songCollectionUrl,
+                collection.isPublic()
         );
     }
 }

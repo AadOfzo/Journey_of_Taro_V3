@@ -47,9 +47,17 @@ public class SongCollectionController {
         return ResponseEntity.ok().body(songCollection);
     }
 
+    @PatchMapping("/{id}/visibility")
+    public ResponseEntity<SongCollectionDto> toggleVisibility(@PathVariable Long id, @RequestBody SongCollectionInputDto songCollectionInputDto) {
+        SongCollectionDto updatedCollection = songCollectionService.toggleVisibility(id, songCollectionInputDto.isPublic());
+        return ResponseEntity.ok().body(updatedCollection);
+    }
+
     @GetMapping("/{id}/image")
     public ResponseEntity<Resource> getSongCollectionImage(@PathVariable("id") Long id, HttpServletRequest request){
         Resource resource = songCollectionService.getImageFromSongCollection(id);
+
+        System.out.println("Serving image for user: " + id);
 
         String mimeType;
         try {
