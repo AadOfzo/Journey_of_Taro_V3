@@ -52,7 +52,6 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/users/{username}/grant-admin").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/users/{id}/image").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/**/image").permitAll()
                         .requestMatchers(HttpMethod.POST, "/{id}/image").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
@@ -79,6 +78,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "uploads/songs/songCollections").permitAll()
                         .requestMatchers(HttpMethod.POST, "/songCollections/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/songCollections/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/songCollections/{id}/visibility").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/songCollections/**").hasRole("ADMIN")
 
                         // Allow public access to authentication endpoints
